@@ -2,6 +2,8 @@
 
 return [
 
-    'process_automatically' => true,
+    // Warning: Experimental: Does not work properly for backed-off jobs
+
+    'process_automatically' => false,
 
 ];

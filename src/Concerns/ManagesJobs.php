@@ -49,6 +49,11 @@ trait ManagesJobs
             $job->onConnection($jobRow->on_connection);
         }
 
+        if (filled($this->middleware)) {
+            $middleware = ($this->middleware)() ?? [];
+            $job->middleware = array_merge($job->middleware, $middleware);
+        }
+
         return new NextJob($job, $jobRow);
     }
 

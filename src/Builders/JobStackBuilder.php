@@ -62,6 +62,13 @@ class JobStackBuilder
     protected ?string $globalConnection = null;
 
     /**
+     * Global middleware.
+     *
+     * @var Closure|null
+     */
+    protected ?Closure $globalMiddleware = null;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -110,6 +117,7 @@ class JobStackBuilder
         $jobStack->on_then = $this->onThen;
         $jobStack->on_catch = $this->onCatch;
         $jobStack->on_finally = $this->onFinally;
+        $jobStack->middleware = $this->globalMiddleware;
         $jobStack->save();
 
         $jobStack->rows()->insert($this->prepareJobsForInsert($jobStack));
@@ -214,13 +222,26 @@ class JobStackBuilder
     }
 
     /**
+     * Set a global middleware closure to run.
+     *
+     * @param Closure|array $closure
+     * @return $this
+     */
+    public function withMiddleware(Closure|array $closure): static
+    {
+        $this->globalMiddleware = $closure instanceof Closure ? $closure : fn () => $closure;
+
+        return $this;
+    }
+
+    /**
      * Create the JobStack
      *
      * @return JobStack
      */
     public function create(): JobStack
     {
-        return DB::transaction(fn () => $this->createJobStack());
+        return DB::transaction(fn() => $this->createJobStack());
     }
 
     /**

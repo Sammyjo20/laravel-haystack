@@ -15,8 +15,14 @@ return new class extends Migration
             $table->text('on_catch')->nullable();
             $table->text('on_finally')->nullable();
             $table->text('intermediate_job')->nullable();
+            $table->text('middleware')->nullable();
             $table->boolean('started')->default(false);
             $table->boolean('finished')->default(false);
         });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('job_stacks');
     }
 };

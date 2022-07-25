@@ -28,6 +28,7 @@ class JobStack extends Model
         'on_catch' => SerializeClosure::class,
         'on_finally' => SerializeClosure::class,
         'intermediate_job' => SerializeJob::class,
+        'middleware' => SerializeClosure::class,
         'started' => 'boolean',
         'finished' => 'boolean',
     ];
