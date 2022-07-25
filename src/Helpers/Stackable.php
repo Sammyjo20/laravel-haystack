@@ -10,7 +10,7 @@ class Stackable
     /**
      * Check if a job is stackable.
      *
-     * @param ShouldQueue $job
+     * @param  ShouldQueue  $job
      * @return bool
      */
     public static function isStackable(ShouldQueue $job): bool
@@ -21,7 +21,7 @@ class Stackable
     /**
      * Check if a job is not stackable.
      *
-     * @param ShouldQueue $job
+     * @param  ShouldQueue  $job
      * @return bool
      */
     public static function isNotStackable(ShouldQueue $job): bool

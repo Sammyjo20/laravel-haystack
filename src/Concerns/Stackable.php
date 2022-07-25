@@ -3,7 +3,6 @@
 namespace Sammyjo20\LaravelJobStack\Concerns;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Sammyjo20\LaravelJobStack\Actions\CreatePendingJobStackRow;
 use Sammyjo20\LaravelJobStack\Models\JobStack;
 
 trait Stackable
@@ -28,7 +27,7 @@ trait Stackable
     /**
      * Set the JobStack onto the job.
      *
-     * @param JobStack $jobStack
+     * @param  JobStack  $jobStack
      * @return $this
      */
     public function setJobStack(JobStack $jobStack): static
@@ -71,10 +70,10 @@ trait Stackable
     /**
      * Append a job to the JobStack.
      *
-     * @param ShouldQueue $job
-     * @param int $delayInSeconds
-     * @param string|null $queue
-     * @param string|null $connection
+     * @param  ShouldQueue  $job
+     * @param  int  $delayInSeconds
+     * @param  string|null  $queue
+     * @param  string|null  $connection
      * @return void
      */
     public function appendJob(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): void

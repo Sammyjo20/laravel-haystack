@@ -10,14 +10,13 @@ class NextJob
     /**
      * Constructor
      *
-     * @param ShouldQueue $job
-     * @param JobStackRow $jobStackRow
+     * @param  ShouldQueue  $job
+     * @param  JobStackRow  $jobStackRow
      */
     public function __construct(
         readonly public ShouldQueue $job,
         readonly public JobStackRow $jobStackRow,
-    )
-    {
+    ) {
         //
     }
 }

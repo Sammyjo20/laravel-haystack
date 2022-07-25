@@ -63,6 +63,7 @@ trait ManagesJobs
 
         if (! $nextJob instanceof NextJob) {
             $this->finish();
+
             return;
         }
 
@@ -86,7 +87,7 @@ trait ManagesJobs
     /**
      * Finish the JobStack.
      *
-     * @param bool $fail
+     * @param  bool  $fail
      * @return void
      */
     public function finish(bool $fail = false): void
@@ -123,10 +124,10 @@ trait ManagesJobs
     /**
      * Append a new job to the job stack.
      *
-     * @param ShouldQueue $job
-     * @param int $delayInSeconds
-     * @param string|null $queue
-     * @param string|null $connection
+     * @param  ShouldQueue  $job
+     * @param  int  $delayInSeconds
+     * @param  string|null  $queue
+     * @param  string|null  $connection
      * @return void
      */
     public function appendJob(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): void
@@ -139,7 +140,7 @@ trait ManagesJobs
     /**
      * Append the pending job to the JobStack.
      *
-     * @param PendingJobStackRow $pendingJob
+     * @param  PendingJobStackRow  $pendingJob
      * @return void
      */
     public function appendPendingJob(PendingJobStackRow $pendingJob): void
@@ -155,7 +156,7 @@ trait ManagesJobs
     /**
      * Execute the closure.
      *
-     * @param Closure|null $closure
+     * @param  Closure|null  $closure
      * @return void
      */
     protected function executeClosure(?Closure $closure): void

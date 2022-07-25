@@ -4,11 +4,11 @@ namespace Sammyjo20\LaravelJobStack;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelJobStack\Actions\ProcessCompletedJob;
 use Sammyjo20\LaravelJobStack\Helpers\Stackable;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Illuminate\Support\Facades\Queue;
 
 class LaravelJobStackServiceProvider extends PackageServiceProvider
 {

@@ -10,9 +10,9 @@ class SerializeJob implements CastsAttributes
      * Unserialize a job.
      *
      * @param $model
-     * @param string $key
+     * @param  string  $key
      * @param $value
-     * @param array $attributes
+     * @param  array  $attributes
      * @return mixed|null
      */
     public function get($model, string $key, $value, array $attributes)
@@ -24,9 +24,9 @@ class SerializeJob implements CastsAttributes
      * Serialize a job.
      *
      * @param $model
-     * @param string $key
+     * @param  string  $key
      * @param $value
-     * @param array $attributes
+     * @param  array  $attributes
      * @return mixed|string|null
      */
     public function set($model, string $key, $value, array $attributes)

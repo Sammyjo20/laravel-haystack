@@ -12,10 +12,10 @@ class CreatePendingJobStackRow
     /**
      * Create a new PendingJobStackRow.
      *
-     * @param ShouldQueue $job
-     * @param int $delayInSeconds
-     * @param string|null $queue
-     * @param string|null $connection
+     * @param  ShouldQueue  $job
+     * @param  int  $delayInSeconds
+     * @param  string|null  $queue
+     * @param  string|null  $connection
      * @return PendingJobStackRow
      */
     public static function execute(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): PendingJobStackRow
