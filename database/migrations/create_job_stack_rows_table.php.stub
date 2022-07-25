@@ -19,4 +19,9 @@ return new class extends Migration
             $table->string('on_connection')->nullable();
         });
     }
+
+    public function down()
+    {
+        Schema::dropIfExists('job_stack_rows');
+    }
 };
