@@ -30,6 +30,12 @@ class ExampleJob implements ShouldQueue
      */
     public function handle()
     {
-        // $this->jobStack->nextJob();
+        ray($this->name)->orange();
+
+        if ($this->name === 'Andy') {
+            $this->appendJob(new static('Charlotte'));
+        }
+
+        $this->nextJob();
     }
 }

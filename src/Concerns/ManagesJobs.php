@@ -4,7 +4,9 @@ namespace Sammyjo20\LaravelJobStack\Concerns;
 
 use Closure;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Sammyjo20\LaravelJobStack\Actions\CreatePendingJobStackRow;
 use Sammyjo20\LaravelJobStack\Data\NextJob;
+use Sammyjo20\LaravelJobStack\Data\PendingJobStackRow;
 use Sammyjo20\LaravelJobStack\Models\JobStackRow;
 
 trait ManagesJobs
@@ -60,12 +62,13 @@ trait ManagesJobs
         $nextJob = $this->getNextJob();
 
         if (! $nextJob instanceof NextJob) {
+            $this->finish();
             return;
         }
 
-        dispatch($nextJob->job);
-
         $nextJob->jobStackRow->delete();
+
+        dispatch($nextJob->job);
     }
 
     /**
@@ -101,6 +104,10 @@ trait ManagesJobs
         // Always execute the finally closure.
 
         $this->executeClosure($this->on_finally);
+
+        // Now finally delete itself.
+
+        $this->delete();
     }
 
     /**
@@ -111,6 +118,38 @@ trait ManagesJobs
     public function fail(): void
     {
         $this->finish(true);
+    }
+
+    /**
+     * Append a new job to the job stack.
+     *
+     * @param ShouldQueue $job
+     * @param int $delayInSeconds
+     * @param string|null $queue
+     * @param string|null $connection
+     * @return void
+     */
+    public function appendJob(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): void
+    {
+        $pendingJob = CreatePendingJobStackRow::execute($job, $delayInSeconds, $queue, $connection);
+
+        $this->appendPendingJob($pendingJob);
+    }
+
+    /**
+     * Append the pending job to the JobStack.
+     *
+     * @param PendingJobStackRow $pendingJob
+     * @return void
+     */
+    public function appendPendingJob(PendingJobStackRow $pendingJob): void
+    {
+        $this->rows()->create([
+            'job' => $pendingJob->job,
+            'delay' => $pendingJob->delayInSeconds,
+            'on_queue' => $pendingJob->queue,
+            'on_connection' => $pendingJob->connection,
+        ]);
     }
 
     /**

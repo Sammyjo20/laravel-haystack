@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Sammyjo20\LaravelJobStack\Builders\JobStackBuilder;
+use Sammyjo20\LaravelJobStack\Casts\SerializeClosure;
+use Sammyjo20\LaravelJobStack\Casts\SerializeJob;
 use Sammyjo20\LaravelJobStack\Concerns\ManagesJobs;
 
 class JobStack extends Model
@@ -22,7 +24,12 @@ class JobStack extends Model
      * @var array
      */
     protected $casts = [
-        //
+        'on_then' => SerializeClosure::class,
+        'on_catch' => SerializeClosure::class,
+        'on_finally' => SerializeClosure::class,
+        'intermediate_job' => SerializeJob::class,
+        'started' => 'boolean',
+        'finished' => 'boolean',
     ];
 
     /**

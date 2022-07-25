@@ -3,6 +3,7 @@
 namespace Sammyjo20\LaravelJobStack\Data;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Sammyjo20\LaravelJobStack\Models\JobStack;
 
 class PendingJobStackRow
 {

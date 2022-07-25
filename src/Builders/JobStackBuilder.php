@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
+use Sammyjo20\LaravelJobStack\Actions\CreatePendingJobStackRow;
 use Sammyjo20\LaravelJobStack\Concerns\Stackable;
 use Sammyjo20\LaravelJobStack\Data\PendingJobStackRow;
 use Sammyjo20\LaravelJobStack\Models\JobStack;
@@ -93,9 +94,9 @@ class JobStackBuilder
             return [
                 'job_stack_id' => $jobStack->getKey(),
                 'job' => serialize($pendingJob->job),
-                'queue' => $pendingJob->queue ?? $this->globalQueue,
-                'connection' => $pendingJob->connection ?? $this->globalConnection,
                 'delay' => $pendingJob->delayInSeconds ?? $this->globalDelayInSeconds,
+                'on_queue' => $pendingJob->queue ?? $this->globalQueue,
+                'on_connection' => $pendingJob->connection ?? $this->globalConnection,
             ];
         })->toArray();
     }
@@ -162,19 +163,15 @@ class JobStackBuilder
      *
      * @param ShouldQueue $job
      * @param int $delayInSeconds
-     * @param int|null $queue
-     * @param int|null $connection
+     * @param string|null $queue
+     * @param string|null $connection
      * @return $this
      */
     public function addJob(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
     {
-        $isStackable = in_array(Stackable::class, class_uses_recursive($job), true);
+        $pendingJobStackRow = CreatePendingJobStackRow::execute($job, $delayInSeconds, $queue, $connection);
 
-        if (! $isStackable) {
-            throw new InvalidArgumentException('The provided job does not contain the "Stackable" trait.');
-        }
-
-        $this->jobs->add(new PendingJobStackRow($job, $delayInSeconds, $queue, $connection));
+        $this->jobs->add($pendingJobStackRow);
 
         return $this;
     }

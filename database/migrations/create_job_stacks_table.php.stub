@@ -14,6 +14,7 @@ return new class extends Migration
             $table->text('on_then')->nullable();
             $table->text('on_catch')->nullable();
             $table->text('on_finally')->nullable();
+            $table->text('intermediate_job')->nullable();
             $table->boolean('started')->default(false);
             $table->boolean('finished')->default(false);
         });

@@ -5,6 +5,7 @@ namespace Sammyjo20\LaravelJobStack\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Sammyjo20\LaravelJobStack\Casts\SerializeJob;
 
 class JobStackRow extends Model
 {
@@ -19,7 +20,7 @@ class JobStackRow extends Model
      * @var array
      */
     protected $casts = [
-        //
+        'job' => SerializeJob::class,
     ];
 
     /**

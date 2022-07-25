@@ -7,7 +7,6 @@ it('works', function () {
     $jobStack = JobStack::build()
         ->addJob(new ExampleJob('Sam'))
         ->addJob(new ExampleJob('Andy'))
-        ->onConnection('sync')
         ->then(function () {
             ray('I have finished successfully')->green();
         })
@@ -19,5 +18,5 @@ it('works', function () {
         })
         ->dispatch();
 
-    dd($jobStack->rows()->get());
+    dd($jobStack);
 });
