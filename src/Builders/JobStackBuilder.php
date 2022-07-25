@@ -224,7 +224,7 @@ class JobStackBuilder
     /**
      * Set a global middleware closure to run.
      *
-     * @param Closure|array $closure
+     * @param  Closure|array  $closure
      * @return $this
      */
     public function withMiddleware(Closure|array $closure): static
@@ -241,7 +241,7 @@ class JobStackBuilder
      */
     public function create(): JobStack
     {
-        return DB::transaction(fn() => $this->createJobStack());
+        return DB::transaction(fn () => $this->createJobStack());
     }
 
     /**
