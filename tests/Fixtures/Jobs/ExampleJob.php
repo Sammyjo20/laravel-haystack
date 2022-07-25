@@ -18,7 +18,7 @@ class ExampleJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(protected string $name)
+    public function __construct(protected string $name, protected bool $fail = false)
     {
         //
     }
@@ -33,9 +33,7 @@ class ExampleJob implements ShouldQueue
         ray($this->name)->orange();
 
         if ($this->name === 'Andy') {
-            $this->appendJob(new static('Charlotte'));
+            $this->appendJob(new static('Charlotte', true));
         }
-
-        $this->nextJob();
     }
 }

@@ -33,6 +33,14 @@ class JobStack extends Model
     ];
 
     /**
+     * @var false[]
+     */
+    protected $attributes = [
+        'started' => false,
+        'finished' => false,
+    ];
+
+    /**
      * The JobStack's rows.
      *
      * @return HasMany

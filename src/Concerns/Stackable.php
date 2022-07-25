@@ -16,6 +16,16 @@ trait Stackable
     protected JobStack $jobStack;
 
     /**
+     * Get the job stack.
+     *
+     * @return JobStack
+     */
+    public function getJobStack(): JobStack
+    {
+        return $this->jobStack;
+    }
+
+    /**
      * Set the JobStack onto the job.
      *
      * @param JobStack $jobStack

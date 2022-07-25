@@ -216,14 +216,23 @@ class JobStackBuilder
     }
 
     /**
+     * Create the JobStack
+     *
+     * @return JobStack
+     */
+    public function create(): JobStack
+    {
+        return DB::transaction(fn () => $this->createJobStack());
+    }
+
+    /**
      * Dispatch the JobStack.
      *
      * @return JobStack
      */
     public function dispatch(): JobStack
     {
-        /** @var JobStack $jobStack */
-        $jobStack = DB::transaction(fn () => $this->createJobStack());
+        $jobStack = $this->create();
 
         $jobStack->start();
 
