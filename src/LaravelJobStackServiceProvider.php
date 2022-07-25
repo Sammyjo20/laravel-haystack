@@ -4,7 +4,6 @@ namespace Sammyjo20\LaravelJobStack;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\Events\JobProcessed;
-use Illuminate\Support\Facades\Config;
 use Sammyjo20\LaravelJobStack\Actions\ProcessCompletedJob;
 use Sammyjo20\LaravelJobStack\Helpers\Stackable;
 use Spatie\LaravelPackageTools\Package;
