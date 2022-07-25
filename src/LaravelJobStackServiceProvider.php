@@ -2,9 +2,9 @@
 
 namespace Sammyjo20\LaravelJobStack;
 
+use Sammyjo20\LaravelJobStack\Commands\LaravelJobStackCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Sammyjo20\LaravelJobStack\Commands\LaravelJobStackCommand;
 
 class LaravelJobStackServiceProvider extends PackageServiceProvider
 {
