@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Sammyjo20\LaravelJobStack\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class LaravelJobStackCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'laravel-job-stack';
 
     public $description = 'My command';
 
