@@ -11,8 +11,11 @@ return new class extends Migration
         Schema::create('job_stacks', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->text('on_finish')->nullable();
-            $table->text('on_error')->nullable();
+            $table->text('on_then')->nullable();
+            $table->text('on_catch')->nullable();
+            $table->text('on_finally')->nullable();
+            $table->boolean('started')->default(false);
+            $table->boolean('finished')->default(false);
         });
     }
 };

@@ -14,9 +14,9 @@ return new class extends Migration
             $table->timestamps();
             $table->foreignIdFor(JobStack::class)->constrained()->cascadeOnDelete();
             $table->text('job');
-            $table->string('queue')->nullable();
-            $table->string('connection')->nullable();
             $table->bigInteger('delay')->default(0);
+            $table->string('on_queue')->nullable();
+            $table->string('on_connection')->nullable();
         });
     }
 };
