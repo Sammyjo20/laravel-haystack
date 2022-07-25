@@ -13,7 +13,7 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn(string $modelName) => 'Sammyjo20\\LaravelJobStack\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
+            fn (string $modelName) => 'Sammyjo20\\LaravelJobStack\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 
@@ -28,10 +28,10 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
 
-        $migration = include __DIR__ . '/../database/migrations/create_job_stacks_table.php.stub';
+        $migration = include __DIR__.'/../database/migrations/create_job_stacks_table.php.stub';
         $migration->up();
 
-        $migration = include __DIR__ . '/../database/migrations/create_job_stack_rows_table.php.stub';
+        $migration = include __DIR__.'/../database/migrations/create_job_stack_rows_table.php.stub';
         $migration->up();
     }
 }

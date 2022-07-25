@@ -6,9 +6,7 @@ use Closure;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use InvalidArgumentException;
 use Sammyjo20\LaravelJobStack\Actions\CreatePendingJobStackRow;
-use Sammyjo20\LaravelJobStack\Concerns\Stackable;
 use Sammyjo20\LaravelJobStack\Data\PendingJobStackRow;
 use Sammyjo20\LaravelJobStack\Models\JobStack;
 
@@ -74,18 +72,18 @@ class JobStackBuilder
     /**
      * Normalize the closure.
      *
-     * @param Closure|callable $callable
+     * @param  Closure|callable  $callable
      * @return Closure
      */
     protected function normalizeClosure(Closure|callable $callable): Closure
     {
-        return $callable instanceof Closure ? $callable : static fn() => $callable();
+        return $callable instanceof Closure ? $callable : static fn () => $callable();
     }
 
     /**
      * Map the jobs to be ready for inserting.
      *
-     * @param JobStack $jobStack
+     * @param  JobStack  $jobStack
      * @return array
      */
     protected function prepareJobsForInsert(JobStack $jobStack): array
@@ -122,7 +120,7 @@ class JobStackBuilder
     /**
      * Provide a closure that will run when the job stack is complete.
      *
-     * @param Closure|callable $closure
+     * @param  Closure|callable  $closure
      * @return $this
      */
     public function then(Closure|callable $closure): static
@@ -135,7 +133,7 @@ class JobStackBuilder
     /**
      * Provide a closure that will run when the job stack fails.
      *
-     * @param Closure|callable $closure
+     * @param  Closure|callable  $closure
      * @return $this
      */
     public function catch(Closure|callable $closure): static
@@ -148,7 +146,7 @@ class JobStackBuilder
     /**
      * Provide a closure that will run when the job stack finishes.
      *
-     * @param Closure|callable $closure
+     * @param  Closure|callable  $closure
      * @return $this
      */
     public function finally(Closure|callable $closure): static
@@ -161,10 +159,10 @@ class JobStackBuilder
     /**
      * Add a job to the job stack.
      *
-     * @param ShouldQueue $job
-     * @param int $delayInSeconds
-     * @param string|null $queue
-     * @param string|null $connection
+     * @param  ShouldQueue  $job
+     * @param  int  $delayInSeconds
+     * @param  string|null  $queue
+     * @param  string|null  $connection
      * @return $this
      */
     public function addJob(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
@@ -179,7 +177,7 @@ class JobStackBuilder
     /**
      * Set a global delay on the jobs.
      *
-     * @param int $seconds
+     * @param  int  $seconds
      * @return $this
      */
     public function withDelay(int $seconds): static
@@ -192,7 +190,7 @@ class JobStackBuilder
     /**
      * Set a global queue for the jobs.
      *
-     * @param string $queue
+     * @param  string  $queue
      * @return $this
      */
     public function onQueue(string $queue): static
@@ -205,7 +203,7 @@ class JobStackBuilder
     /**
      * Set a global connection for the jobs.
      *
-     * @param string $connection
+     * @param  string  $connection
      * @return $this
      */
     public function onConnection(string $connection): static

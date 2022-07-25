@@ -10,7 +10,7 @@ class ProcessCompletedJob
     /**
      * Constructor
      *
-     * @param JobProcessed $jobProcessed
+     * @param  JobProcessed  $jobProcessed
      */
     public function __construct(protected JobProcessed $jobProcessed)
     {
