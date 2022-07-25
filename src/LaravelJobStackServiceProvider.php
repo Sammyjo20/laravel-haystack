@@ -4,7 +4,6 @@ namespace Sammyjo20\LaravelJobStack;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Sammyjo20\LaravelJobStack\Commands\LaravelJobStackCommand;
 
 class LaravelJobStackServiceProvider extends PackageServiceProvider
 {
@@ -18,8 +17,9 @@ class LaravelJobStackServiceProvider extends PackageServiceProvider
         $package
             ->name('laravel-job-stack')
             ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_laravel-job-stack_table')
-            ->hasCommand(LaravelJobStackCommand::class);
+            ->hasMigrations([
+                'create_job_stacks_table',
+                'create_job_stack_rows_table',
+            ]);
     }
 }

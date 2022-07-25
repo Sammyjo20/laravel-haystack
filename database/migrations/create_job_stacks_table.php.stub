@@ -8,12 +8,11 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('laravel_job_stack_table', function (Blueprint $table) {
+        Schema::create('job_stacks', function (Blueprint $table) {
             $table->id();
-
-            // add fields
-
             $table->timestamps();
+            $table->text('on_finish')->nullable();
+            $table->text('on_error')->nullable();
         });
     }
 };
