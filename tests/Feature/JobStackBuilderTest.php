@@ -4,7 +4,6 @@ use Sammyjo20\LaravelJobStack\Models\JobStack;
 use Sammyjo20\LaravelJobStack\Tests\Fixtures\Jobs\ExampleJob;
 
 it('works', function () {
-
     $jobStack = JobStack::build()
         ->addJob(new ExampleJob('Sam'))
         ->addJob(new ExampleJob('Steve'))
@@ -16,7 +15,7 @@ it('works', function () {
             ray('I have failed')->red();
         })
         ->finally(function () {
-            ray('This always happens.')->purple();
+            ray('This always happens at the end.')->purple();
         })
         ->dispatch();
 
