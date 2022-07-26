@@ -40,31 +40,37 @@ trait Stackable
     /**
      * Dispatch the next job in the JobStack.
      *
-     * @return void
+     * @return $this
      */
-    public function nextJob(): void
+    public function nextJob(): static
     {
         $this->jobStack->dispatchNextJob();
+
+        return $this;
     }
 
     /**
      * Finish the JobStack.
      *
-     * @return void
+     * @return $this
      */
-    public function finishJobStack(): void
+    public function finishJobStack(): static
     {
         $this->jobStack->finish();
+
+        return $this;
     }
 
     /**
      * Fail the job stack.
      *
-     * @return void
+     * @return $this
      */
-    public function failJobStack(): void
+    public function failJobStack(): static
     {
         $this->jobStack->finish(true);
+
+        return $this;
     }
 
     /**
@@ -74,10 +80,12 @@ trait Stackable
      * @param  int  $delayInSeconds
      * @param  string|null  $queue
      * @param  string|null  $connection
-     * @return void
+     * @return $this
      */
-    public function appendJob(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): void
+    public function appendJob(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
     {
         $this->jobStack->appendJob($job, $delayInSeconds, $queue, $connection);
+
+        return $this;
     }
 }
