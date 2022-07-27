@@ -20,5 +20,6 @@ This package is great if you are chaining thousands of jobs or if you are buildi
 ```bash
 composer require sammyjo20/laravel-waffle
 ```
+> Requires Laravel 8+ and PHP 8.1
 
 Coming soon... 🪐 
