@@ -4,7 +4,7 @@ namespace Sammyjo20\LaravelHaystack\Data;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class PendingHaystackRow
+class PendingHaystackBale
 {
     /**
      * Constructor

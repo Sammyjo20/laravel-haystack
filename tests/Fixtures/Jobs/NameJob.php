@@ -30,6 +30,12 @@ class NameJob implements ShouldQueue
      */
     public function handle()
     {
+        ray($this->name)->orange();
+
+        if ($this->name === 'Gareth') {
+            $this->appendToHaystack(new static('Liz'));
+        }
+
         $this->nextJob();
     }
 }

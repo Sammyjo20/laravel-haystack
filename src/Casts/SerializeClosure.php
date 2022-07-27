@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use InvalidArgumentException;
 use Laravel\SerializableClosure\SerializableClosure;
+use Sammyjo20\LaravelHaystack\Helpers\ClosureHelper;
 
 class SerializeClosure implements CastsAttributes
 {
@@ -43,11 +44,7 @@ class SerializeClosure implements CastsAttributes
             throw new InvalidArgumentException('Value provided must be a closure or an invokable class.');
         }
 
-        if (is_callable($value) === true && is_object($value) === false) {
-            throw new InvalidArgumentException('Callable value provided must be an invokable class.');
-        }
-
-        $closure = $value instanceof Closure ? $value : static fn() => $value();
+        $closure = ClosureHelper::fromCallable($value);
 
         return serialize(new SerializableClosure($closure));
     }

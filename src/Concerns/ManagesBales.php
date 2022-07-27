@@ -4,9 +4,9 @@ namespace Sammyjo20\LaravelHaystack\Concerns;
 
 use Closure;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Sammyjo20\LaravelHaystack\Actions\CreatePendingHaystackRow;
+use Sammyjo20\LaravelHaystack\Actions\CreatePendingHaystackBale;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
-use Sammyjo20\LaravelHaystack\Data\PendingHaystackRow;
+use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 
 trait ManagesBales
@@ -18,7 +18,7 @@ trait ManagesBales
      */
     public function getNextJobRow(): ?HaystackBale
     {
-        return $this->rows()->first();
+        return $this->bales()->first();
     }
 
     /**
@@ -136,7 +136,7 @@ trait ManagesBales
      */
     public function appendJob(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): void
     {
-        $pendingJob = CreatePendingHaystackRow::execute($job, $delayInSeconds, $queue, $connection);
+        $pendingJob = CreatePendingHaystackBale::execute($job, $delayInSeconds, $queue, $connection);
 
         $this->appendPendingJob($pendingJob);
     }
@@ -144,12 +144,12 @@ trait ManagesBales
     /**
      * Append the pending job to the Haystack.
      *
-     * @param  PendingHaystackRow  $pendingJob
+     * @param  PendingHaystackBale  $pendingJob
      * @return void
      */
-    public function appendPendingJob(PendingHaystackRow $pendingJob): void
+    public function appendPendingJob(PendingHaystackBale $pendingJob): void
     {
-        $this->rows()->create([
+        $this->bales()->create([
             'job' => $pendingJob->job,
             'delay' => $pendingJob->delayInSeconds,
             'on_queue' => $pendingJob->queue,

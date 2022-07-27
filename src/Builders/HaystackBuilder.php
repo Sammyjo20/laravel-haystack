@@ -6,8 +6,9 @@ use Closure;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Sammyjo20\LaravelHaystack\Actions\CreatePendingHaystackRow;
-use Sammyjo20\LaravelHaystack\Data\PendingHaystackRow;
+use Sammyjo20\LaravelHaystack\Actions\CreatePendingHaystackBale;
+use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
+use Sammyjo20\LaravelHaystack\Helpers\ClosureHelper;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 
 class HaystackBuilder
@@ -77,84 +78,46 @@ class HaystackBuilder
     }
 
     /**
-     * Map the jobs to be ready for inserting.
-     *
-     * @param  Haystack  $haystack
-     * @return array
-     */
-    protected function prepareJobsForInsert(Haystack $haystack): array
-    {
-        return $this->jobs->map(function (PendingHaystackRow $pendingJob) use ($haystack) {
-            return [
-                'haystack_id' => $haystack->getKey(),
-                'job' => serialize($pendingJob->job),
-                'delay' => $pendingJob->delayInSeconds ?? $this->globalDelayInSeconds,
-                'on_queue' => $pendingJob->queue ?? $this->globalQueue,
-                'on_connection' => $pendingJob->connection ?? $this->globalConnection,
-            ];
-        })->toArray();
-    }
-
-    /**
-     * Create the job stack.
-     *
-     * @return Haystack
-     */
-    protected function createHaystack(): Haystack
-    {
-        $haystack = new Haystack;
-        $haystack->on_then = $this->onThen;
-        $haystack->on_catch = $this->onCatch;
-        $haystack->on_finally = $this->onFinally;
-        $haystack->middleware = $this->globalMiddleware;
-        $haystack->save();
-
-        $haystack->rows()->insert($this->prepareJobsForInsert($haystack));
-
-        return $haystack;
-    }
-
-    /**
-     * Provide a closure that will run when the job stack is complete.
+     * Provide a closure that will run when the haystack is complete.
      *
      * @param  Closure|callable  $closure
      * @return $this
      */
     public function then(Closure|callable $closure): static
     {
-        $this->onThen = $closure;
+        $this->onThen = ClosureHelper::fromCallable($closure);
 
         return $this;
     }
 
     /**
-     * Provide a closure that will run when the job stack fails.
+     * Provide a closure that will run when the haystack fails.
      *
      * @param  Closure|callable  $closure
      * @return $this
      */
     public function catch(Closure|callable $closure): static
     {
-        $this->onCatch = $closure;
+        $this->onCatch = ClosureHelper::fromCallable($closure);
 
         return $this;
     }
 
     /**
-     * Provide a closure that will run when the job stack finishes.
+     * Provide a closure that will run when the haystack finishes.
      *
      * @param  Closure|callable  $closure
      * @return $this
      */
     public function finally(Closure|callable $closure): static
     {
-        $this->onFinally = $closure;
+        $this->onFinally = ClosureHelper::fromCallable($closure);
 
         return $this;
     }
 
     /**
-     * Add a job to the job stack.
+     * Add a job to the haystack.
      *
      * @param  ShouldQueue  $job
      * @param  int  $delayInSeconds
@@ -164,11 +127,27 @@ class HaystackBuilder
      */
     public function addJob(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
     {
-        $pendingHaystackRow = CreatePendingHaystackRow::execute($job, $delayInSeconds, $queue, $connection);
+        $pendingHaystackRow = CreatePendingHaystackBale::execute($job, $delayInSeconds, $queue, $connection);
 
         $this->jobs->add($pendingHaystackRow);
 
         return $this;
+    }
+
+    /**
+     * Add a bale onto the haystack. Yee-haw!
+     *
+     * @alias addJob()
+     *
+     * @param ShouldQueue $job
+     * @param int $delayInSeconds
+     * @param string|null $queue
+     * @param string|null $connection
+     * @return $this
+     */
+    public function addBale(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
+    {
+        return $this->addJob($job, $delayInSeconds, $queue, $connection);
     }
 
     /**
@@ -218,7 +197,11 @@ class HaystackBuilder
      */
     public function withMiddleware(Closure|callable|array $value): static
     {
-        $this->globalMiddleware = is_array($value) ? fn () => $value : $value;
+        if (is_array($value)) {
+            $value = static fn () => $value;
+        }
+
+        $this->globalMiddleware = ClosureHelper::fromCallable($value);
 
         return $this;
     }
@@ -243,6 +226,44 @@ class HaystackBuilder
         $haystack = $this->create();
 
         $haystack->start();
+
+        return $haystack;
+    }
+
+    /**
+     * Map the jobs to be ready for inserting.
+     *
+     * @param  Haystack  $haystack
+     * @return array
+     */
+    protected function prepareJobsForInsert(Haystack $haystack): array
+    {
+        return $this->jobs->map(function (PendingHaystackBale $pendingJob) use ($haystack) {
+            return [
+                'haystack_id' => $haystack->getKey(),
+                'job' => serialize($pendingJob->job),
+                'delay' => $pendingJob->delayInSeconds ?? $this->globalDelayInSeconds,
+                'on_queue' => $pendingJob->queue ?? $this->globalQueue,
+                'on_connection' => $pendingJob->connection ?? $this->globalConnection,
+            ];
+        })->toArray();
+    }
+
+    /**
+     * Create the haystack.
+     *
+     * @return Haystack
+     */
+    protected function createHaystack(): Haystack
+    {
+        $haystack = new Haystack;
+        $haystack->on_then = $this->onThen;
+        $haystack->on_catch = $this->onCatch;
+        $haystack->on_finally = $this->onFinally;
+        $haystack->middleware = $this->globalMiddleware;
+        $haystack->save();
+
+        $haystack->bales()->insert($this->prepareJobsForInsert($haystack));
 
         return $haystack;
     }

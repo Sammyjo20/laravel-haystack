@@ -50,6 +50,16 @@ trait Stackable
     }
 
     /**
+     * Dispatch the next bale in the haystack. Yee-haw!
+     *
+     * @return $this
+     */
+    public function nextBale(): static
+    {
+        return $this->nextJob();
+    }
+
+    /**
      * Finish the Haystack.
      *
      * @return $this
@@ -82,7 +92,7 @@ trait Stackable
      * @param  string|null  $connection
      * @return $this
      */
-    public function appendJob(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
+    public function appendToHaystack(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
     {
         $this->haystack->appendJob($job, $delayInSeconds, $queue, $connection);
 
