@@ -40,7 +40,7 @@ class HaystackBale extends Model
      *
      * @return BelongsTo
      */
-    public function jobStack(): BelongsTo
+    public function haystack(): BelongsTo
     {
         return $this->belongsTo(Haystack::class);
     }

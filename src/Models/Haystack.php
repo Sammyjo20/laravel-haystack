@@ -52,11 +52,11 @@ class Haystack extends Model
     }
 
     /**
-     * The Haystack's rows.
+     * The Haystack's bales.
      *
      * @return HasMany
      */
-    public function rows(): HasMany
+    public function bales(): HasMany
     {
         return $this->hasMany(HaystackBale::class, 'haystack_id', 'id')->orderBy('id', 'asc');
     }

@@ -7,36 +7,36 @@ use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableClass;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 
-test('a haystack can have many haystack rows', function () {
+test('a haystack can have many haystack bales', function () {
     $samJob = new NameJob('Sam');
     $steveJob = new NameJob('Steve');
     $taylorJob = new NameJob('Taylor');
 
     $haystack = Haystack::factory()
-        ->has(HaystackBale::factory()->state(['job' => $samJob]), 'rows')
-        ->has(HaystackBale::factory()->state(['job' => $steveJob]), 'rows')
-        ->has(HaystackBale::factory()->state(['job' => $taylorJob]), 'rows')
+        ->has(HaystackBale::factory()->state(['job' => $samJob]), 'bales')
+        ->has(HaystackBale::factory()->state(['job' => $steveJob]), 'bales')
+        ->has(HaystackBale::factory()->state(['job' => $taylorJob]), 'bales')
         ->create();
 
     expect($haystack)->toBeInstanceOf(Haystack::class);
-    expect($haystack->rows()->count())->toEqual(3);
+    expect($haystack->bales()->count())->toEqual(3);
 
-    $rows = $haystack->rows()->get();
+    $bales = $haystack->bales()->get();
 
     // This ensures that the order is correct too.
 
-    expect($rows[0]->job)->toEqual($samJob);
-    expect($rows[1]->job)->toEqual($steveJob);
-    expect($rows[2]->job)->toEqual($taylorJob);
+    expect($bales[0]->job)->toEqual($samJob);
+    expect($bales[1]->job)->toEqual($steveJob);
+    expect($bales[2]->job)->toEqual($taylorJob);
 
     // Check that the haystack row relates back to the haystack
 
-    expect($rows[0]->haystack_id)->toEqual($haystack->getKey());
-    expect($rows[1]->haystack_id)->toEqual($haystack->getKey());
-    expect($rows[2]->haystack_id)->toEqual($haystack->getKey());
+    expect($bales[0]->haystack_id)->toEqual($haystack->getKey());
+    expect($bales[1]->haystack_id)->toEqual($haystack->getKey());
+    expect($bales[2]->haystack_id)->toEqual($haystack->getKey());
 
-    expect($rows[0]->jobStack)->toBeInstanceOf(Haystack::class);
-    expect($rows[0]->jobStack->getKey())->toEqual($haystack->getKey());
+    expect($bales[0]->haystack)->toBeInstanceOf(Haystack::class);
+    expect($bales[0]->haystack->getKey())->toEqual($haystack->getKey());
 });
 
 test('you can store a serialized closure on a haystack', function () {
@@ -129,9 +129,9 @@ test('when a haystack has no jobs left and nextJob is called it is finished and 
     expect(Haystack::all())->toHaveCount(0);
 });
 
-test('when a haystack fails it will delete itself and all other rows', function () {
+test('when a haystack fails it will delete itself and all bales', function () {
     $haystack = Haystack::factory()
-        ->has(HaystackBale::factory()->state(['job' => new NameJob('Sam')]), 'rows')
+        ->has(HaystackBale::factory()->state(['job' => new NameJob('Sam')]), 'bales')
         ->create();
 
     expect(Haystack::all())->toHaveCount(1);

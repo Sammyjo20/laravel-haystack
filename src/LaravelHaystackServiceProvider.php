@@ -20,11 +20,11 @@ class LaravelHaystackServiceProvider extends PackageServiceProvider
          * More info: https://github.com/spatie/laravel-package-tools
          */
         $package
-            ->name('laravel-job-stack')
+            ->name('laravel-haystack')
             ->hasConfigFile()
             ->hasMigrations([
-                'create_job_stacks_table',
-                'create_job_stack_rows_table',
+                'create_haystacks_table',
+                'create_haystack_bales_table',
             ]);
     }
 
