@@ -28,10 +28,12 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
 
-        $migration = include __DIR__.'/../database/migrations/create_job_stacks_table.php.stub';
+        config()->set('database.connections.testing.foreign_key_constraints', true);
+
+        $migration = include __DIR__ . '/../database/migrations/create_job_stacks_table.php.stub';
         $migration->up();
 
-        $migration = include __DIR__.'/../database/migrations/create_job_stack_rows_table.php.stub';
+        $migration = include __DIR__ . '/../database/migrations/create_job_stack_rows_table.php.stub';
         $migration->up();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Sammyjo20\LaravelJobStack\Models;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -42,5 +43,29 @@ class JobStackRow extends Model
     public function jobStack(): BelongsTo
     {
         return $this->belongsTo(JobStack::class);
+    }
+
+    /**
+     * Get the job already configured.
+     *
+     * @return ShouldQueue
+     */
+    public function configuredJob(): ShouldQueue
+    {
+        $job = $this->job;
+
+        if ($this->delay > 0) {
+            $job->delay($this->delay);
+        }
+
+        if (filled($this->on_queue)) {
+            $job->onQueue($this->on_queue);
+        }
+
+        if (filled($this->connection)) {
+            $job->onConnection($this->on_connection);
+        }
+
+        return $job;
     }
 }

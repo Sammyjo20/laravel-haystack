@@ -34,24 +34,24 @@ trait ManagesJobs
             return null;
         }
 
-        $job = $jobRow->job;
+        // We'll retrieve the configured job which will have
+        // the delay, queue and connection all set up.
+
+        $job = $jobRow->configuredJob();
+
+        // We'll now set the JobStack model on the job.
+
         $job->setJobStack($this);
 
-        if ($jobRow->delay > 0) {
-            $job->delay($jobRow->delay);
-        }
-
-        if (filled($jobRow->queue)) {
-            $job->onQueue($jobRow->on_queue);
-        }
-
-        if (filled($jobRow->connection)) {
-            $job->onConnection($jobRow->on_connection);
-        }
+        // We'll now apply any global middleware if it was provided to us
+        // while building the JobStack.
 
         if (filled($this->middleware)) {
-            $middleware = ($this->middleware)() ?? [];
-            $job->middleware = array_merge($job->middleware, $middleware);
+            $middleware = call_user_func($this->middleware);
+
+            if (is_array($middleware)) {
+                $job->middleware = array_merge($job->middleware, $middleware);
+            }
         }
 
         return new NextJob($job, $jobRow);
@@ -68,7 +68,6 @@ trait ManagesJobs
 
         if (! $nextJob instanceof NextJob) {
             $this->finish();
-
             return;
         }
 

@@ -1,23 +1,5 @@
 <?php
 
-use Sammyjo20\LaravelJobStack\Models\JobStack;
-use Sammyjo20\LaravelJobStack\Tests\Fixtures\Jobs\ExampleJob;
+test('you can provide a closure, invokable class or array to the middleware', function () {
 
-it('works', function () {
-    $jobStack = JobStack::build()
-        ->addJob(new ExampleJob('Sam'))
-        ->addJob(new ExampleJob('Steve'))
-        ->addJob(new ExampleJob('Taylor'))
-        ->then(function () {
-            ray('I have finished successfully')->green();
-        })
-        ->catch(function () {
-            ray('I have failed')->red();
-        })
-        ->finally(function () {
-            ray('This always happens at the end.')->purple();
-        })
-        ->dispatch();
-
-    dd($jobStack);
 });

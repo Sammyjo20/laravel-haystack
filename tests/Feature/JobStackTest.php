@@ -27,3 +27,11 @@ test('you can dispatch the next job in the job stack', function () {
 test('you can dispatch the next job in the job stack with a custom delay', function () {
     //
 });
+
+test('when a job stack finished it runs the "then" and "finally" closures', function () {
+
+});
+
+test('when a job stack fails it runs the "catch" and "finally" closures', function () {
+
+});
