@@ -30,7 +30,7 @@ trait ManagesJobs
     {
         $jobRow = $this->getNextJobRow();
 
-        if (is_null($jobRow)) {
+        if (! $jobRow instanceof JobStackRow) {
             return null;
         }
 
