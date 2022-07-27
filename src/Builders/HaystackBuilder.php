@@ -1,40 +1,40 @@
 <?php
 
-namespace Sammyjo20\LaravelJobStack\Builders;
+namespace Sammyjo20\LaravelHaystack\Builders;
 
 use Closure;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Sammyjo20\LaravelJobStack\Actions\CreatePendingJobStackRow;
-use Sammyjo20\LaravelJobStack\Data\PendingJobStackRow;
-use Sammyjo20\LaravelJobStack\Models\JobStack;
+use Sammyjo20\LaravelHaystack\Actions\CreatePendingHaystackRow;
+use Sammyjo20\LaravelHaystack\Data\PendingHaystackRow;
+use Sammyjo20\LaravelHaystack\Models\Haystack;
 
-class JobStackBuilder
+class HaystackBuilder
 {
     /**
-     * Closure to run when the JobStack is finished.
+     * Closure to run when the Haystack is finished.
      *
      * @var Closure|null
      */
     protected ?Closure $onThen = null;
 
     /**
-     * Closure to run when the JobStack has failed.
+     * Closure to run when the Haystack has failed.
      *
      * @var Closure|null
      */
     protected ?Closure $onCatch = null;
 
     /**
-     * Closure to run when the JobStack has finished.
+     * Closure to run when the Haystack has finished.
      *
      * @var Closure|null
      */
     protected ?Closure $onFinally = null;
 
     /**
-     * The jobs to be added to the JobStack.
+     * The jobs to be added to the Haystack.
      *
      * @var Collection
      */
@@ -79,14 +79,14 @@ class JobStackBuilder
     /**
      * Map the jobs to be ready for inserting.
      *
-     * @param  JobStack  $jobStack
+     * @param  Haystack  $haystack
      * @return array
      */
-    protected function prepareJobsForInsert(JobStack $jobStack): array
+    protected function prepareJobsForInsert(Haystack $haystack): array
     {
-        return $this->jobs->map(function (PendingJobStackRow $pendingJob) use ($jobStack) {
+        return $this->jobs->map(function (PendingHaystackRow $pendingJob) use ($haystack) {
             return [
-                'job_stack_id' => $jobStack->getKey(),
+                'haystack_id' => $haystack->getKey(),
                 'job' => serialize($pendingJob->job),
                 'delay' => $pendingJob->delayInSeconds ?? $this->globalDelayInSeconds,
                 'on_queue' => $pendingJob->queue ?? $this->globalQueue,
@@ -98,20 +98,20 @@ class JobStackBuilder
     /**
      * Create the job stack.
      *
-     * @return JobStack
+     * @return Haystack
      */
-    protected function createJobStack(): JobStack
+    protected function createHaystack(): Haystack
     {
-        $jobStack = new JobStack;
-        $jobStack->on_then = $this->onThen;
-        $jobStack->on_catch = $this->onCatch;
-        $jobStack->on_finally = $this->onFinally;
-        $jobStack->middleware = $this->globalMiddleware;
-        $jobStack->save();
+        $haystack = new Haystack;
+        $haystack->on_then = $this->onThen;
+        $haystack->on_catch = $this->onCatch;
+        $haystack->on_finally = $this->onFinally;
+        $haystack->middleware = $this->globalMiddleware;
+        $haystack->save();
 
-        $jobStack->rows()->insert($this->prepareJobsForInsert($jobStack));
+        $haystack->rows()->insert($this->prepareJobsForInsert($haystack));
 
-        return $jobStack;
+        return $haystack;
     }
 
     /**
@@ -164,9 +164,9 @@ class JobStackBuilder
      */
     public function addJob(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
     {
-        $pendingJobStackRow = CreatePendingJobStackRow::execute($job, $delayInSeconds, $queue, $connection);
+        $pendingHaystackRow = CreatePendingHaystackRow::execute($job, $delayInSeconds, $queue, $connection);
 
-        $this->jobs->add($pendingJobStackRow);
+        $this->jobs->add($pendingHaystackRow);
 
         return $this;
     }
@@ -224,26 +224,26 @@ class JobStackBuilder
     }
 
     /**
-     * Create the JobStack
+     * Create the Haystack
      *
-     * @return JobStack
+     * @return Haystack
      */
-    public function create(): JobStack
+    public function create(): Haystack
     {
-        return DB::transaction(fn () => $this->createJobStack());
+        return DB::transaction(fn () => $this->createHaystack());
     }
 
     /**
-     * Dispatch the JobStack.
+     * Dispatch the Haystack.
      *
-     * @return JobStack
+     * @return Haystack
      */
-    public function dispatch(): JobStack
+    public function dispatch(): Haystack
     {
-        $jobStack = $this->create();
+        $haystack = $this->create();
 
-        $jobStack->start();
+        $haystack->start();
 
-        return $jobStack;
+        return $haystack;
     }
 }

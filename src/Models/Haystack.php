@@ -1,20 +1,20 @@
 <?php
 
-namespace Sammyjo20\LaravelJobStack\Models;
+namespace Sammyjo20\LaravelHaystack\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Sammyjo20\LaravelJobStack\Builders\JobStackBuilder;
-use Sammyjo20\LaravelJobStack\Casts\SerializeClosure;
-use Sammyjo20\LaravelJobStack\Casts\SerializeJob;
-use Sammyjo20\LaravelJobStack\Concerns\ManagesJobs;
-use Sammyjo20\LaravelJobStack\Database\Factories\JobStackFactory;
+use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
+use Sammyjo20\LaravelHaystack\Casts\SerializeClosure;
+use Sammyjo20\LaravelHaystack\Casts\SerializeJob;
+use Sammyjo20\LaravelHaystack\Concerns\ManagesBales;
+use Sammyjo20\LaravelHaystack\Database\Factories\HaystackFactory;
 
-class JobStack extends Model
+class Haystack extends Model
 {
     use HasFactory;
-    use ManagesJobs;
+    use ManagesBales;
 
     /**
      * @var array
@@ -48,26 +48,26 @@ class JobStack extends Model
      */
     protected static function newFactory()
     {
-        return JobStackFactory::new();
+        return HaystackFactory::new();
     }
 
     /**
-     * The JobStack's rows.
+     * The Haystack's rows.
      *
      * @return HasMany
      */
     public function rows(): HasMany
     {
-        return $this->hasMany(JobStackRow::class, 'job_stack_id', 'id')->orderBy('id', 'asc');
+        return $this->hasMany(HaystackBale::class, 'haystack_id', 'id')->orderBy('id', 'asc');
     }
 
     /**
-     * Start building a JobStack.
+     * Start building a Haystack.
      *
-     * @return JobStackBuilder
+     * @return HaystackBuilder
      */
-    public static function build(): JobStackBuilder
+    public static function build(): HaystackBuilder
     {
-        return new JobStackBuilder;
+        return new HaystackBuilder;
     }
 }

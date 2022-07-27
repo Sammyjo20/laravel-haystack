@@ -1,13 +1,13 @@
 <?php
 
-namespace Sammyjo20\LaravelJobStack\Tests\Fixtures\Jobs;
+namespace Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Sammyjo20\LaravelJobStack\Concerns\Stackable;
+use Sammyjo20\LaravelHaystack\Concerns\Stackable;
 
 class NameJob implements ShouldQueue
 {

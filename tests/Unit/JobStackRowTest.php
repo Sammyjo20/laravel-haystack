@@ -1,42 +1,42 @@
 <?php
 
-use Sammyjo20\LaravelJobStack\Models\JobStack;
-use Sammyjo20\LaravelJobStack\Tests\Fixtures\Jobs\NameJob;
+use Sammyjo20\LaravelHaystack\Models\Haystack;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 
-it('will serialize a job on a job stack row', function () {
+it('will serialize a job on a haystack row', function () {
     $job = new NameJob('Sam');
 
-    $jobStack = JobStack::factory()->create();
+    $haystack = Haystack::factory()->create();
 
-    $jobStackRow = $jobStack->rows()->make();
-    $jobStackRow->job = $job;
-    $jobStackRow->save();
+    $haystackRow = $haystack->rows()->make();
+    $haystackRow->job = $job;
+    $haystackRow->save();
 
-    $jobStackRow->refresh();
+    $haystackRow->refresh();
 
-    $rawJob = $jobStackRow->getRawOriginal('job');
+    $rawJob = $haystackRow->getRawOriginal('job');
 
     expect(unserialize($rawJob))->toEqual($job);
-    expect($jobStackRow->job)->toEqual($job);
+    expect($haystackRow->job)->toEqual($job);
 });
 
-test('a job stack row can store the connection queue and a delay', function () {
-    $jobStack = JobStack::factory()->create();
+test('a haystack row can store the connection queue and a delay', function () {
+    $haystack = Haystack::factory()->create();
 
-    $jobStackRow = $jobStack->rows()->make();
-    $jobStackRow->job = new NameJob('Sam');
-    $jobStackRow->delay = 60;
-    $jobStackRow->on_queue = 'jobStacks';
-    $jobStackRow->on_connection = 'database';
-    $jobStackRow->save();
+    $haystackRow = $haystack->rows()->make();
+    $haystackRow->job = new NameJob('Sam');
+    $haystackRow->delay = 60;
+    $haystackRow->on_queue = 'jobStacks';
+    $haystackRow->on_connection = 'database';
+    $haystackRow->save();
 
-    expect($jobStackRow->delay)->toEqual(60);
-    expect($jobStackRow->on_queue)->toEqual('jobStacks');
-    expect($jobStackRow->on_connection)->toEqual('database');
+    expect($haystackRow->delay)->toEqual(60);
+    expect($haystackRow->on_queue)->toEqual('jobStacks');
+    expect($haystackRow->on_connection)->toEqual('database');
 
     // Test that when retrieving the job, it will have all the options applied
 
-    $job = $jobStackRow->configuredJob();
+    $job = $haystackRow->configuredJob();
 
     expect($job->delay)->toEqual(60);
     expect($job->queue)->toEqual('jobStacks');

@@ -1,15 +1,15 @@
 <?php
 
-namespace Sammyjo20\LaravelJobStack\Models;
+namespace Sammyjo20\LaravelHaystack\Models;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Sammyjo20\LaravelJobStack\Casts\SerializeJob;
-use Sammyjo20\LaravelJobStack\Database\Factories\JobStackRowFactory;
+use Sammyjo20\LaravelHaystack\Casts\SerializeJob;
+use Sammyjo20\LaravelHaystack\Database\Factories\HaystackBaleFactory;
 
-class JobStackRow extends Model
+class HaystackBale extends Model
 {
     use HasFactory;
 
@@ -32,17 +32,17 @@ class JobStackRow extends Model
      */
     protected static function newFactory()
     {
-        return JobStackRowFactory::new();
+        return HaystackBaleFactory::new();
     }
 
     /**
-     * The JobStack this row belongs to.
+     * The Haystack this row belongs to.
      *
      * @return BelongsTo
      */
     public function jobStack(): BelongsTo
     {
-        return $this->belongsTo(JobStack::class);
+        return $this->belongsTo(Haystack::class);
     }
 
     /**

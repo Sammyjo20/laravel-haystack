@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('job_stacks', function (Blueprint $table) {
+        Schema::create('haystacks', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->text('on_then')->nullable();
@@ -22,6 +22,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('job_stacks');
+        Schema::dropIfExists('haystacks');
     }
 };

@@ -1,10 +1,10 @@
 <?php
 
-namespace Sammyjo20\LaravelJobStack\Data;
+namespace Sammyjo20\LaravelHaystack\Data;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class PendingJobStackRow
+class PendingHaystackRow
 {
     /**
      * Constructor

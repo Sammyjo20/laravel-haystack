@@ -1,27 +1,27 @@
 <?php
 
 use Laravel\SerializableClosure\SerializableClosure;
-use Sammyjo20\LaravelJobStack\Builders\JobStackBuilder;
-use Sammyjo20\LaravelJobStack\Models\JobStack;
-use Sammyjo20\LaravelJobStack\Models\JobStackRow;
-use Sammyjo20\LaravelJobStack\Tests\Fixtures\Callables\InvokableClass;
-use Sammyjo20\LaravelJobStack\Tests\Fixtures\Jobs\NameJob;
+use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
+use Sammyjo20\LaravelHaystack\Models\Haystack;
+use Sammyjo20\LaravelHaystack\Models\HaystackBale;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableClass;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 
-test('a job stack can have many job stack rows', function () {
+test('a haystack can have many haystack rows', function () {
     $samJob = new NameJob('Sam');
     $steveJob = new NameJob('Steve');
     $taylorJob = new NameJob('Taylor');
 
-    $jobStack = JobStack::factory()
-        ->has(JobStackRow::factory()->state(['job' => $samJob]), 'rows')
-        ->has(JobStackRow::factory()->state(['job' => $steveJob]), 'rows')
-        ->has(JobStackRow::factory()->state(['job' => $taylorJob]), 'rows')
+    $haystack = Haystack::factory()
+        ->has(HaystackBale::factory()->state(['job' => $samJob]), 'rows')
+        ->has(HaystackBale::factory()->state(['job' => $steveJob]), 'rows')
+        ->has(HaystackBale::factory()->state(['job' => $taylorJob]), 'rows')
         ->create();
 
-    expect($jobStack)->toBeInstanceOf(JobStack::class);
-    expect($jobStack->rows()->count())->toEqual(3);
+    expect($haystack)->toBeInstanceOf(Haystack::class);
+    expect($haystack->rows()->count())->toEqual(3);
 
-    $rows = $jobStack->rows()->get();
+    $rows = $haystack->rows()->get();
 
     // This ensures that the order is correct too.
 
@@ -29,75 +29,75 @@ test('a job stack can have many job stack rows', function () {
     expect($rows[1]->job)->toEqual($steveJob);
     expect($rows[2]->job)->toEqual($taylorJob);
 
-    // Check that the job stack row relates back to the job stack
+    // Check that the haystack row relates back to the haystack
 
-    expect($rows[0]->job_stack_id)->toEqual($jobStack->getKey());
-    expect($rows[1]->job_stack_id)->toEqual($jobStack->getKey());
-    expect($rows[2]->job_stack_id)->toEqual($jobStack->getKey());
+    expect($rows[0]->haystack_id)->toEqual($haystack->getKey());
+    expect($rows[1]->haystack_id)->toEqual($haystack->getKey());
+    expect($rows[2]->haystack_id)->toEqual($haystack->getKey());
 
-    expect($rows[0]->jobStack)->toBeInstanceOf(JobStack::class);
-    expect($rows[0]->jobStack->getKey())->toEqual($jobStack->getKey());
+    expect($rows[0]->jobStack)->toBeInstanceOf(Haystack::class);
+    expect($rows[0]->jobStack->getKey())->toEqual($haystack->getKey());
 });
 
-test('you can store a serialized closure on a job stack', function () {
+test('you can store a serialized closure on a haystack', function () {
     $thenClosure = fn () => 'Then';
     $catchClosure = fn () => 'Catch';
     $finallyClosure = fn () => 'Finally';
     $middlewareClosure = fn () => [];
 
-    $jobStack = new JobStack;
-    $jobStack->on_then = $thenClosure;
-    $jobStack->on_catch = $catchClosure;
-    $jobStack->on_finally = $finallyClosure;
-    $jobStack->middleware = $middlewareClosure;
-    $jobStack->save();
+    $haystack = new Haystack;
+    $haystack->on_then = $thenClosure;
+    $haystack->on_catch = $catchClosure;
+    $haystack->on_finally = $finallyClosure;
+    $haystack->middleware = $middlewareClosure;
+    $haystack->save();
 
-    $jobStack->refresh();
+    $haystack->refresh();
 
-    $rawThen = $jobStack->getRawOriginal('on_then');
-    $rawCatch = $jobStack->getRawOriginal('on_catch');
-    $rawFinally = $jobStack->getRawOriginal('on_finally');
-    $rawMiddleware = $jobStack->getRawOriginal('middleware');
+    $rawThen = $haystack->getRawOriginal('on_then');
+    $rawCatch = $haystack->getRawOriginal('on_catch');
+    $rawFinally = $haystack->getRawOriginal('on_finally');
+    $rawMiddleware = $haystack->getRawOriginal('middleware');
 
     expect(unserialize($rawThen))->toBeInstanceOf(SerializableClosure::class);
     expect(unserialize($rawCatch))->toBeInstanceOf(SerializableClosure::class);
     expect(unserialize($rawFinally))->toBeInstanceOf(SerializableClosure::class);
     expect(unserialize($rawMiddleware))->toBeInstanceOf(SerializableClosure::class);
 
-    expect($jobStack->on_then)->toBeInstanceOf(Closure::class);
-    expect($jobStack->on_catch)->toBeInstanceOf(Closure::class);
-    expect($jobStack->on_finally)->toBeInstanceOf(Closure::class);
-    expect($jobStack->middleware)->toBeInstanceOf(Closure::class);
+    expect($haystack->on_then)->toBeInstanceOf(Closure::class);
+    expect($haystack->on_catch)->toBeInstanceOf(Closure::class);
+    expect($haystack->on_finally)->toBeInstanceOf(Closure::class);
+    expect($haystack->middleware)->toBeInstanceOf(Closure::class);
 
-    expect(call_user_func($jobStack->on_then))->toEqual('Then');
-    expect(call_user_func($jobStack->on_catch))->toEqual('Catch');
-    expect(call_user_func($jobStack->on_finally))->toEqual('Finally');
-    expect(call_user_func($jobStack->middleware))->toEqual([]);
+    expect(call_user_func($haystack->on_then))->toEqual('Then');
+    expect(call_user_func($haystack->on_catch))->toEqual('Catch');
+    expect(call_user_func($haystack->on_finally))->toEqual('Finally');
+    expect(call_user_func($haystack->middleware))->toEqual([]);
 });
 
-test('you can store an invokable class on a job stack', function () {
+test('you can store an invokable class on a haystack', function () {
     $invokableClass = new InvokableClass();
 
-    $jobStack = new JobStack;
-    $jobStack->on_then = $invokableClass;
-    $jobStack->save();
+    $haystack = new Haystack;
+    $haystack->on_then = $invokableClass;
+    $haystack->save();
 
-    $jobStack->refresh();
+    $haystack->refresh();
 
-    $rawThen = $jobStack->getRawOriginal('on_then');
+    $rawThen = $haystack->getRawOriginal('on_then');
 
     expect(unserialize($rawThen))->toBeInstanceOf(SerializableClosure::class);
-    expect($jobStack->on_then)->toBeInstanceOf(Closure::class);
-    expect(call_user_func($jobStack->on_then))->toEqual('Howdy!');
+    expect($haystack->on_then)->toBeInstanceOf(Closure::class);
+    expect(call_user_func($haystack->on_then))->toEqual('Howdy!');
 });
 
-test('you cannot provide a non callable value to a job stack closure', function ($value) {
+test('you cannot provide a non callable value to a haystack closure', function ($value) {
     $this->expectException(InvalidArgumentException::class);
     $this->expectExceptionMessage('Value provided must be a closure or an invokable class.');
 
-    $jobStack = new JobStack;
-    $jobStack->on_then = $value;
-    $jobStack->save();
+    $haystack = new Haystack;
+    $haystack->on_then = $value;
+    $haystack->save();
 })->with([
     fn () => 'Hello',
     fn () => 123,
@@ -114,42 +114,42 @@ test('you must provide an invokable class if you do not provide a closure', func
         //
     }
 
-    $jobStack = new JobStack;
-    $jobStack->on_then = 'myFunction';
-    $jobStack->save();
+    $haystack = new Haystack;
+    $haystack->on_then = 'myFunction';
+    $haystack->save();
 });
 
-test('when a job stack has no jobs left and nextJob is called it is finished and is deleted', function () {
-    $jobStack = JobStack::factory()->create();
+test('when a haystack has no jobs left and nextJob is called it is finished and is deleted', function () {
+    $haystack = Haystack::factory()->create();
 
-    expect(JobStack::all())->toHaveCount(1);
+    expect(Haystack::all())->toHaveCount(1);
 
-    $jobStack->finish();
+    $haystack->finish();
 
-    expect(JobStack::all())->toHaveCount(0);
+    expect(Haystack::all())->toHaveCount(0);
 });
 
-test('when a job stack fails it will delete itself and all other rows', function () {
-    $jobStack = JobStack::factory()
-        ->has(JobStackRow::factory()->state(['job' => new NameJob('Sam')]), 'rows')
+test('when a haystack fails it will delete itself and all other rows', function () {
+    $haystack = Haystack::factory()
+        ->has(HaystackBale::factory()->state(['job' => new NameJob('Sam')]), 'rows')
         ->create();
 
-    expect(JobStack::all())->toHaveCount(1);
-    expect(JobStackRow::all())->toHaveCount(1);
+    expect(Haystack::all())->toHaveCount(1);
+    expect(HaystackBale::all())->toHaveCount(1);
 
-    $jobStack->fail();
+    $haystack->fail();
 
-    expect(JobStack::all())->toHaveCount(0);
-    expect(JobStackRow::all())->toHaveCount(0);
+    expect(Haystack::all())->toHaveCount(0);
+    expect(HaystackBale::all())->toHaveCount(0);
 });
 
-test('you can instantiate a job stack builder from the model', function () {
-    expect(JobStack::build())->toBeInstanceOf(JobStackBuilder::class);
+test('you can instantiate a haystack builder from the model', function () {
+    expect(Haystack::build())->toBeInstanceOf(HaystackBuilder::class);
 });
 
 test('started and finished properties are set by default', function () {
-    $jobStack = new JobStack;
+    $haystack = new Haystack;
 
-    expect($jobStack->started)->toBeFalse();
-    expect($jobStack->finished)->toBeFalse();
+    expect($haystack->started)->toBeFalse();
+    expect($haystack->finished)->toBeFalse();
 });

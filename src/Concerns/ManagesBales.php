@@ -1,28 +1,28 @@
 <?php
 
-namespace Sammyjo20\LaravelJobStack\Concerns;
+namespace Sammyjo20\LaravelHaystack\Concerns;
 
 use Closure;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Sammyjo20\LaravelJobStack\Actions\CreatePendingJobStackRow;
-use Sammyjo20\LaravelJobStack\Data\NextJob;
-use Sammyjo20\LaravelJobStack\Data\PendingJobStackRow;
-use Sammyjo20\LaravelJobStack\Models\JobStackRow;
+use Sammyjo20\LaravelHaystack\Actions\CreatePendingHaystackRow;
+use Sammyjo20\LaravelHaystack\Data\NextJob;
+use Sammyjo20\LaravelHaystack\Data\PendingHaystackRow;
+use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 
-trait ManagesJobs
+trait ManagesBales
 {
     /**
-     * Get the next job row in the JobStack.
+     * Get the next job row in the Haystack.
      *
-     * @return JobStackRow|null
+     * @return HaystackBale|null
      */
-    public function getNextJobRow(): ?JobStackRow
+    public function getNextJobRow(): ?HaystackBale
     {
         return $this->rows()->first();
     }
 
     /**
-     * Get the next job from the JobStack.
+     * Get the next job from the Haystack.
      *
      * @return NextJob|null
      */
@@ -30,7 +30,7 @@ trait ManagesJobs
     {
         $jobRow = $this->getNextJobRow();
 
-        if (! $jobRow instanceof JobStackRow) {
+        if (! $jobRow instanceof HaystackBale) {
             return null;
         }
 
@@ -39,12 +39,12 @@ trait ManagesJobs
 
         $job = $jobRow->configuredJob();
 
-        // We'll now set the JobStack model on the job.
+        // We'll now set the Haystack model on the job.
 
-        $job->setJobStack($this);
+        $job->setHaystack($this);
 
         // We'll now apply any global middleware if it was provided to us
-        // while building the JobStack.
+        // while building the Haystack.
 
         if (filled($this->middleware)) {
             $middleware = call_user_func($this->middleware);
@@ -71,13 +71,13 @@ trait ManagesJobs
             return;
         }
 
-        $nextJob->jobStackRow->delete();
+        $nextJob->haystackRow->delete();
 
         dispatch($nextJob->job);
     }
 
     /**
-     * Start the JobStack.
+     * Start the Haystack.
      *
      * @return void
      */
@@ -89,7 +89,7 @@ trait ManagesJobs
     }
 
     /**
-     * Finish the JobStack.
+     * Finish the Haystack.
      *
      * @param  bool  $fail
      * @return void
@@ -116,7 +116,7 @@ trait ManagesJobs
     }
 
     /**
-     * Fail the JobStack.
+     * Fail the Haystack.
      *
      * @return void
      */
@@ -136,18 +136,18 @@ trait ManagesJobs
      */
     public function appendJob(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): void
     {
-        $pendingJob = CreatePendingJobStackRow::execute($job, $delayInSeconds, $queue, $connection);
+        $pendingJob = CreatePendingHaystackRow::execute($job, $delayInSeconds, $queue, $connection);
 
         $this->appendPendingJob($pendingJob);
     }
 
     /**
-     * Append the pending job to the JobStack.
+     * Append the pending job to the Haystack.
      *
-     * @param  PendingJobStackRow  $pendingJob
+     * @param  PendingHaystackRow  $pendingJob
      * @return void
      */
-    public function appendPendingJob(PendingJobStackRow $pendingJob): void
+    public function appendPendingJob(PendingHaystackRow $pendingJob): void
     {
         $this->rows()->create([
             'job' => $pendingJob->job,

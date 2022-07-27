@@ -1,6 +1,6 @@
 <?php
 
-namespace Sammyjo20\LaravelJobStack\Casts;
+namespace Sammyjo20\LaravelHaystack\Casts;
 
 use Closure;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;

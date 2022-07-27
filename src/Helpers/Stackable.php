@@ -1,9 +1,9 @@
 <?php
 
-namespace Sammyjo20\LaravelJobStack\Helpers;
+namespace Sammyjo20\LaravelHaystack\Helpers;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Sammyjo20\LaravelJobStack\Concerns\Stackable as StackableTrait;
+use Sammyjo20\LaravelHaystack\Concerns\Stackable as StackableTrait;
 
 class Stackable
 {

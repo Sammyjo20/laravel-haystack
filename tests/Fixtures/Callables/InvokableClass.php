@@ -1,6 +1,6 @@
 <?php
 
-namespace Sammyjo20\LaravelJobStack\Tests\Fixtures\Callables;
+namespace Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables;
 
 class InvokableClass
 {

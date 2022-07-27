@@ -1,13 +1,13 @@
 <?php
 
-namespace Sammyjo20\LaravelJobStack\Database\Factories;
+namespace Sammyjo20\LaravelHaystack\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Sammyjo20\LaravelJobStack\Models\JobStackRow;
+use Sammyjo20\LaravelHaystack\Models\Haystack;
 
-class JobStackRowFactory extends Factory
+class HaystackFactory extends Factory
 {
-    protected $model = JobStackRow::class;
+    protected $model = Haystack::class;
 
     /**
      * Definition
