@@ -1,6 +1,6 @@
 <div align="center">
     
-<img src="https://user-images.githubusercontent.com/29132017/181361703-e19c1e2a-d9d0-47db-a7ca-194739894743.jpeg" width="150">
+<img src="https://user-images.githubusercontent.com/29132017/181362714-e8afe51e-7a8c-46ef-acb3-5ca2cfb931d3.png" width="150">
 
 # Laravel Waffle
 Beautifully simple, database-driven job batches.
