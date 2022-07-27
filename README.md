@@ -7,6 +7,10 @@ Beautifully simple, database-driven job batches.
 
 ![Build Status](https://github.com/sammyjo20/saloon/actions/workflows/tests.yml/badge.svg)
 
+```bash
+composer require sammyjo20/laravel-waffle
+```
+
 </div>
 
 Coming soon... 🪐 
