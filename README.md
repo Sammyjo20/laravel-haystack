@@ -12,7 +12,7 @@ Beautifully simple database-driven job chains.
 
 ## Introduction
 
-Laravel Haystack is a beautifully simple package that allows you to have a job chain powered by the database. Since all of the jobs in the chain are stored in the database, memory usage is low and you can delay jobs or have long running jobs risking your memory. Laravel Haystack supports every queue connection/worker out of the box. (Database, Redis/Horizon, SQS)
+Laravel Haystack is a beautifully simple package that allows you to have a job chain powered by the database. Since all of the jobs in the chain are stored in the database, memory usage is low and you can delay jobs or have long running jobs without risking using all your memory. Laravel Haystack supports every queue connection/worker out of the box. (Database, Redis/Horizon, SQS)
 
 This package is great if you are chaining thousands of jobs or if you are building an API integration which requires job throttling with middleware.
 
