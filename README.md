@@ -13,6 +13,8 @@ Beautifully simple, database-driven job chains.
 
 Laravel Waffle is a beautifully simple package that allows you to have a job chain powered by the database. Since all of the jobs in the chain are stored in the database, memory usage is low and you can delay jobs or have long running jobs risking your memory. Even though the jobs are stored in memory, you can use a queue driver of your choice. Laravel Waffle supports every queue out of the box. 
 
+This package is great if you are chaining thousands of jobs or if you are building an API integration which requires job throttling with middleware.
+
 ## Installation
 
 ```bash
