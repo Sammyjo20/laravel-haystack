@@ -9,6 +9,7 @@ use Sammyjo20\LaravelJobStack\Builders\JobStackBuilder;
 use Sammyjo20\LaravelJobStack\Casts\SerializeClosure;
 use Sammyjo20\LaravelJobStack\Casts\SerializeJob;
 use Sammyjo20\LaravelJobStack\Concerns\ManagesJobs;
+use Sammyjo20\LaravelJobStack\Database\Factories\JobStackFactory;
 
 class JobStack extends Model
 {
@@ -40,6 +41,16 @@ class JobStack extends Model
         'started' => false,
         'finished' => false,
     ];
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    protected static function newFactory()
+    {
+        return JobStackFactory::new();
+    }
 
     /**
      * The JobStack's rows.

@@ -9,7 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Sammyjo20\LaravelJobStack\Concerns\Stackable;
 
-class ExampleJob implements ShouldQueue
+class BasicJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable;
 
@@ -18,7 +18,7 @@ class ExampleJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(protected string $name, protected bool $fail = false)
+    public function __construct()
     {
         //
     }
@@ -30,10 +30,6 @@ class ExampleJob implements ShouldQueue
      */
     public function handle()
     {
-        ray($this->name)->orange();
-
-        if ($this->name === 'Andy') {
-            $this->appendJob(new static('Charlotte', true));
-        }
+        //
     }
 }

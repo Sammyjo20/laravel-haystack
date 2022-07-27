@@ -77,17 +77,6 @@ class JobStackBuilder
     }
 
     /**
-     * Normalize the closure.
-     *
-     * @param  Closure|callable  $callable
-     * @return Closure
-     */
-    protected function normalizeClosure(Closure|callable $callable): Closure
-    {
-        return $callable instanceof Closure ? $callable : static fn () => $callable();
-    }
-
-    /**
      * Map the jobs to be ready for inserting.
      *
      * @param  JobStack  $jobStack
@@ -133,7 +122,7 @@ class JobStackBuilder
      */
     public function then(Closure|callable $closure): static
     {
-        $this->onThen = $this->normalizeClosure($closure);
+        $this->onThen = $closure;
 
         return $this;
     }
@@ -146,7 +135,7 @@ class JobStackBuilder
      */
     public function catch(Closure|callable $closure): static
     {
-        $this->onCatch = $this->normalizeClosure($closure);
+        $this->onCatch = $closure;
 
         return $this;
     }
@@ -159,7 +148,7 @@ class JobStackBuilder
      */
     public function finally(Closure|callable $closure): static
     {
-        $this->onFinally = $this->normalizeClosure($closure);
+        $this->onFinally = $closure;
 
         return $this;
     }
@@ -224,12 +213,12 @@ class JobStackBuilder
     /**
      * Set a global middleware closure to run.
      *
-     * @param  Closure|array  $closure
+     * @param Closure|callable|array $value
      * @return $this
      */
-    public function withMiddleware(Closure|array $closure): static
+    public function withMiddleware(Closure|callable|array $value): static
     {
-        $this->globalMiddleware = $closure instanceof Closure ? $closure : fn () => $closure;
+        $this->globalMiddleware = is_array($value) ? fn () => $value : $value;
 
         return $this;
     }
