@@ -267,4 +267,84 @@ class HaystackBuilder
 
         return $haystack;
     }
+
+    /**
+     * Get all the jobs in the builder.
+     *
+     * @return Collection
+     */
+    public function getJobs(): Collection
+    {
+        return $this->jobs;
+    }
+
+    /**
+     * Get the closure for the "onThen".
+     *
+     * @return Closure|null
+     */
+    public function getOnThen(): ?Closure
+    {
+        return $this->onThen;
+    }
+
+    /**
+     * Get the closure for the "onCatch".
+     *
+     * @return Closure|null
+     */
+    public function getOnCatch(): ?Closure
+    {
+        return $this->onCatch;
+    }
+
+    /**
+     * Get the closure for the "onFinally".
+     *
+     * @return Closure|null
+     */
+    public function getOnFinally(): ?Closure
+    {
+        return $this->onFinally;
+    }
+
+    /**
+     * Get the time for the "withDelay".
+     *
+     * @return int
+     */
+    public function getGlobalDelayInSeconds(): int
+    {
+        return $this->globalDelayInSeconds;
+    }
+
+    /**
+     * Get the global queue
+     *
+     * @return string|null
+     */
+    public function getGlobalQueue(): ?string
+    {
+        return $this->globalQueue;
+    }
+
+    /**
+     * Get the global connection.
+     *
+     * @return string|null
+     */
+    public function getGlobalConnection(): ?string
+    {
+        return $this->globalConnection;
+    }
+
+    /**
+     * Get the closure for the global middleware.
+     *
+     * @return Closure|null
+     */
+    public function getGlobalMiddleware(): ?Closure
+    {
+        return $this->globalMiddleware;
+    }
 }

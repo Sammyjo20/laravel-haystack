@@ -6,8 +6,6 @@ class Middleware
 {
     public function handle($command, $next)
     {
-        ray('Howdy!');
-
         $next($command);
     }
 }

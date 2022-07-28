@@ -153,3 +153,17 @@ test('started and finished properties are set by default', function () {
     expect($haystack->started)->toBeFalse();
     expect($haystack->finished)->toBeFalse();
 });
+
+test('if you use the dispatchNextJob without starting the job it will start the job first', function () {
+    $builder = new HaystackBuilder;
+
+    $haystack = $builder->create();
+
+    expect($haystack->started)->toBeFalse();
+    expect($haystack->finished)->toBeFalse();
+
+    $haystack->dispatchNextJob();
+
+    expect($haystack->started)->toBeTrue();
+    expect($haystack->finished)->toBeTrue();
+});

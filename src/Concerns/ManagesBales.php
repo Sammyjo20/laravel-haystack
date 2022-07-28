@@ -64,6 +64,11 @@ trait ManagesBales
      */
     public function dispatchNextJob(): void
     {
+        if ($this->started === false) {
+            $this->start();
+            return;
+        }
+
         $nextJob = $this->getNextJob();
 
         if (! $nextJob instanceof NextJob) {
