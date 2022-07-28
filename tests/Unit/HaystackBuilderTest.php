@@ -6,6 +6,7 @@ use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableClass;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NotStackableJob;
 
 test('you can add jobs to the haystack builder', function () {
     $builder = new HaystackBuilder;
@@ -144,4 +145,13 @@ test('you can dispatch a haystack right away', function () {
     $haystack = $builder->dispatch();
 
     expect($haystack->started)->toBeTrue();
+});
+
+test('it throws an exception if you try to add a job without the stackable class', function () {
+    $builder = new HaystackBuilder;
+
+    $this->expectException(InvalidArgumentException::class);
+    $this->expectExceptionMessage('The provided job does not contain the "Stackable" trait.');
+
+    $builder->addJob(new NotStackableJob);
 });

@@ -30,4 +30,4 @@ test('it can process jobs automatically', function () {
 })->skip('Try getting this to work');
 
 test('it throws an exception if you try to queue the next job with automatic queuing turned on', function () {
-});
+})->skip();
