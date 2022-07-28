@@ -1,16 +1,16 @@
 <?php
 
-namespace Sammyjo20\LaravelJobStack;
+namespace Sammyjo20\LaravelHaystack;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Support\Facades\Queue;
-use Sammyjo20\LaravelJobStack\Actions\ProcessCompletedJob;
-use Sammyjo20\LaravelJobStack\Helpers\Stackable;
 use Spatie\LaravelPackageTools\Package;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Sammyjo20\LaravelHaystack\Helpers\Stackable;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Sammyjo20\LaravelHaystack\Actions\ProcessCompletedJob;
 
-class LaravelJobStackServiceProvider extends PackageServiceProvider
+class LaravelHaystackServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
@@ -20,11 +20,11 @@ class LaravelJobStackServiceProvider extends PackageServiceProvider
          * More info: https://github.com/spatie/laravel-package-tools
          */
         $package
-            ->name('laravel-job-stack')
+            ->name('laravel-haystack')
             ->hasConfigFile()
             ->hasMigrations([
-                'create_job_stacks_table',
-                'create_job_stack_rows_table',
+                'create_haystacks_table',
+                'create_haystack_bales_table',
             ]);
     }
 
@@ -33,7 +33,7 @@ class LaravelJobStackServiceProvider extends PackageServiceProvider
      */
     public function bootingPackage()
     {
-        if (config('job-stack.process_automatically', false) === true) {
+        if (config('haystack.process_automatically', false) === true) {
             $this->listenToJobs();
         }
     }
@@ -43,9 +43,9 @@ class LaravelJobStackServiceProvider extends PackageServiceProvider
      *
      * @return void
      */
-    private function listenToJobs(): void
+    public function listenToJobs(): void
     {
-        // We'll firstly append the job_stack_id onto the queued job's
+        // We'll firstly append the haystack_id onto the queued job's
         // payload. This will be resolved in our process completed
         // job logic.
 
@@ -55,7 +55,7 @@ class LaravelJobStackServiceProvider extends PackageServiceProvider
 
             if ($command instanceof ShouldQueue && Stackable::isStackable($command) === true) {
                 $jobData = array_merge($payload['data'], array_filter([
-                    'job_stack_id' => $command->getJobStack()->getKey(),
+                    'haystack_id' => $command->getHaystack()->getKey(),
                 ]));
             }
 

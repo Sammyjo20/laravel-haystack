@@ -1,9 +1,9 @@
 <?php
 
-namespace Sammyjo20\LaravelJobStack\Data;
+namespace Sammyjo20\LaravelHaystack\Data;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Sammyjo20\LaravelJobStack\Models\JobStackRow;
+use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 
 class NextJob
 {
@@ -11,11 +11,11 @@ class NextJob
      * Constructor
      *
      * @param  ShouldQueue  $job
-     * @param  JobStackRow  $jobStackRow
+     * @param  HaystackBale  $haystackRow
      */
     public function __construct(
         readonly public ShouldQueue $job,
-        readonly public JobStackRow $jobStackRow,
+        readonly public HaystackBale $haystackRow,
     ) {
         //
     }

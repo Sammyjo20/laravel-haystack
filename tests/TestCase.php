@@ -1,10 +1,10 @@
 <?php
 
-namespace Sammyjo20\LaravelJobStack\Tests;
+namespace Sammyjo20\LaravelHaystack\Tests;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Sammyjo20\LaravelJobStack\LaravelJobStackServiceProvider;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Sammyjo20\LaravelHaystack\LaravelHaystackServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -13,25 +13,32 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Sammyjo20\\LaravelJobStack\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => 'Sammyjo20\\LaravelHaystack\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 
     protected function getPackageProviders($app)
     {
         return [
-            LaravelJobStackServiceProvider::class,
+            LaravelHaystackServiceProvider::class,
         ];
+    }
+
+    protected function getApplicationTimezone($app)
+    {
+        return 'Europe/London';
     }
 
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');
+        config()->set('database.connections.testing.foreign_key_constraints', true);
+        config()->set('haystack.process_automatically', false);
 
-        $migration = include __DIR__.'/../database/migrations/create_job_stacks_table.php.stub';
+        $migration = include __DIR__.'/../database/migrations/create_haystacks_table.php.stub';
         $migration->up();
 
-        $migration = include __DIR__.'/../database/migrations/create_job_stack_rows_table.php.stub';
+        $migration = include __DIR__.'/../database/migrations/create_haystack_bales_table.php.stub';
         $migration->up();
     }
 }

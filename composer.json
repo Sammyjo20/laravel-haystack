@@ -1,12 +1,12 @@
 {
-    "name": "sammyjo20/laravel-job-stack",
-    "description": "This is my package laravel-job-stack",
+    "name": "sammyjo20/laravel-haystack",
+    "description": "This is my package laravel-haystack",
     "keywords": [
         "Sammyjo20",
         "laravel",
-        "laravel-job-stack"
+        "laravel-haystack"
     ],
-    "homepage": "https://github.com/sammyjo20/laravel-job-stack",
+    "homepage": "https://github.com/sammyjo20/laravel-haystack",
     "license": "MIT",
     "authors": [
         {
@@ -17,9 +17,9 @@
     ],
     "require": {
         "php": "^8.1",
-        "illuminate/contracts": "^9.0",
-        "illuminate/database": "^9.0",
-        "illuminate/support": "^9.0",
+        "illuminate/contracts": "^8.0|^9.0",
+        "illuminate/database": "^8.0|^9.0",
+        "illuminate/support": "^8.0|^9.0",
         "laravel/serializable-closure": "^1.2",
         "spatie/laravel-package-tools": "^1.9.2"
     },
@@ -35,13 +35,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Sammyjo20\\LaravelJobStack\\": "src",
-            "Sammyjo20\\LaravelJobStack\\Database\\Factories\\": "database/factories"
+            "Sammyjo20\\LaravelHaystack\\": "src",
+            "Sammyjo20\\LaravelHaystack\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Sammyjo20\\LaravelJobStack\\Tests\\": "tests"
+            "Sammyjo20\\LaravelHaystack\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -59,11 +59,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Sammyjo20\\LaravelJobStack\\LaravelJobStackServiceProvider"
-            ],
-            "aliases": {
-                "LaravelJobStack": "Sammyjo20\\LaravelJobStack\\Facades\\LaravelJobStack"
-            }
+                "Sammyjo20\\LaravelHaystack\\LaravelHaystackServiceProvider"
+            ]
         }
     },
     "minimum-stability": "dev",

@@ -1,9 +1,9 @@
 <?php
 
-namespace Sammyjo20\LaravelJobStack\Actions;
+namespace Sammyjo20\LaravelHaystack\Actions;
 
 use Illuminate\Queue\Events\JobProcessed;
-use Sammyjo20\LaravelJobStack\Models\JobStack;
+use Sammyjo20\LaravelHaystack\Models\Haystack;
 
 class ProcessCompletedJob
 {
@@ -18,28 +18,42 @@ class ProcessCompletedJob
     }
 
     /**
-     * Attempt to find the job_stack_id on the processed job.
+     * Attempt to find the haystack_id on the processed job.
      *
      * @return void
      */
     public function execute(): void
     {
         $job = $this->jobProcessed->job;
+        $payload = $job->payload();
 
-        $jobStackId = $job->payload()['data']['job_stack_id'] ?? null;
+        // If the job has been pushed back onto the queue, we will wait.
 
-        if (blank($jobStackId)) {
+        if ($job->isReleased()) {
             return;
         }
 
-        // Now we'll try to find the JobStack from the ID.
+        // Otherwise, we'll attempt to find the haystack_id added to the jobs
+        // and retrieve it.
 
-        $jobStack = JobStack::findOrFail($jobStackId);
+        $haystackId = $payload['data']['haystack_id'] ?? null;
 
-        // Once we have found the JobStack, we'll check if the current job
+        if (blank($haystackId)) {
+            return;
+        }
+
+        // Now we'll try to find the Haystack from the ID.
+
+        $haystack = Haystack::find($haystackId);
+
+        if (! $haystack instanceof Haystack) {
+            return;
+        }
+
+        // Once we have found the Haystack, we'll check if the current job
         // has failed. If it has, then we'll fail the whole stack. Otherwise,
         // we will dispatch the next job.
 
-        $job->hasFailed() ? $jobStack->fail() : $jobStack->dispatchNextJob();
+        $job->hasFailed() ? $haystack->fail() : $haystack->dispatchNextJob();
     }
 }

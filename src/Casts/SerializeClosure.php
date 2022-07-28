@@ -1,9 +1,12 @@
 <?php
 
-namespace Sammyjo20\LaravelJobStack\Casts;
+namespace Sammyjo20\LaravelHaystack\Casts;
 
-use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Closure;
+use InvalidArgumentException;
 use Laravel\SerializableClosure\SerializableClosure;
+use Sammyjo20\LaravelHaystack\Helpers\ClosureHelper;
+use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
 class SerializeClosure implements CastsAttributes
 {
@@ -16,7 +19,7 @@ class SerializeClosure implements CastsAttributes
      * @param  array  $attributes
      * @return mixed|null
      */
-    public function get($model, string $key, $value, array $attributes)
+    public function get($model, string $key, $value, array $attributes): ?Closure
     {
         return isset($value) ? unserialize($value, ['allowed_classes' => true])->getClosure() : null;
     }
@@ -32,12 +35,18 @@ class SerializeClosure implements CastsAttributes
      *
      * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
      */
-    public function set($model, string $key, $value, array $attributes)
+    public function set($model, string $key, $value, array $attributes): ?string
     {
         if (blank($value)) {
             return null;
         }
 
-        return serialize(new SerializableClosure($value));
+        if ($value instanceof Closure === false && is_callable($value) === false) {
+            throw new InvalidArgumentException('Value provided must be a closure or an invokable class.');
+        }
+
+        $closure = ClosureHelper::fromCallable($value);
+
+        return serialize(new SerializableClosure($closure));
     }
 }
