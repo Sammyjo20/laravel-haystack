@@ -18,7 +18,7 @@ class NameJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(protected string $name)
+    public function __construct(public string $name)
     {
         //
     }

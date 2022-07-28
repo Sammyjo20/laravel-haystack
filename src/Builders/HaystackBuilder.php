@@ -80,7 +80,7 @@ class HaystackBuilder
     /**
      * Provide a closure that will run when the haystack is complete.
      *
-     * @param  Closure|callable  $closure
+     * @param Closure|callable $closure
      * @return $this
      */
     public function then(Closure|callable $closure): static
@@ -93,7 +93,7 @@ class HaystackBuilder
     /**
      * Provide a closure that will run when the haystack fails.
      *
-     * @param  Closure|callable  $closure
+     * @param Closure|callable $closure
      * @return $this
      */
     public function catch(Closure|callable $closure): static
@@ -106,7 +106,7 @@ class HaystackBuilder
     /**
      * Provide a closure that will run when the haystack finishes.
      *
-     * @param  Closure|callable  $closure
+     * @param Closure|callable $closure
      * @return $this
      */
     public function finally(Closure|callable $closure): static
@@ -119,10 +119,10 @@ class HaystackBuilder
     /**
      * Add a job to the haystack.
      *
-     * @param  ShouldQueue  $job
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
+     * @param ShouldQueue $job
+     * @param int $delayInSeconds
+     * @param string|null $queue
+     * @param string|null $connection
      * @return $this
      */
     public function addJob(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
@@ -153,7 +153,7 @@ class HaystackBuilder
     /**
      * Set a global delay on the jobs.
      *
-     * @param  int  $seconds
+     * @param int $seconds
      * @return $this
      */
     public function withDelay(int $seconds): static
@@ -166,7 +166,7 @@ class HaystackBuilder
     /**
      * Set a global queue for the jobs.
      *
-     * @param  string  $queue
+     * @param string $queue
      * @return $this
      */
     public function onQueue(string $queue): static
@@ -179,7 +179,7 @@ class HaystackBuilder
     /**
      * Set a global connection for the jobs.
      *
-     * @param  string  $connection
+     * @param string $connection
      * @return $this
      */
     public function onConnection(string $connection): static
@@ -198,7 +198,7 @@ class HaystackBuilder
     public function withMiddleware(Closure|callable|array $value): static
     {
         if (is_array($value)) {
-            $value = static fn () => $value;
+            $value = static fn() => $value;
         }
 
         $this->globalMiddleware = ClosureHelper::fromCallable($value);
@@ -213,7 +213,7 @@ class HaystackBuilder
      */
     public function create(): Haystack
     {
-        return DB::transaction(fn () => $this->createHaystack());
+        return DB::transaction(fn() => $this->createHaystack());
     }
 
     /**
@@ -233,16 +233,18 @@ class HaystackBuilder
     /**
      * Map the jobs to be ready for inserting.
      *
-     * @param  Haystack  $haystack
+     * @param Haystack $haystack
      * @return array
      */
     protected function prepareJobsForInsert(Haystack $haystack): array
     {
         return $this->jobs->map(function (PendingHaystackBale $pendingJob) use ($haystack) {
+            $hasDelay = isset($pendingJob->delayInSeconds) && $pendingJob->delayInSeconds > 0;
+
             return [
                 'haystack_id' => $haystack->getKey(),
                 'job' => serialize($pendingJob->job),
-                'delay' => $pendingJob->delayInSeconds ?? $this->globalDelayInSeconds,
+                'delay' => $hasDelay ? $pendingJob->delayInSeconds : $this->globalDelayInSeconds,
                 'on_queue' => $pendingJob->queue ?? $this->globalQueue,
                 'on_connection' => $pendingJob->connection ?? $this->globalConnection,
             ];
