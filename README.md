@@ -27,14 +27,14 @@ composer require sammyjo20/laravel-haystack
 Then publish and run the migrations with:
 
 ```bash
-php artisan vendor:publish --tag="laravel-haystack-migrations"
+php artisan vendor:publish --tag="haystack-migrations"
 php artisan migrate
 ```
 
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag="laravel-haystack-config"
+php artisan vendor:publish --tag="haystack-config"
 ```
 
 Coming soon... 🪐 
