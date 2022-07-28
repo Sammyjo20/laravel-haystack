@@ -74,6 +74,19 @@ test('you can store a serialized closure on a haystack', function () {
     expect(call_user_func($haystack->on_catch))->toEqual('Catch');
     expect(call_user_func($haystack->on_finally))->toEqual('Finally');
     expect(call_user_func($haystack->middleware))->toEqual([]);
+
+    // Check that you can make them nullable too.
+
+    $haystack->on_then = null;
+    $haystack->on_catch = null;
+    $haystack->on_finally = null;
+    $haystack->middleware = null;
+    $haystack->save();
+
+    expect($haystack->on_then)->toBeNull();
+    expect($haystack->on_catch)->toBeNull();
+    expect($haystack->on_finally)->toBeNull();
+    expect($haystack->middleware)->toBeNull();
 });
 
 test('you can store an invokable class on a haystack', function () {
