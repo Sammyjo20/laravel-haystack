@@ -4,6 +4,7 @@ namespace Sammyjo20\LaravelHaystack\Concerns;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
+use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
 
 trait Stackable
 {
@@ -44,6 +45,10 @@ trait Stackable
      */
     public function nextJob(): static
     {
+        if (config('haystack.process_automatically', false) === true) {
+            throw new StackableException('The "nextJob" method is unavailable when "haystack.process_automatically" is enabled.');
+        }
+
         $this->haystack->dispatchNextJob();
 
         return $this;

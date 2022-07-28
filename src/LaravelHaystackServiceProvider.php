@@ -43,7 +43,7 @@ class LaravelHaystackServiceProvider extends PackageServiceProvider
      *
      * @return void
      */
-    private function listenToJobs(): void
+    public function listenToJobs(): void
     {
         // We'll firstly append the haystack_id onto the queued job's
         // payload. This will be resolved in our process completed

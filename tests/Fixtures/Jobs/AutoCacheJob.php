@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Sammyjo20\LaravelHaystack\Concerns\Stackable;
 
-class CacheJob implements ShouldQueue
+class AutoCacheJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable;
 
@@ -31,7 +31,5 @@ class CacheJob implements ShouldQueue
     public function handle()
     {
         cache()->put($this->key, $this->value);
-
-        $this->nextBale(); // Alias of next job
     }
 }
