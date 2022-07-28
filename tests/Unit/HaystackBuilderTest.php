@@ -5,8 +5,8 @@ use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableClass;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NotStackableJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableClass;
 
 test('you can add jobs to the haystack builder', function () {
     $builder = new HaystackBuilder;

@@ -1,17 +1,17 @@
 <?php
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingDelayJob;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\FailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ExcitedJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\FailJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingDelayJob;
 
 test('a stackable job can call the next job', function () {
     $haystack = Haystack::build()
         ->addJob(new CacheJob('name', 'Sam'))
-        ->addJob(new CacheJob('legend','Gareth'))
+        ->addJob(new CacheJob('legend', 'Gareth'))
         ->create();
 
     expect($haystack)->toBeInstanceOf(Haystack::class);
@@ -30,7 +30,7 @@ test('a stackable job can finish a haystack early', function () {
     Haystack::build()
         ->addJob(new CacheJob('name', 'Sam'))
         ->addJob(new ExcitedJob())
-        ->addJob(new CacheJob('legend','Gareth'))
+        ->addJob(new CacheJob('legend', 'Gareth'))
         ->dispatch();
 
     expect(cache()->get('name'))->toEqual('Sam');
@@ -41,7 +41,7 @@ test('a stackable job can fail a haystack early', function () {
     Haystack::build()
         ->addJob(new CacheJob('name', 'Sam'))
         ->addJob(new FailJob())
-        ->addJob(new CacheJob('legend','Gareth'))
+        ->addJob(new CacheJob('legend', 'Gareth'))
         ->dispatch();
 
     expect(cache()->get('name'))->toEqual('Sam');

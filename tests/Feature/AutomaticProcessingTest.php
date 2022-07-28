@@ -1,14 +1,12 @@
 <?php
 
-use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Support\Facades\Queue;
-use Sammyjo20\LaravelHaystack\Actions\ProcessCompletedJob;
-use Sammyjo20\LaravelHaystack\LaravelHaystackServiceProvider;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
-use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
+use Sammyjo20\LaravelHaystack\LaravelHaystackServiceProvider;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ReleaseJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoCacheJob;
+use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
 
 beforeEach(function () {
     config()->set('haystack.process_automatically', true);
@@ -42,7 +40,7 @@ test('it can process jobs automatically', function () {
 
 test('if a job is released it will not be processed', function () {
     Queue::fake([
-        ReleaseJob::class
+        ReleaseJob::class,
     ]);
 
     $haystack = Haystack::build()
