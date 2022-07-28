@@ -10,7 +10,7 @@ class ClosureHelper
     /**
      * Create a closure from a given callable.
      *
-     * @param Closure|callable $value
+     * @param  Closure|callable  $value
      * @return Closure
      */
     public static function fromCallable(Closure|callable $value): Closure
@@ -19,6 +19,6 @@ class ClosureHelper
             throw new InvalidArgumentException('Callable value provided must be an invokable class.');
         }
 
-        return $value instanceof Closure ? $value : static fn() => $value();
+        return $value instanceof Closure ? $value : static fn () => $value();
     }
 }

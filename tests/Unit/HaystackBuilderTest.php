@@ -1,11 +1,11 @@
 <?php
 
+use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
-use Sammyjo20\LaravelHaystack\Models\Haystack;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableClass;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableClass;
 
 test('you can add jobs to the haystack builder', function () {
     $builder = new HaystackBuilder;
@@ -89,17 +89,17 @@ test('you can specify a closure to happen on an erroneous haystack', function ()
 test('you can specify middleware as a closure, invokable class or an array', function () {
     $builder = new HaystackBuilder;
 
-    $builder->withMiddleware(fn() => [new Middleware()]);
+    $builder->withMiddleware(fn () => [new Middleware()]);
 
-    expect($builder->getGlobalMiddleware())->toEqual(fn() => [new Middleware()]);
+    expect($builder->getGlobalMiddleware())->toEqual(fn () => [new Middleware()]);
 
     $builder->withMiddleware(new InvokableClass);
 
-    expect($builder->getGlobalMiddleware())->toEqual(fn() => new InvokableClass);
+    expect($builder->getGlobalMiddleware())->toEqual(fn () => new InvokableClass);
 
     $builder->withMiddleware([new Middleware]);
 
-    expect($builder->getGlobalMiddleware())->toEqual(fn() => [new Middleware()]);
+    expect($builder->getGlobalMiddleware())->toEqual(fn () => [new Middleware()]);
 });
 
 test('you can create a haystack from a builder', function () {

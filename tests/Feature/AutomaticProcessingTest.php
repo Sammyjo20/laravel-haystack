@@ -1,11 +1,12 @@
 <?php
 
-use Illuminate\Support\Facades\Config;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
 
 test('it can process jobs automatically', function () {
+    config()->set('queue.default', 'database');
+    config()->set('queue.connections.database.retry_after', 5);
 
     $haystack = Haystack::build()
         ->addBale(new NameJob('Sam'))
@@ -27,3 +28,6 @@ test('it can process jobs automatically', function () {
 
     $this->artisan('queue:work');
 })->skip('Try getting this to work');
+
+test('it throws an exception if you try to queue the next job with automatic queuing turned on', function () {
+});

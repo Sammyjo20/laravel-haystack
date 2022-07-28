@@ -3,13 +3,13 @@
 namespace Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Sammyjo20\LaravelHaystack\Concerns\Stackable;
 
-class ExpectedNumberJob implements ShouldQueue
+class OrderCheckCacheJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable;
 
@@ -18,7 +18,7 @@ class ExpectedNumberJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public int $expectedNumber)
+    public function __construct(public string $value)
     {
         //
     }
@@ -30,6 +30,8 @@ class ExpectedNumberJob implements ShouldQueue
      */
     public function handle()
     {
+        cache()->put('order', array_merge(cache()->get('order', []), [$this->value]));
+
         $this->nextJob();
     }
 }

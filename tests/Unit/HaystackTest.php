@@ -1,12 +1,12 @@
 <?php
 
-use Laravel\SerializableClosure\SerializableClosure;
-use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableClass;
+use Laravel\SerializableClosure\SerializableClosure;
+use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableClass;
 
 test('a haystack can have many haystack bales', function () {
     $samJob = new NameJob('Sam');
@@ -103,7 +103,7 @@ test('you cannot provide a non callable value to a haystack closure', function (
     fn () => 'Hello',
     fn () => 123,
     fn () => true,
-    fn () => (object)[1],
+    fn () => (object) [1],
     fn () => [1],
 ]);
 
@@ -111,7 +111,8 @@ test('you must provide an invokable class if you do not provide a closure', func
     $this->expectException(InvalidArgumentException::class);
     $this->expectExceptionMessage('Callable value provided must be an invokable class.');
 
-    function myFunction() {
+    function myFunction()
+    {
         //
     }
 

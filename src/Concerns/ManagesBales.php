@@ -4,10 +4,10 @@ namespace Sammyjo20\LaravelHaystack\Concerns;
 
 use Closure;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Sammyjo20\LaravelHaystack\Actions\CreatePendingHaystackBale;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
-use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
+use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
+use Sammyjo20\LaravelHaystack\Actions\CreatePendingHaystackBale;
 
 trait ManagesBales
 {
@@ -66,6 +66,7 @@ trait ManagesBales
     {
         if ($this->started === false) {
             $this->start();
+
             return;
         }
 
@@ -73,6 +74,7 @@ trait ManagesBales
 
         if (! $nextJob instanceof NextJob) {
             $this->finish();
+
             return;
         }
 

@@ -3,16 +3,14 @@
 namespace Sammyjo20\LaravelHaystack\Actions;
 
 use Illuminate\Queue\Events\JobProcessed;
-use Illuminate\Support\Facades\DB;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
-use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 
 class ProcessCompletedJob
 {
     /**
      * Constructor
      *
-     * @param JobProcessed $jobProcessed
+     * @param  JobProcessed  $jobProcessed
      */
     public function __construct(protected JobProcessed $jobProcessed)
     {
@@ -46,7 +44,11 @@ class ProcessCompletedJob
 
         // Now we'll try to find the Haystack from the ID.
 
-        $haystack = Haystack::findOrFail($haystackId);
+        $haystack = Haystack::find($haystackId);
+
+        if (! $haystack instanceof Haystack) {
+            return;
+        }
 
         // Once we have found the Haystack, we'll check if the current job
         // has failed. If it has, then we'll fail the whole stack. Otherwise,

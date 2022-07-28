@@ -2,11 +2,11 @@
 
 namespace Sammyjo20\LaravelHaystack\Models;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Sammyjo20\LaravelHaystack\Casts\SerializeJob;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Sammyjo20\LaravelHaystack\Database\Factories\HaystackBaleFactory;
 
 class HaystackBale extends Model

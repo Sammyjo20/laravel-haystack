@@ -3,8 +3,8 @@
 use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
 
 test('a haystack can be created with jobs', function () {
     $haystack = Haystack::build()
@@ -71,7 +71,7 @@ test('a haystack can be created with middleware', function () {
 test('a haystack job can have their own delay, queue and connection', function () {
     $haystack = Haystack::build()
         ->addJob(new NameJob('Sam'))
-        ->addJob(new NameJob('Gareth'), 120, 'cowboy','redis')
+        ->addJob(new NameJob('Gareth'), 120, 'cowboy', 'redis')
         ->withDelay(60)
         ->onQueue('testing')
         ->onConnection('database')

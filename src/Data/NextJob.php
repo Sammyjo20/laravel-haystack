@@ -14,7 +14,7 @@ class NextJob
      * @param  HaystackBale  $haystackRow
      */
     public function __construct(
-        readonly public ShouldQueue  $job,
+        readonly public ShouldQueue $job,
         readonly public HaystackBale $haystackRow,
     ) {
         //

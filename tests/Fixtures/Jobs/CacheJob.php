@@ -3,13 +3,13 @@
 namespace Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Sammyjo20\LaravelHaystack\Concerns\Stackable;
 
-class DeadendJob implements ShouldQueue
+class CacheJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable;
 
@@ -18,7 +18,7 @@ class DeadendJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(public string $key, public string $value)
     {
         //
     }
@@ -30,6 +30,8 @@ class DeadendJob implements ShouldQueue
      */
     public function handle()
     {
-        //
+        cache()->put($this->key, $this->value);
+
+        $this->nextJob();
     }
 }

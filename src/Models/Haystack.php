@@ -2,13 +2,12 @@
 
 namespace Sammyjo20\LaravelHaystack\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
-use Sammyjo20\LaravelHaystack\Casts\SerializeClosure;
-use Sammyjo20\LaravelHaystack\Casts\SerializeJob;
 use Sammyjo20\LaravelHaystack\Concerns\ManagesBales;
+use Sammyjo20\LaravelHaystack\Casts\SerializeClosure;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
 use Sammyjo20\LaravelHaystack\Database\Factories\HaystackFactory;
 
 class Haystack extends Model

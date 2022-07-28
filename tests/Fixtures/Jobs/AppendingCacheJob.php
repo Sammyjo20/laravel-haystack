@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Sammyjo20\LaravelHaystack\Concerns\Stackable;
 
-class NameJob implements ShouldQueue
+class AppendingCacheJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable;
 
@@ -18,7 +18,7 @@ class NameJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public string $name)
+    public function __construct(public string $key, public string $value)
     {
         //
     }
@@ -30,6 +30,10 @@ class NameJob implements ShouldQueue
      */
     public function handle()
     {
+        cache()->put($this->key, $this->value);
+
+        $this->appendToHaystack(new CacheJob('is_appended', true));
+
         $this->nextJob();
     }
 }

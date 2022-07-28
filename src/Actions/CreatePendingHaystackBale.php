@@ -2,10 +2,10 @@
 
 namespace Sammyjo20\LaravelHaystack\Actions;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
 use InvalidArgumentException;
-use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Sammyjo20\LaravelHaystack\Helpers\Stackable;
+use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 
 class CreatePendingHaystackBale
 {

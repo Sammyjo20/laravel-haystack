@@ -3,12 +3,15 @@
 use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingOrderCheckCacheJob;
 
 test('you can start a haystack', function () {
     Queue::fake();
 
     $haystack = Haystack::build()
         ->addJob(new NameJob('Sam'))
+        ->addJob(new NameJob('Steve'))
         ->create();
 
     Queue::assertNothingPushed();
@@ -17,7 +20,9 @@ test('you can start a haystack', function () {
 
     expect($haystack->started)->toBeTrue();
 
-    Queue::assertPushed(NameJob::class);
+    Queue::assertPushed(NameJob::class, function ($job) {
+        return $job->name === 'Sam';
+    });
 });
 
 test('you can finish a haystack early', function () {
@@ -62,26 +67,21 @@ test('you can fail a haystack', function () {
     Queue::assertNothingPushed();
 });
 
-test('you can append a job onto the haystack', function () {
-    //
+test('jobs are processed in the right orrder', function () {
+    Haystack::build()
+        ->addJob(new OrderCheckCacheJob('Sam'))
+        ->addJob(new OrderCheckCacheJob('Steve'))
+        ->addJob(new OrderCheckCacheJob('Taylor'))
+        ->dispatch();
+
+    expect(cache()->get('order'))->toEqual(['Sam', 'Steve', 'Taylor']);
 });
 
-test('you can get the next job in the haystack', function () {
-    // Make sure the right order is pulled out
-});
+test('you can append a job onto the haystack in a job and it is run at the end', function () {
+    Haystack::build()
+        ->addJob(new AppendingOrderCheckCacheJob('Sam'))
+        ->addJob(new OrderCheckCacheJob('Taylor'))
+        ->dispatch();
 
-test('you can dispatch the next job in the haystack', function () {
-    //
-});
-
-test('you can dispatch the next job in the haystack with a custom delay', function () {
-    //
-});
-
-test('when a haystack finished it runs the "then" and "finally" closures', function () {
-
-});
-
-test('when a haystack fails it runs the "catch" and "finally" closures', function () {
-
+    expect(cache()->get('order'))->toEqual(['Sam', 'Taylor', 'Sam']);
 });
