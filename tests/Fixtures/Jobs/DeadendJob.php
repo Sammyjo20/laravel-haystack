@@ -9,7 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Sammyjo20\LaravelHaystack\Concerns\Stackable;
 
-class BasicJob implements ShouldQueue
+class DeadendJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable;
 

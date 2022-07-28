@@ -1,6 +1,7 @@
 <?php
 
 use Sammyjo20\LaravelHaystack\Models\Haystack;
+use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 
@@ -27,7 +28,21 @@ it('works', function () {
 });
 
 test('a haystack can be created with jobs', function () {
+    $haystack = Haystack::build()
+        ->addJob(new NameJob('Sam'))
+        ->addJob(new NameJob('Gareth'))
+        ->create();
 
+    expect($haystack)->toBeInstanceOf(Haystack::class);
+
+    $haystackBales = $haystack->bales()->get();
+
+    expect($haystackBales)->toHaveCount(2);
+    expect($haystackBales[0])->toBeInstanceOf(HaystackBale::class);
+    expect($haystackBales[1])->toBeInstanceOf(HaystackBale::class);
+
+    expect($haystackBales[0]->job)->toEqual(new NameJob('Sam'));
+    expect($haystackBales[1]->job)->toEqual(new NameJob('Gareth'));
 });
 
 test('a haystack can be created with default delay, queue and connection', function () {

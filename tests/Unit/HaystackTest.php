@@ -2,6 +2,7 @@
 
 use Laravel\SerializableClosure\SerializableClosure;
 use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
+use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableClass;
@@ -166,4 +167,26 @@ test('if you use the dispatchNextJob without starting the job it will start the 
 
     expect($haystack->started)->toBeTrue();
     expect($haystack->finished)->toBeTrue();
+});
+
+test('you can get the next bale in the haystack', function () {
+    $samJob = new NameJob('Sam');
+    $steveJob = new NameJob('Steve');
+    $taylorJob = new NameJob('Taylor');
+
+    $haystack = Haystack::factory()
+        ->has(HaystackBale::factory()->state(['job' => $samJob]), 'bales')
+        ->has(HaystackBale::factory()->state(['job' => $steveJob]), 'bales')
+        ->has(HaystackBale::factory()->state(['job' => $taylorJob]), 'bales')
+        ->create();
+
+    $bales = $haystack->bales()->get();
+
+    expect($haystack->getNextJobRow())->toEqual($bales[0]);
+    expect($haystack->getNextJob())->toBeInstanceOf(NextJob::class);
+
+    $nextJob = $haystack->getNextJob();
+
+    expect($nextJob->job)->toEqual($samJob->setHaystack($haystack));
+    expect($nextJob->haystackRow->getKey())->toEqual($bales[0]->getKey());
 });

@@ -17,7 +17,7 @@ test('you can append a job onto the haystack', function () {
 });
 
 test('you can get the next job in the haystack', function () {
-    // Make separate method for it
+    // Make sure the right order is pulled out
 });
 
 test('you can dispatch the next job in the haystack', function () {

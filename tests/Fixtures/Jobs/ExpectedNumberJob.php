@@ -9,7 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Sammyjo20\LaravelHaystack\Concerns\Stackable;
 
-class NameJob implements ShouldQueue
+class ExpectedNumberJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable;
 
@@ -18,7 +18,7 @@ class NameJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(protected string $name)
+    public function __construct(public int $expectedNumber)
     {
         //
     }
