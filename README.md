@@ -1,7 +1,6 @@
 <div align="center">
     
-<img src="https://user-images.githubusercontent.com/29132017/181374518-043b0359-edd2-43de-9906-3f587ccef99d.png" width="200">
-
+<img src="https://user-images.githubusercontent.com/29132017/181642184-e95e6214-2ff0-4a32-985e-938432b7b3f5.jpeg" width="200">
 
 # Laravel Haystack
 Beautifully simple database-driven job chains.
