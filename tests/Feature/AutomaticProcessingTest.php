@@ -12,7 +12,7 @@ beforeEach(function () {
     config()->set('haystack.process_automatically', true);
 
     // It's a bit hacky, but we'll run the "bootingPackage" method
-    // on the provider to  start recording events.
+    // on the provider to start recording events.
 
     (new LaravelHaystackServiceProvider(app()))->bootingPackage();
 });

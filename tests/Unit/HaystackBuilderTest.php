@@ -3,6 +3,7 @@
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableMiddleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NotStackableJob;
@@ -94,9 +95,9 @@ test('you can specify middleware as a closure, invokable class or an array', fun
 
     expect($builder->getGlobalMiddleware())->toEqual(fn () => [new Middleware()]);
 
-    $builder->withMiddleware(new InvokableClass);
+    $builder->withMiddleware(new InvokableMiddleware);
 
-    expect($builder->getGlobalMiddleware())->toEqual(fn () => new InvokableClass);
+    expect($builder->getGlobalMiddleware())->toEqual(fn () => new InvokableMiddleware);
 
     $builder->withMiddleware([new Middleware]);
 
