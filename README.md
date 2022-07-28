@@ -17,9 +17,24 @@ This package is great if you are chaining thousands of jobs or if you are buildi
 
 ## Installation
 
+You can install the package via composer:
+
 ```bash
 composer require sammyjo20/laravel-haystack
 ```
 > Requires Laravel 8+ and PHP 8.1
+
+Then publish and run the migrations with:
+
+```bash
+php artisan vendor:publish --tag="laravel-haystack-migrations"
+php artisan migrate
+```
+
+You can publish the config file with:
+
+```bash
+php artisan vendor:publish --tag="laravel-haystack-config"
+```
 
 Coming soon... 🪐 
