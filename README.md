@@ -15,6 +15,8 @@ Laravel Haystack is a beautifully simple package that allows you to have a job c
 
 This package is great if you are chaining thousands of jobs or if you are building an API integration which requires job throttling with middleware.
 
+(Code Summary Here)
+
 ## Installation
 
 You can install the package via composer:
