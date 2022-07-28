@@ -33,7 +33,7 @@ class LaravelHaystackServiceProvider extends PackageServiceProvider
      */
     public function bootingPackage()
     {
-        if (config('job-stack.process_automatically', false) === true) {
+        if (config('haystack.process_automatically', false) === true) {
             $this->listenToJobs();
         }
     }
@@ -65,6 +65,6 @@ class LaravelHaystackServiceProvider extends PackageServiceProvider
         // After every processed job, we will execute this, which will determine if it should
         // run the next job in the chain.
 
-        Queue::after(fn (JobProcessed $event) => (new ProcessCompletedJob($event))->execute());
+        Queue::after(fn(JobProcessed $event) => (new ProcessCompletedJob($event))->execute());
     }
 }

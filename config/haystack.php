@@ -2,7 +2,7 @@
 
 return [
 
-    // Warning: Experimental: Does not work properly for backed-off jobs
+    // Warning: Experimental.
 
     'process_automatically' => false,
 

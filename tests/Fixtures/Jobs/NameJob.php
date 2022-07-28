@@ -34,8 +34,10 @@ class NameJob implements ShouldQueue
 
         if ($this->name === 'Gareth') {
             $this->appendToHaystack(new static('Liz'));
+
+            $this->release(10);
         }
 
-        $this->nextJob();
+        // $this->nextJob();
     }
 }

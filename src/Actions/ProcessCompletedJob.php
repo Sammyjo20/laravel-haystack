@@ -3,14 +3,16 @@
 namespace Sammyjo20\LaravelHaystack\Actions;
 
 use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Support\Facades\DB;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
+use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 
 class ProcessCompletedJob
 {
     /**
      * Constructor
      *
-     * @param  JobProcessed  $jobProcessed
+     * @param JobProcessed $jobProcessed
      */
     public function __construct(protected JobProcessed $jobProcessed)
     {
@@ -25,8 +27,18 @@ class ProcessCompletedJob
     public function execute(): void
     {
         $job = $this->jobProcessed->job;
+        $payload = $job->payload();
 
-        $haystackId = $job->payload()['data']['haystack_id'] ?? null;
+        // If the job has been pushed back onto the queue, we will wait.
+
+        if ($job->isReleased()) {
+            return;
+        }
+
+        // Otherwise, we'll attempt to find the haystack_id added to the jobs
+        // and retrieve it.
+
+        $haystackId = $payload['data']['haystack_id'] ?? null;
 
         if (blank($haystackId)) {
             return;
