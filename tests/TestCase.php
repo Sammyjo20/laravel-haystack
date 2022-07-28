@@ -33,6 +33,7 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
         config()->set('database.connections.testing.foreign_key_constraints', true);
+        config()->set('haystack.process_automatically', false);
 
         $migration = include __DIR__.'/../database/migrations/create_haystacks_table.php.stub';
         $migration->up();
