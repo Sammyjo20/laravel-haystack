@@ -12,6 +12,27 @@ Beautifully simple but powerful database-driven job chains.
 ## Introduction
 Laravel Haystack is a package that allows you to have a job chain powered by the database. Since all of the jobs in the chain are stored in the database, memory usage is low and you can delay jobs for a long time or have long running jobs without risking using all your memory. Laravel Haystack supports every queue connection/worker out of the box. (Database, Redis/Horizon, SQS).
 
+```php
+$haystack = Haystack::build()
+   ->addJob(new RecordPodcast)
+   ->addJob(new ProcessPodcast)
+   ->addJob(new PublishPodcast)
+   ->then(function () {
+      // Haystack completed
+   })
+   ->catch(function () {
+      // Haystack failed
+   })
+   ->finally(function () {
+      // Always run either on success or fail.
+   })
+   ->withMiddleware([
+      // Middleware to apply on every job
+   ])
+   ->withDelay(60) // Add a delay to every job
+   ->dispatch();
+```
+
 ### But doesn't Laravel already have job chains?
 That's right! Let's just be clear that we're not talking about **Batched Jobs**. Laravel does have job chains but they have some considerations.
 
@@ -28,12 +49,11 @@ Laravel Haystack aims to solve this by storing the job chain in the database and
 - It provides callback methods like `then`, `catch` and `finally`.
 - Global middleware that can be applied to every single job in the chain
 - Delay that can be added to every job in the chain
+- You can store the model for later processing.
 
 ### Use Cases
 - Great if you need to make hundreds or thousands of API calls in a row, can be combined with Spatie's Job Rate Limiter to keep track of delays and pause jobs when a rate limit is hit.
 - Great if you need to queue thousands of jobs in a chain at a time.
-
-(Code Summary Here)
 
 ## Installation
 
