@@ -17,11 +17,21 @@ That's right! Let's just be clear that we're not talking about **Batched Jobs**.
 
 - They consume quite a lot of memory/data since the chain is stored inside the job. This is especially true if you are storing thousands of jobs.
 - They are volatile, meaning if you lose one job in the chain - you lose the whole chain.
-- They do not provide the `then`, `catch`, `finally` helper methods that batched jobs do.
+- They do not provide the `then`, `catch`, `finally` callable methods that batched jobs do.
 - Long delays with memory based or SQS queue is not possible as you could lose the jobs due to expiry or if the server shuts down.
 
+Laravel Haystack aims to solve this by storing the job chain in the database and queuing one job at a time. When the job is completed, Laravel Haystack listens out for the "job completed" event and queues the next job in the chain from the database.
 
-This package is great if you are chaining thousands of jobs or if you are building an API integration which requires job throttling with middleware.
+### Laravel Haystack Features
+- Low memory consumption as one job is processed at a time and the chain is stored in the database
+- You can have unlimited delay times since it will use the scheduler to restart a chain. Even if your queue driver is SQS.
+- It provides callback methods like `then`, `catch` and `finally`.
+- Global middleware that can be applied to every single job in the chain
+- Delay that can be added to every job in the chain
+
+### Use Cases
+- Great if you need to make hundreds or thousands of API calls in a row, can be combined with Spatie's Job Rate Limiter to keep track of delays and pause jobs when a rate limit is hit.
+- Great if you need to queue thousands of jobs in a chain at a time.
 
 (Code Summary Here)
 
