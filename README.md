@@ -54,6 +54,7 @@ Laravel Haystack aims to solve this by storing the job chain in the database and
 ### Use Cases
 - Great if you need to make hundreds or thousands of API calls in a row, can be combined with Spatie's Job Rate Limiter to keep track of delays and pause jobs when a rate limit is hit.
 - Great if you need to queue thousands of jobs in a chain at a time.
+- If you need to batch import rows of data - each row can be a haystack job (bale) and processed one at a time. 
 
 ## Installation
 
