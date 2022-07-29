@@ -77,4 +77,43 @@ You can publish the config file with:
 php artisan vendor:publish --tag="haystack-config"
 ```
 
-Coming soon... 🪐 
+## Basic Usage
+
+### Building Haystacks
+
+### Dispatching Haystacks
+
+### Creating Haystacks For Later
+
+Use the create method to create the model and store it somewhere for later processing.
+
+## Callback Events
+
+### Then
+
+### Catch
+
+### Finally
+
+### Invokable classes
+
+## Configuring
+
+### Delay
+
+### Connection
+
+### Queue
+
+## Appending Jobs
+
+## Global Middleware
+
+## Delaying Entire Stack
+
+## Manual Processing
+
+## Configuration Options
+
+- Automatic Processing
+- Preserve Finished Haystacks
