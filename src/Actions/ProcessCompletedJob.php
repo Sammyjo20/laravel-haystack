@@ -29,7 +29,7 @@ class ProcessCompletedJob
 
         // If the job has been pushed back onto the queue, we will wait.
 
-        if ($job->isReleased()) {
+        if ($job->isReleased() === true && $job->hasFailed() === false) {
             return;
         }
 
