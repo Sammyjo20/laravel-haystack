@@ -16,4 +16,18 @@ return [
 
     'process_automatically' => true,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Stale Haystacks
+    |--------------------------------------------------------------------------
+    |
+    | This value determines how long "stale" haystacks are kept for. These are
+    | haystacks where the job that controlled them has failed without sending
+    | the failure signal to laravel-haystack. This shouldn't happen if auto
+    | processing has been turned on.
+    |
+    */
+
+    'keep_stale_haystacks_for_days' => 3,
+
 ];
