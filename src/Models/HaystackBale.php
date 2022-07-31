@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Sammyjo20\LaravelHaystack\Casts\SerializeJob;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Database\Factories\HaystackBaleFactory;
 
 class HaystackBale extends Model
@@ -48,9 +49,9 @@ class HaystackBale extends Model
     /**
      * Get the job already configured.
      *
-     * @return ShouldQueue
+     * @return StackableJob
      */
-    public function configuredJob(): ShouldQueue
+    public function configuredJob(): StackableJob
     {
         $job = $this->job;
 

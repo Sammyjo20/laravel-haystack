@@ -9,12 +9,7 @@ use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
 
 beforeEach(function () {
-    config()->set('haystack.process_automatically', true);
-
-    // It's a bit hacky, but we'll run the "bootingPackage" method
-    // on the provider to start recording events.
-
-    (new LaravelHaystackServiceProvider(app()))->bootingPackage();
+    automaticProcessing();
 });
 
 test('it throws an exception if you try to queue the next job with automatic queuing turned on', function () {

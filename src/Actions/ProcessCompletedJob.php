@@ -2,7 +2,9 @@
 
 namespace Sammyjo20\LaravelHaystack\Actions;
 
+use Illuminate\Contracts\Queue\Job;
 use Illuminate\Queue\Events\JobProcessed;
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 
 class ProcessCompletedJob
@@ -24,12 +26,21 @@ class ProcessCompletedJob
      */
     public function execute(): void
     {
-        $job = $this->jobProcessed->job;
-        $payload = $job->payload();
+        $processedJob = $this->jobProcessed->job;
+        $payload = $processedJob->payload();
+
+        // We now need to unserialize the real job under the hood, to check if it has
+        // been delayed.
+
+        $job = isset($payload['data']['command']) ? unserialize($payload['data']['command'], ['allowed_classes' => true]) : null;
+
+        if (! $job instanceof StackableJob) {
+            return;
+        }
 
         // If the job has been pushed back onto the queue, we will wait.
 
-        if ($job->isReleased() === true && $job->hasFailed() === false) {
+        if ($processedJob->isReleased() === true && $processedJob->hasFailed() === false) {
             return;
         }
 
@@ -54,6 +65,6 @@ class ProcessCompletedJob
         // has failed. If it has, then we'll fail the whole stack. Otherwise,
         // we will dispatch the next job.
 
-        $job->hasFailed() ? $haystack->fail() : $haystack->dispatchNextJob();
+        $processedJob->hasFailed() ? $haystack->fail() : $haystack->dispatchNextJob($job);
     }
 }

@@ -30,6 +30,7 @@ class Haystack extends Model
         'middleware' => SerializeClosure::class,
         'started' => 'boolean',
         'finished' => 'boolean',
+        'resume_at' => 'immutable_datetime',
     ];
 
     /**

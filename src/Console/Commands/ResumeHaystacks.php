@@ -1,0 +1,26 @@
+<?php
+
+namespace Sammyjo20\LaravelHaystack\Console\Commands;
+
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use Sammyjo20\LaravelHaystack\Models\Haystack;
+
+class ResumeHaystacks extends Command
+{
+    public $signature = 'resume:haystacks';
+
+    public $description = 'Resume any paused haystacks if it has reached the time. Should be executed every minute.';
+
+    public function handle(): int
+    {
+        $haystacks = Haystack::query()->where('resume_at', '<=', now())->cursor();
+
+        foreach ($haystacks as $haystack) {
+            $haystack->update(['resume_at' => null]);
+            $haystack->dispatchNextJob();
+        }
+
+        return self::SUCCESS;
+    }
+}
