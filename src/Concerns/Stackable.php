@@ -7,6 +7,7 @@ use Carbon\CarbonInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
+use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
 
 trait Stackable
@@ -68,12 +69,13 @@ trait Stackable
     /**
      * Dispatch the next bale in the haystack. Yee-haw!
      *
+     * @param int|CarbonInterface|null $delayInSecondsOrCarbon
      * @return $this
      * @throws StackableException
      */
-    public function nextBale(): static
+    public function nextBale(int|CarbonInterface $delayInSecondsOrCarbon = null): static
     {
-        return $this->nextJob();
+        return $this->nextJob($delayInSecondsOrCarbon);
     }
 
     /**
@@ -150,6 +152,31 @@ trait Stackable
     public function setHaystackBaleId(int $haystackBaleId): static
     {
         $this->haystackBaleId = $haystackBaleId;
+
+        return $this;
+    }
+
+    /**
+     * Pause the haystack. We also need to delete the current row.
+     *
+     * @param int|CarbonInterface $delayInSecondsOrCarbon
+     * @return $this
+     * @throws StackableException
+     */
+    public function pauseHaystack(int|CarbonInterface $delayInSecondsOrCarbon): static
+    {
+        if (config('haystack.process_automatically', false) === false) {
+            throw new StackableException('The "pauseHaystack" method is unavailable when "haystack.process_automatically" is disabled. Use the "nextJob" with a delay provided instead.');
+        }
+
+        $resumeAt = CarbonHelper::createFromSecondsOrCarbon($delayInSecondsOrCarbon);
+
+        $this->haystack->pause($resumeAt);
+
+        // We need to make sure that we delete the current haystack bale to stop it
+        // from being processed when the haystack is resumed.
+
+        HaystackBale::query()->whereKey($this->getHaystackBaleId())->delete();
 
         return $this;
     }

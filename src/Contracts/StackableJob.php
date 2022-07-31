@@ -2,10 +2,8 @@
 
 namespace Sammyjo20\LaravelHaystack\Contracts;
 
-use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Sammyjo20\LaravelHaystack\Concerns\Stackable;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
 
@@ -37,10 +35,10 @@ interface StackableJob
     /**
      * Dispatch the next bale in the haystack. Yee-haw!
      *
+     * @param int|CarbonInterface|null $delayInSecondsOrCarbon
      * @return $this
-     * @throws StackableException
      */
-    public function nextBale(): static;
+    public function nextBale(int|CarbonInterface $delayInSecondsOrCarbon = null): static;
 
     /**
      * Release the job for haystack to process later.
@@ -89,4 +87,12 @@ interface StackableJob
      * @return $this
      */
     public function setHaystackBaleId(int $haystackBaleId): static;
+
+    /**
+     * Pause the haystack.
+     *
+     * @param int|CarbonInterface $delayInSecondsOrCarbon
+     * @return $this
+     */
+    public function pauseHaystack(int|CarbonInterface $delayInSecondsOrCarbon): static;
 }

@@ -79,14 +79,6 @@ trait ManagesBales
             return;
         }
 
-        // If the delay in seconds has been provided, we need to pause the haystack by the
-        // delay.
-
-        if (isset($delayInSecondsOrCarbon)) {
-            $this->pause(CarbonHelper::createFromSecondsOrCarbon($delayInSecondsOrCarbon));
-            return;
-        }
-
         if (is_null($job) && $this->started === false) {
             $this->start();
             return;
@@ -97,6 +89,14 @@ trait ManagesBales
 
         if (isset($job)) {
             HaystackBale::query()->whereKey($job->getHaystackBaleId())->delete();
+        }
+
+        // If the delay in seconds has been provided, we need to pause the haystack by the
+        // delay.
+
+        if (isset($delayInSecondsOrCarbon)) {
+            $this->pause(CarbonHelper::createFromSecondsOrCarbon($delayInSecondsOrCarbon));
+            return;
         }
 
         // Now we'll query the next bale.
