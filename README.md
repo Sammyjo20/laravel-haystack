@@ -494,5 +494,5 @@ use Sammyjo20\LaravelHaystack\Models\Haystack;
 
 $schedule->command('model:prune', [
     '--model' => [Haystack::class],
-])->everyDay();
+])->daily();
 ```
