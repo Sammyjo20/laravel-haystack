@@ -77,7 +77,7 @@ test('if a job is using the database connection - we will not process the next j
     Haystack::build()
         ->addJob(new ReleaseJob)
         ->addJob(new AutoCacheJob('boss', 'Gareth'))
-        ->dispatch();gi
+        ->dispatch();
 
     expect(cache()->get('boss'))->toBeNull();
 
