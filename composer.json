@@ -33,7 +33,7 @@
         "spatie/laravel-ray": "^1.26"
     },
     "minimum-stability": "stable",
-    "autoload": {g
+    "autoload": {
         "psr-4": {
             "Sammyjo20\\LaravelHaystack\\": "src",
             "Sammyjo20\\LaravelHaystack\\Database\\Factories\\": "database/factories"
