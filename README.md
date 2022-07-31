@@ -93,9 +93,9 @@ namespace App\Jobs;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Concerns\Stackable;
  
-class ProcessPodcast implements ShouldQueue, **StackableJob**
+class ProcessPodcast implements ShouldQueue, StackableJob
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, **Stackable**
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable
 ```
 
 ### Building Haystacks
@@ -296,10 +296,10 @@ $haystack = Haystack::build()
    ->addJob(new RecordPodcast) 
    ->addJob(new ProcessPodcast)
    ->withMiddleware(function () {
-	      return [
-		       (new RateLimited)->allows(30)->everyMinute(),
-		       new OtherMiddleware,
-		    ];
+        return [
+           (new RateLimited)->allows(30)->everyMinute(),
+           new OtherMiddleware,
+        ];
    })
    ->dispatch();
 ```
@@ -321,10 +321,10 @@ $haystack = Haystack::build()
 class PodcastMiddleware {
     public function __invoke()
     {
-				return [
-		       (new RateLimited)->allows(30)->everyMinute(),
-		       new OtherMiddleware,
-		    ];
+		return [
+	        (new RateLimited)->allows(30)->everyMinute(),
+		    new OtherMiddleware,
+		];
     }
 }
 ```
@@ -341,16 +341,16 @@ namespace App\Jobs;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Concerns\Stackable;
  
-class ProcessPodcast implements ShouldQueue, **StackableJob**
+class ProcessPodcast implements ShouldQueue, StackableJob
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, **Stackable
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable
 
     public function handle()
     {
         // Your application code...
 
         $this->appendToHaystack(new DifferentJob);
-    }**
+    }
 ```
 
 ## Long Delays & Pausing Haystack
@@ -389,9 +389,9 @@ namespace App\Jobs;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Concerns\Stackable;
  
-class ProcessPodcast implements ShouldQueue, **StackableJob**
+class ProcessPodcast implements ShouldQueue, StackableJob
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, **Stackable
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable
 
     public function handle()
     {
@@ -404,7 +404,7 @@ class ProcessPodcast implements ShouldQueue, **StackableJob**
 
 	      $this->longRelease(now()->addDays(2)); // Release for 2 days.
 				return;
-    }**
+    }
 ```
 
 ### Pausing the next job
@@ -419,16 +419,16 @@ namespace App\Jobs;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Concerns\Stackable;
  
-class ProcessPodcast implements ShouldQueue, **StackableJob**
+class ProcessPodcast implements ShouldQueue, StackableJo
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, **Stackable
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable
 
     public function handle()
     {
         // Your application code...
 
         $this->pauseHaystack(now()->addHours(4)); // Pause the haystack for 4 hours.
-    }**
+    }
 ```
 
 ## Manual Processing
@@ -447,16 +447,16 @@ namespace App\Jobs;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Concerns\Stackable;
  
-class ProcessPodcast implements ShouldQueue, **StackableJob**
+class ProcessPodcast implements ShouldQueue, StackableJob
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, **Stackable
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable
 
     public function handle()
     {
         // Your application code...
 
         $this->nextJob();
-    }**
+    }
 ```
 
 ### Manually Failing Haystacks
@@ -471,14 +471,14 @@ namespace App\Jobs;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Concerns\Stackable;
  
-class ProcessPodcast implements ShouldQueue, **StackableJob**
+class ProcessPodcast implements ShouldQueue, StackableJob
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, **Stackable
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable
 
     public function failed($exception)
     {
         $this->failHaystack();
-    }**
+    }
 ```
 
 ## Cleaning Up Stale And Finished Haystacks
