@@ -1,0 +1,49 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [ 8.1 ]
+        laravel: [ ^8.0, ^9.0 ]
+        dependency-version: [ prefer-stable ]
+        include:
+          - laravel: ^8.0
+            testbench: ^6.0
+          - laravel: ^9.0
+            testbench: ^7.0
+
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - ${{ matrix.dependency-version }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.composer/cache/files
+          key: dependencies-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Install composer dependencies
+        run: |
+          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
+
+      - name: Execute tests
+        run: composer test

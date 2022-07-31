@@ -1,3 +1,3 @@
 # Changelog
 
-All notable changes to `laravel-job-stack` will be documented in this file.
+All notable changes to `laravel-haystack` will be documented in this file.

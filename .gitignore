@@ -4,8 +4,5 @@ build
 composer.lock
 coverage
 docs
-phpunit.xml
-phpstan.neon
-testbench.yaml
 vendor
 node_modules
