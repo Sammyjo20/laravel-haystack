@@ -16,3 +16,8 @@ function withAutomaticProcessing(): void
 
     (new LaravelHaystackServiceProvider(app()))->bootingPackage();
 }
+
+function dontDeleteHaystack(): void
+{
+    config()->set('haystack.delete_finished_haystacks', false);
+}

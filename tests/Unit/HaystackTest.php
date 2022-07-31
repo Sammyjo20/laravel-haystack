@@ -1,10 +1,12 @@
 <?php
 
+use Illuminate\Support\Carbon;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Laravel\SerializableClosure\SerializableClosure;
 use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\TravelMiddleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableClass;
 
@@ -203,4 +205,50 @@ test('you can get the next bale in the haystack', function () {
 
     expect($nextJob->job)->toEqual($samJob->setHaystack($haystack)->setHaystackBaleId($bales[0]->getKey()));
     expect($nextJob->haystackRow->getKey())->toEqual($bales[0]->getKey());
+});
+
+test('haystacks are deleted by default', function () {
+    Haystack::build()
+        ->addJob(new NameJob('Sam'))
+        ->dispatch();
+
+    expect(Haystack::query()->count())->toEqual(0);
+});
+
+test('haystacks can be preserved', function () {
+    dontDeleteHaystack();
+
+    Haystack::build()
+        ->addJob(new NameJob('Sam'))
+        ->dispatch();
+
+    expect(Haystack::query()->count())->toEqual(1);
+});
+
+test('a haystack has a started at and finished at date', function () {
+    dontDeleteHaystack();
+
+    Carbon::setTestNow('2022-01-01 09:00');
+
+    $startDate = now()->toImmutable();
+
+    $haystack = Haystack::build()
+        ->addJob(new NameJob('Sam'))
+        ->withMiddleware([
+            new TravelMiddleware,
+        ])
+        ->create();
+
+    $haystack->refresh();
+
+    expect($haystack->started_at)->toBeNull();
+
+    $haystack->start();
+
+    $haystack->refresh();
+
+    $endDate = now();
+
+    expect($haystack->started_at)->toEqual($startDate);
+    expect($haystack->finished_at)->toEqual($endDate);
 });

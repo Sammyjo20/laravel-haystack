@@ -30,4 +30,30 @@ return [
 
     'keep_stale_haystacks_for_days' => 3,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Delete Finished Haystacks
+    |--------------------------------------------------------------------------
+    |
+    | This value determines if laravel-haystack should automatically delete
+    | haystacks when they have finished processing. If this value is set
+    | to false, make sure to use the scheduled command to clean up
+    | old finished haystacks.
+    |
+    */
+
+    'delete_finished_haystacks' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Keep Finished Haystacks For Days
+    |--------------------------------------------------------------------------
+    |
+    | This value determines how long finished haystacks will be retained for
+    | this is only applicable if "deleted_finished_haystacks" has been disabled.
+    |
+    */
+
+    'keep_finished_haystacks_for_days' => 1,
+
 ];

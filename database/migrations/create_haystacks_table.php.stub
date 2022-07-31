@@ -17,7 +17,9 @@ return new class extends Migration
             $table->text('middleware')->nullable();
             $table->boolean('started')->default(false);
             $table->boolean('finished')->default(false);
+            $table->dateTime('started_at')->nullable();
             $table->dateTime('resume_at')->nullable();
+            $table->dateTime('finished_at')->nullable();
         });
     }
 

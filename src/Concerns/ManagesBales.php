@@ -123,7 +123,7 @@ trait ManagesBales
      */
     public function start(): void
     {
-        $this->update(['started' => true]);
+        $this->update(['started' => true, 'started_at' => now()]);
 
         $this->dispatchNextJob();
     }
@@ -150,7 +150,7 @@ trait ManagesBales
             return;
         }
 
-        $this->update(['finished' => true]);
+        $this->update(['finished' => true, 'finished_at' => now()]);
 
         $fail === true
             ? $this->executeClosure($this->on_catch)
@@ -162,7 +162,9 @@ trait ManagesBales
 
         // Now finally delete itself.
 
-        $this->delete();
+        if (config('haystack.delete_finished_haystacks') === true) {
+            $this->delete();
+        }
     }
 
     /**
