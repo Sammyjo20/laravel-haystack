@@ -2,7 +2,10 @@
 
 namespace Sammyjo20\LaravelHaystack\Models;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Sammyjo20\LaravelHaystack\Concerns\ManagesBales;
 use Sammyjo20\LaravelHaystack\Casts\SerializeClosure;
@@ -14,6 +17,7 @@ class Haystack extends Model
 {
     use HasFactory;
     use ManagesBales;
+    use Prunable;
 
     /**
      * @var array
@@ -36,14 +40,6 @@ class Haystack extends Model
     ];
 
     /**
-     * @var false[]
-     */
-    protected $attributes = [
-        'started' => false,
-        'finished' => false,
-    ];
-
-    /**
      * Create a new factory instance for the model.
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
@@ -51,6 +47,25 @@ class Haystack extends Model
     protected static function newFactory()
     {
         return HaystackFactory::new();
+    }
+
+    /**
+     * Get the prunable model query.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function prunable(): Builder
+    {
+        $staleHaystackDays = config('haystack.keep_stale_haystacks_for_days', 0);
+        $finishedHaystackDays = config('haystack.keep_finished_haystacks_for_days', 0);
+
+        return static::query()
+            ->where(function ($query) use ($staleHaystackDays) {
+                $query->whereNull('finished_at')->where('started_at', '<=', now()->subDays($staleHaystackDays));
+            })
+            ->orWhere(function ($query) use ($finishedHaystackDays) {
+                $query->whereNotNull('started_at')->where('finished_at', '<=', now()->subDays($finishedHaystackDays));
+            });
     }
 
     /**
@@ -71,5 +86,25 @@ class Haystack extends Model
     public static function build(): HaystackBuilder
     {
         return new HaystackBuilder;
+    }
+
+    /**
+     * Denotes if the haystack has started.
+     *
+     * @return bool
+     */
+    public function getStartedAttribute(): bool
+    {
+        return $this->started_at instanceof CarbonImmutable;
+    }
+
+    /**
+     * Denotes if the haystack has finished.
+     *
+     * @return bool
+     */
+    public function getFinishedAttribute(): bool
+    {
+        return $this->finished_at instanceof CarbonImmutable;
     }
 }

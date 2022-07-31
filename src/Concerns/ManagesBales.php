@@ -123,7 +123,7 @@ trait ManagesBales
      */
     public function start(): void
     {
-        $this->update(['started' => true, 'started_at' => now()]);
+        $this->update(['started_at' => now()]);
 
         $this->dispatchNextJob();
     }
@@ -150,7 +150,7 @@ trait ManagesBales
             return;
         }
 
-        $this->update(['finished' => true, 'finished_at' => now()]);
+        $this->update(['finished_at' => now()]);
 
         $fail === true
             ? $this->executeClosure($this->on_catch)
