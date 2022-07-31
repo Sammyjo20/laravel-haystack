@@ -3,18 +3,12 @@
 use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
-use Sammyjo20\LaravelHaystack\LaravelHaystackServiceProvider;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ReleaseJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
 
 beforeEach(function () {
-    config()->set('haystack.process_automatically', true);
-
-    // It's a bit hacky, but we'll run the "bootingPackage" method
-    // on the provider to start recording events.
-
-    (new LaravelHaystackServiceProvider(app()))->bootingPackage();
+    withAutomaticProcessing();
 });
 
 test('it throws an exception if you try to queue the next job with automatic queuing turned on', function () {
@@ -60,6 +54,7 @@ test('if a job is released it will not be processed', function () {
 
     $bales = $haystack->bales()->get();
 
-    expect($bales)->toHaveCount(1);
-    expect($bales[0]->job)->toEqual(new AutoCacheJob('boss', 'Gareth'));
+    expect($bales)->toHaveCount(2);
+    expect($bales[0]->job)->toEqual(new ReleaseJob);
+    expect($bales[1]->job)->toEqual(new AutoCacheJob('boss', 'Gareth'));
 });

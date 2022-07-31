@@ -2,24 +2,38 @@
 
 namespace Sammyjo20\LaravelHaystack\Data;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 
 class PendingHaystackBale
 {
     /**
      * Constructor
      *
-     * @param  ShouldQueue  $job
+     * @param  StackableJob  $job
      * @param  int  $delayInSeconds
      * @param  string|null  $queue
      * @param  string|null  $connection
      */
     public function __construct(
-        readonly public ShouldQueue $job,
-        readonly public int $delayInSeconds = 0,
-        readonly public ?string $queue = null,
-        readonly public ?string $connection = null,
+        public StackableJob $job,
+        public int $delayInSeconds = 0,
+        public ?string $queue = null,
+        public ?string $connection = null,
     ) {
-        //
+        $nativeDelay = $this->job->delay;
+        $nativeQueue = $this->job->queue;
+        $nativeConnection = $this->job->connection;
+
+        if (isset($nativeDelay) && $this->delayInSeconds <= 0) {
+            $this->delayInSeconds = $nativeDelay;
+        }
+
+        if (isset($nativeQueue) && ! isset($this->queue)) {
+            $this->queue = $nativeQueue;
+        }
+
+        if (isset($nativeConnection) && ! isset($this->connection)) {
+            $this->connection = $nativeConnection;
+        }
     }
 }

@@ -5,9 +5,9 @@ namespace Sammyjo20\LaravelHaystack\Builders;
 use Closure;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Helpers\ClosureHelper;
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 use Sammyjo20\LaravelHaystack\Actions\CreatePendingHaystackBale;
 
@@ -119,13 +119,13 @@ class HaystackBuilder
     /**
      * Add a job to the haystack.
      *
-     * @param  ShouldQueue  $job
+     * @param  StackableJob  $job
      * @param  int  $delayInSeconds
      * @param  string|null  $queue
      * @param  string|null  $connection
      * @return $this
      */
-    public function addJob(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
+    public function addJob(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
     {
         $pendingHaystackRow = CreatePendingHaystackBale::execute($job, $delayInSeconds, $queue, $connection);
 
@@ -139,13 +139,13 @@ class HaystackBuilder
      *
      * @alias addJob()
      *
-     * @param  ShouldQueue  $job
+     * @param  StackableJob  $job
      * @param  int  $delayInSeconds
      * @param  string|null  $queue
      * @param  string|null  $connection
      * @return $this
      */
-    public function addBale(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
+    public function addBale(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
     {
         return $this->addJob($job, $delayInSeconds, $queue, $connection);
     }

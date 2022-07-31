@@ -110,9 +110,13 @@ Use the create method to create the model and store it somewhere for later proce
 
 ## Global Middleware
 
-## Delaying Entire Stack
+## Long Delays & Pausing Haystack
+### Long Delays/Releasing
+### Pausing the next job
 
 ## Manual Processing
+
+## Cleaning Up Stale And Finished Haystacks
 
 ## Configuration Options
 

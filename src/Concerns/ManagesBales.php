@@ -3,9 +3,14 @@
 namespace Sammyjo20\LaravelHaystack\Concerns;
 
 use Closure;
+use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
+use Illuminate\Queue\Jobs\Job;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
+use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 use Sammyjo20\LaravelHaystack\Actions\CreatePendingHaystackBale;
 
@@ -41,7 +46,8 @@ trait ManagesBales
 
         // We'll now set the Haystack model on the job.
 
-        $job->setHaystack($this);
+        $job->setHaystack($this)
+            ->setHaystackBaleId($jobRow->getKey());
 
         // We'll now apply any global middleware if it was provided to us
         // while building the Haystack.
@@ -60,25 +66,52 @@ trait ManagesBales
     /**
      * Dispatch the next job.
      *
+     * @param  StackableJob|null  $job
+     * @param  int|CarbonInterface|null  $delayInSecondsOrCarbon
      * @return void
      */
-    public function dispatchNextJob(): void
+    public function dispatchNextJob(StackableJob $job = null, int|CarbonInterface $delayInSecondsOrCarbon = null): void
     {
-        if ($this->started === false) {
+        // If the resume_at has been set, and the date is in the future, we're not allowed to process
+        // the next job, so we stop.
+
+        if ($this->resume_at instanceof CarbonInterface && $this->resume_at->isFuture()) {
+            return;
+        }
+
+        if (is_null($job) && $this->started === false) {
             $this->start();
 
             return;
         }
 
+        // If the job has been provided, we will delete the haystack bale to prevent
+        // the same bale being retrieved on the next job.
+
+        if (isset($job)) {
+            HaystackBale::query()->whereKey($job->getHaystackBaleId())->delete();
+        }
+
+        // If the delay in seconds has been provided, we need to pause the haystack by the
+        // delay.
+
+        if (isset($delayInSecondsOrCarbon)) {
+            $this->pause(CarbonHelper::createFromSecondsOrCarbon($delayInSecondsOrCarbon));
+
+            return;
+        }
+
+        // Now we'll query the next bale.
+
         $nextJob = $this->getNextJob();
+
+        // If no next job was found, we'll stop.
 
         if (! $nextJob instanceof NextJob) {
             $this->finish();
 
             return;
         }
-
-        $nextJob->haystackRow->delete();
 
         dispatch($nextJob->job);
     }
@@ -90,8 +123,18 @@ trait ManagesBales
      */
     public function start(): void
     {
-        $this->update(['started' => true]);
+        $this->update(['started' => true, 'started_at' => now()]);
 
+        $this->dispatchNextJob();
+    }
+
+    /**
+     * Restart the haystack
+     *
+     * @return void
+     */
+    public function restart(): void
+    {
         $this->dispatchNextJob();
     }
 
@@ -107,7 +150,7 @@ trait ManagesBales
             return;
         }
 
-        $this->update(['finished' => true]);
+        $this->update(['finished' => true, 'finished_at' => now()]);
 
         $fail === true
             ? $this->executeClosure($this->on_catch)
@@ -119,7 +162,9 @@ trait ManagesBales
 
         // Now finally delete itself.
 
-        $this->delete();
+        if (config('haystack.delete_finished_haystacks') === true) {
+            $this->delete();
+        }
     }
 
     /**
@@ -175,5 +220,16 @@ trait ManagesBales
         if ($closure instanceof Closure) {
             $closure();
         }
+    }
+
+    /**
+     * Pause the haystack.
+     *
+     * @param  CarbonImmutable  $resumeAt
+     * @return void
+     */
+    public function pause(CarbonImmutable $resumeAt): void
+    {
+        $this->update(['resume_at' => $resumeAt]);
     }
 }

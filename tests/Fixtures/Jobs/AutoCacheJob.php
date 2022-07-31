@@ -8,8 +8,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Sammyjo20\LaravelHaystack\Concerns\Stackable;
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 
-class AutoCacheJob implements ShouldQueue
+class AutoCacheJob implements ShouldQueue, StackableJob
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable;
 

@@ -5,10 +5,10 @@ namespace Sammyjo20\LaravelHaystack;
 use Illuminate\Support\Facades\Queue;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Queue\Events\JobProcessed;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Sammyjo20\LaravelHaystack\Helpers\Stackable;
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Sammyjo20\LaravelHaystack\Actions\ProcessCompletedJob;
+use Sammyjo20\LaravelHaystack\Console\Commands\ResumeHaystacks;
 
 class LaravelHaystackServiceProvider extends PackageServiceProvider
 {
@@ -25,7 +25,8 @@ class LaravelHaystackServiceProvider extends PackageServiceProvider
             ->hasMigrations([
                 'create_haystacks_table',
                 'create_haystack_bales_table',
-            ]);
+            ])
+            ->hasCommand(ResumeHaystacks::class);
     }
 
     /**
@@ -53,10 +54,10 @@ class LaravelHaystackServiceProvider extends PackageServiceProvider
             $jobData = $payload['data'];
             $command = $payload['data']['command'] ?? null;
 
-            if ($command instanceof ShouldQueue && Stackable::isStackable($command) === true) {
-                $jobData = array_merge($payload['data'], array_filter([
+            if ($command instanceof StackableJob) {
+                $jobData = array_merge($payload['data'], [
                     'haystack_id' => $command->getHaystack()->getKey(),
-                ]));
+                ]);
             }
 
             return ['data' => $jobData];
