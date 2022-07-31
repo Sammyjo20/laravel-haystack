@@ -2,9 +2,9 @@
 
 namespace Sammyjo20\LaravelHaystack\Actions;
 
+use Illuminate\Queue\Jobs\SyncJob;
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Queue\Events\JobProcessed;
-use Illuminate\Queue\Jobs\SyncJob;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 
