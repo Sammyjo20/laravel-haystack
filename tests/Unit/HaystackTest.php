@@ -6,9 +6,9 @@ use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Laravel\SerializableClosure\SerializableClosure;
 use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\TravelMiddleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableClass;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\TravelMiddleware;
 
 test('a haystack can have many haystack bales', function () {
     $samJob = new NameJob('Sam');
