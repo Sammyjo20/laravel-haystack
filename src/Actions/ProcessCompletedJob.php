@@ -4,6 +4,7 @@ namespace Sammyjo20\LaravelHaystack\Actions;
 
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Jobs\SyncJob;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 
@@ -39,8 +40,9 @@ class ProcessCompletedJob
         }
 
         // If the job has been pushed back onto the queue, we will wait.
+        // We will ignore this for sync jobs since they never stop processing.
 
-        if ($processedJob->isReleased() === true && $processedJob->hasFailed() === false) {
+        if ($processedJob instanceof SyncJob === false && $processedJob->isReleased() === true && $processedJob->hasFailed() === false) {
             return;
         }
 
