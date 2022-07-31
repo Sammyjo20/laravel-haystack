@@ -7,7 +7,7 @@ use Sammyjo20\LaravelHaystack\Models\Haystack;
 
 class ResumeHaystacks extends Command
 {
-    public $signature = 'resume:haystacks';
+    public $signature = 'haystacks:resume';
 
     public $description = 'Resume any paused haystacks if it has reached the time. Should be executed every minute.';
 

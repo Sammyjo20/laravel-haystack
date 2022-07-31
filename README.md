@@ -45,7 +45,7 @@ Laravel Haystack aims to solve this by storing the job chain in the database and
 
 ### Laravel Haystack Features
 - Low memory consumption as one job is processed at a time and the chain is stored in the database
-- You can have unlimited delay times since it will use the scheduler to restart a chain. Even if your queue driver is SQS.
+- You can delay/release jobs for as long as you want since it will use the scheduler to restart a chain. Even if your queue driver is SQS!
 - It provides callback methods like `then`, `catch` and `finally`.
 - Global middleware that can be applied to every single job in the chain
 - Delay that can be added to every job in the chain
@@ -55,6 +55,7 @@ Laravel Haystack aims to solve this by storing the job chain in the database and
 - If you need to make hundreds or thousands of API calls in a row, can be combined with Spatie's Job Rate Limiter to keep track of delays and pause jobs when a rate limit is hit.
 - If you need to queue thousands of jobs in a chain at a time.
 - If you need to batch import rows of data - each row can be a haystack job (bale) and processed one at a time. While keeping important job information stored in the database. 
+- If you need "release" times longer than 15 minutes if you are using Amazon SQS
 
 ## Installation
 

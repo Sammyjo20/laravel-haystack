@@ -33,7 +33,7 @@ test('you can release the current job for a long time and will be picked up with
 
     // Now we'll try to run the resume command but, it's not time yet, it shouldn't do anything.
 
-    $this->artisan('resume:haystacks');
+    $this->artisan('haystacks:resume');
 
     expect($haystack->resume_at->toIso8601String())->toEqual($releaseUntil->toIso8601String());
     expect($haystack->bales()->count())->toEqual(2);
@@ -42,7 +42,7 @@ test('you can release the current job for a long time and will be picked up with
 
     travel(5)->minutes();
 
-    $this->artisan('resume:haystacks');
+    $this->artisan('haystacks:resume');
 
     // We'll now check
 
@@ -79,7 +79,7 @@ test('you can release the current job for a long time and will be picked up with
 
     // Now we'll try to run the resume command but, it's not time yet, it shouldn't do anything.
 
-    $this->artisan('resume:haystacks');
+    $this->artisan('haystacks:resume');
 
     expect($haystack->resume_at->toIso8601String())->toEqual($releaseUntil->toIso8601String());
     expect($haystack->bales()->count())->toEqual(2);
@@ -88,7 +88,7 @@ test('you can release the current job for a long time and will be picked up with
 
     travel(5)->minutes();
 
-    $this->artisan('resume:haystacks');
+    $this->artisan('haystacks:resume');
 
     // We'll now check
 
@@ -120,7 +120,7 @@ test('you can pause the next job for a long time and it will be picked up with a
 
     // We'll try to run "dispatchNextJob" and it won't work...
 
-    $this->artisan('resume:haystacks');
+    $this->artisan('haystacks:resume');
 
     expect($haystack->resume_at)->toEqual($pauseDate);
     expect(cache()->get('name'))->toEqual('Sam');
@@ -130,7 +130,7 @@ test('you can pause the next job for a long time and it will be picked up with a
 
     travel(5)->minutes();
 
-    $this->artisan('resume:haystacks');
+    $this->artisan('haystacks:resume');
 
     expect(cache()->get('name'))->toEqual('Sam');
     expect(cache()->get('developer'))->toEqual('Taylor');
@@ -158,7 +158,7 @@ test('you can pause the next job for a long time and it will be picked up with a
 
     // We'll try to run "dispatchNextJob" and it won't work...
 
-    $this->artisan('resume:haystacks');
+    $this->artisan('haystacks:resume');
 
     expect($haystack->resume_at)->toEqual($pauseDate);
     expect(cache()->get('name'))->toEqual('Sam');
@@ -168,7 +168,7 @@ test('you can pause the next job for a long time and it will be picked up with a
 
     travel(5)->minutes();
 
-    $this->artisan('resume:haystacks');
+    $this->artisan('haystacks:resume');
 
     expect(cache()->get('name'))->toEqual('Sam');
     expect(cache()->get('developer'))->toEqual('Taylor');
