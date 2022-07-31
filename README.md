@@ -5,7 +5,7 @@
 # Laravel Haystack
 Beautifully simple but powerful database-driven job chains.
 
-![Build Status](https://github.com/sammyjo20/laravel-haystack/actions/workflows/run-tests.yml/badge.svg)
+![Build Status](https://github.com/sammyjo20/laravel-haystack/actions/workflows/tests.yml/badge.svg)
 
 </div>
 
