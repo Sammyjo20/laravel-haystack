@@ -139,6 +139,50 @@ test('you can specify a custom delay, connection or queue on a per job basis whi
     expect($jobs[0]->connection)->toEqual('database');
 });
 
+test('it will respect the delay, connection and queue added to jobs if not set', function () {
+    $builder = new HaystackBuilder;
+
+    $builder->withDelay(120);
+    $builder->onQueue('cowboy');
+    $builder->onConnection('redis');
+
+    $job = new NameJob('Sam');
+
+    $job->delay(60);
+    $job->onConnection('database');
+    $job->onQueue('testing');
+
+    $builder->addJob($job);
+
+    $jobs = $builder->getJobs();
+
+    expect($jobs[0]->delayInSeconds)->toEqual(60);
+    expect($jobs[0]->queue)->toEqual('testing');
+    expect($jobs[0]->connection)->toEqual('database');
+});
+
+test('job specified delay, connection or queue on a per job basis which takes priority over globals', function () {
+    $builder = new HaystackBuilder;
+
+    $builder->withDelay(120);
+    $builder->onQueue('cowboy');
+    $builder->onConnection('redis');
+
+    $job = new NameJob('Sam');
+
+    $job->delay(60);
+    $job->onConnection('database');
+    $job->onQueue('testing');
+
+    $builder->addJob($job);
+
+    $jobs = $builder->getJobs();
+
+    expect($jobs[0]->delayInSeconds)->toEqual(60);
+    expect($jobs[0]->queue)->toEqual('testing');
+    expect($jobs[0]->connection)->toEqual('database');
+});
+
 test('you can dispatch a haystack right away', function () {
     $builder = new HaystackBuilder;
 
