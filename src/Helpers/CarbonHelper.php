@@ -10,7 +10,7 @@ class CarbonHelper
     /**
      * Create a date from seconds or from Carbon.
      *
-     * @param int|CarbonInterface $value
+     * @param  int|CarbonInterface  $value
      * @return CarbonImmutable
      */
     public static function createFromSecondsOrCarbon(int|CarbonInterface $value): CarbonImmutable

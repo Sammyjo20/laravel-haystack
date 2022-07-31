@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
-use Sammyjo20\LaravelHaystack\LaravelHaystackServiceProvider;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ReleaseJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;

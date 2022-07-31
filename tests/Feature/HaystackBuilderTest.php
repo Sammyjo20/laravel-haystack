@@ -125,6 +125,7 @@ test('a haystack can be dispatched straight away', function () {
 
     Queue::assertPushed(NameJob::class, function (NameJob $job) use (&$nextJob) {
         $nextJob = $job;
+
         return $job->name === 'Sam';
     });
 
@@ -132,6 +133,7 @@ test('a haystack can be dispatched straight away', function () {
 
     Queue::assertPushed(NameJob::class, function (NameJob $job) use (&$nextJob) {
         $nextJob = $job;
+
         return $job->name === 'Steve';
     });
 
@@ -139,6 +141,7 @@ test('a haystack can be dispatched straight away', function () {
 
     Queue::assertPushed(NameJob::class, function (NameJob $job) use (&$nextJob) {
         $nextJob = $job;
+
         return $job->name === 'Taylor';
     });
 });

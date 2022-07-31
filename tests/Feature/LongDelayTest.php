@@ -1,15 +1,14 @@
 <?php
 
 use Illuminate\Support\Carbon;
-use Sammyjo20\LaravelHaystack\LaravelHaystackServiceProvider;
-use Sammyjo20\LaravelHaystack\Models\Haystack;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoCacheJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoLongReleaseJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoPauseNextJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\LongReleaseJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PauseNextJob;
 use function Pest\Laravel\travel;
+use Sammyjo20\LaravelHaystack\Models\Haystack;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoCacheJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PauseNextJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\LongReleaseJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoPauseNextJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoLongReleaseJob;
 
 test('you can release the current job for a long time and will be picked up with an artisan command', function () {
     $releaseUntil = now()->addMinutes(5)->toImmutable();

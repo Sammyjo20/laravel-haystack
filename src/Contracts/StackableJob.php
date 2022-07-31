@@ -28,6 +28,7 @@ interface StackableJob
      * Dispatch the next job in the Haystack.
      *
      * @return $this
+     *
      * @throws StackableException
      */
     public function nextJob(int|CarbonInterface $delayInSecondsOrCarbon = null): static;
@@ -35,7 +36,7 @@ interface StackableJob
     /**
      * Dispatch the next bale in the haystack. Yee-haw!
      *
-     * @param int|CarbonInterface|null $delayInSecondsOrCarbon
+     * @param  int|CarbonInterface|null  $delayInSecondsOrCarbon
      * @return $this
      */
     public function nextBale(int|CarbonInterface $delayInSecondsOrCarbon = null): static;
@@ -43,7 +44,7 @@ interface StackableJob
     /**
      * Release the job for haystack to process later.
      *
-     * @param int|CarbonInterface $delayInSecondsOrCarbon
+     * @param  int|CarbonInterface  $delayInSecondsOrCarbon
      * @return $this
      */
     public function longRelease(int|CarbonInterface $delayInSecondsOrCarbon): static;
@@ -83,7 +84,7 @@ interface StackableJob
     /**
      * Set the Haystack bale ID.
      *
-     * @param int $haystackBaleId
+     * @param  int  $haystackBaleId
      * @return $this
      */
     public function setHaystackBaleId(int $haystackBaleId): static;
@@ -91,7 +92,7 @@ interface StackableJob
     /**
      * Pause the haystack.
      *
-     * @param int|CarbonInterface $delayInSecondsOrCarbon
+     * @param  int|CarbonInterface  $delayInSecondsOrCarbon
      * @return $this
      */
     public function pauseHaystack(int|CarbonInterface $delayInSecondsOrCarbon): static;

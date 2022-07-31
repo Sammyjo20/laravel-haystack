@@ -2,12 +2,11 @@
 
 namespace Sammyjo20\LaravelHaystack\Concerns;
 
-use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
+use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
 use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
 
 trait Stackable
@@ -53,6 +52,7 @@ trait Stackable
      * Dispatch the next job in the Haystack.
      *
      * @return $this
+     *
      * @throws StackableException
      */
     public function nextJob(int|CarbonInterface $delayInSecondsOrCarbon = null): static
@@ -69,8 +69,9 @@ trait Stackable
     /**
      * Dispatch the next bale in the haystack. Yee-haw!
      *
-     * @param int|CarbonInterface|null $delayInSecondsOrCarbon
+     * @param  int|CarbonInterface|null  $delayInSecondsOrCarbon
      * @return $this
+     *
      * @throws StackableException
      */
     public function nextBale(int|CarbonInterface $delayInSecondsOrCarbon = null): static
@@ -81,7 +82,7 @@ trait Stackable
     /**
      * Release the job for haystack to process later.
      *
-     * @param int|CarbonInterface $delayInSecondsOrCarbon
+     * @param  int|CarbonInterface  $delayInSecondsOrCarbon
      * @return $this
      */
     public function longRelease(int|CarbonInterface $delayInSecondsOrCarbon): static
@@ -146,7 +147,7 @@ trait Stackable
     /**
      * Set the Haystack bale ID.
      *
-     * @param int $haystackBaleId
+     * @param  int  $haystackBaleId
      * @return $this
      */
     public function setHaystackBaleId(int $haystackBaleId): static
@@ -159,8 +160,9 @@ trait Stackable
     /**
      * Pause the haystack. We also need to delete the current row.
      *
-     * @param int|CarbonInterface $delayInSecondsOrCarbon
+     * @param  int|CarbonInterface  $delayInSecondsOrCarbon
      * @return $this
+     *
      * @throws StackableException
      */
     public function pauseHaystack(int|CarbonInterface $delayInSecondsOrCarbon): static

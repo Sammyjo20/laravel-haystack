@@ -3,7 +3,6 @@
 namespace Sammyjo20\LaravelHaystack\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 
 class ResumeHaystacks extends Command

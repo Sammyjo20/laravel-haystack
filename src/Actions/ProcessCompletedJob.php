@@ -4,8 +4,8 @@ namespace Sammyjo20\LaravelHaystack\Actions;
 
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Queue\Events\JobProcessed;
-use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 
 class ProcessCompletedJob
 {

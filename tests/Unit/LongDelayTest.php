@@ -2,10 +2,10 @@
 
 use Illuminate\Support\Carbon;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PauseNextJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\LongReleaseJob;
 use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoPauseNextJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\LongReleaseJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PauseNextJob;
 
 test('you can provide a carbon instance into the longRelease method', function () {
     Carbon::setTestNow('2022-01-01 09:00');

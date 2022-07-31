@@ -29,6 +29,7 @@ class AutoPauseNextJob implements ShouldQueue, StackableJob
      * Execute the job.
      *
      * @return void
+     *
      * @throws \Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException
      */
     public function handle()

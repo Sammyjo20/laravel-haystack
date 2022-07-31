@@ -2,15 +2,15 @@
 
 namespace Sammyjo20\LaravelHaystack\Concerns;
 
+use Closure;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
-use Closure;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\Jobs\Job;
-use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
-use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
+use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 use Sammyjo20\LaravelHaystack\Actions\CreatePendingHaystackBale;
 
@@ -66,8 +66,8 @@ trait ManagesBales
     /**
      * Dispatch the next job.
      *
-     * @param StackableJob|null $job
-     * @param int|CarbonInterface|null $delayInSecondsOrCarbon
+     * @param  StackableJob|null  $job
+     * @param  int|CarbonInterface|null  $delayInSecondsOrCarbon
      * @return void
      */
     public function dispatchNextJob(StackableJob $job = null, int|CarbonInterface $delayInSecondsOrCarbon = null): void
@@ -81,6 +81,7 @@ trait ManagesBales
 
         if (is_null($job) && $this->started === false) {
             $this->start();
+
             return;
         }
 
@@ -96,6 +97,7 @@ trait ManagesBales
 
         if (isset($delayInSecondsOrCarbon)) {
             $this->pause(CarbonHelper::createFromSecondsOrCarbon($delayInSecondsOrCarbon));
+
             return;
         }
 
@@ -107,6 +109,7 @@ trait ManagesBales
 
         if (! $nextJob instanceof NextJob) {
             $this->finish();
+
             return;
         }
 
@@ -220,7 +223,7 @@ trait ManagesBales
     /**
      * Pause the haystack.
      *
-     * @param CarbonImmutable $resumeAt
+     * @param  CarbonImmutable  $resumeAt
      * @return void
      */
     public function pause(CarbonImmutable $resumeAt): void
