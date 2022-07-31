@@ -58,3 +58,13 @@ test('if a job is released it will not be processed', function () {
     expect($bales[0]->job)->toEqual(new ReleaseJob);
     expect($bales[1]->job)->toEqual(new AutoCacheJob('boss', 'Gareth'));
 });
+
+test('if a job is using the sync connection - we will not stop if it was released', function () {
+    Haystack::build()
+        ->addBale(new ReleaseJob)
+        ->addJob(new AutoCacheJob('boss', 'Gareth'))
+        ->onConnection('sync')
+        ->dispatch();
+
+    expect(cache()->get('boss'))->toEqual('Gareth');
+});
