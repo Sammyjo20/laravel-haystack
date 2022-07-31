@@ -70,24 +70,3 @@ test('if a job is using the sync connection - we will not stop if it was release
 
     expect(cache()->get('boss'))->toEqual('Gareth');
 });
-
-test('if a job is using the database connection - we will not process the next job if it is released', function () {
-    Carbon::setTestNow('2022-01-01 09:00:00');
-
-    Haystack::build()
-        ->addJob(new ReleaseJob)
-        ->addJob(new AutoCacheJob('boss', 'Gareth'))
-        ->dispatch();
-
-    expect(cache()->get('boss'))->toBeNull();
-
-    $jobs = DB::table('jobs')->get();
-
-    expect($jobs)->toHaveCount(1);
-
-    $job = $jobs[0];
-
-    dd($job);
-
-    expect($job->available_at)->toEqual(now()->addSeconds(10)->timestamp);
-});
