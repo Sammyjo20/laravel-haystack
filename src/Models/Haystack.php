@@ -3,8 +3,8 @@
 namespace Sammyjo20\LaravelHaystack\Models;
 
 use Carbon\CarbonImmutable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Sammyjo20\LaravelHaystack\Concerns\ManagesBales;

@@ -1,10 +1,9 @@
 <?php
 
 use Illuminate\Support\Carbon;
-use Sammyjo20\LaravelHaystack\Models\Haystack;
-use function Pest\Laravel\assertDeleted;
 use function Pest\Laravel\assertModelExists;
 use function Pest\Laravel\assertModelMissing;
+use Sammyjo20\LaravelHaystack\Models\Haystack;
 
 test('can correctly prune stale haystacks', function () {
     Carbon::setTestNow('2022-01-01 09:00');
