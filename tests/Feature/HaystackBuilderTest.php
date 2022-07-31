@@ -119,22 +119,26 @@ test('a haystack can be dispatched straight away', function () {
         ->addJob(new NameJob('Taylor'))
         ->dispatch();
 
-    // Manually dispatch...
-
-    $haystack->dispatchNextJob();
-    $haystack->dispatchNextJob();
-
     expect($haystack->started)->toBeTrue();
 
-    Queue::assertPushed(NameJob::class, function (NameJob $job) {
+    $nextJob = null;
+
+    Queue::assertPushed(NameJob::class, function (NameJob $job) use (&$nextJob) {
+        $nextJob = $job;
         return $job->name === 'Sam';
     });
 
-    Queue::assertPushed(NameJob::class, function (NameJob $job) {
+    $haystack->dispatchNextJob($nextJob);
+
+    Queue::assertPushed(NameJob::class, function (NameJob $job) use (&$nextJob) {
+        $nextJob = $job;
         return $job->name === 'Steve';
     });
 
-    Queue::assertPushed(NameJob::class, function (NameJob $job) {
+    $haystack->dispatchNextJob($nextJob);
+
+    Queue::assertPushed(NameJob::class, function (NameJob $job) use (&$nextJob) {
+        $nextJob = $job;
         return $job->name === 'Taylor';
     });
 });

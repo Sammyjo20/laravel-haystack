@@ -201,6 +201,6 @@ test('you can get the next bale in the haystack', function () {
 
     $nextJob = $haystack->getNextJob();
 
-    expect($nextJob->job)->toEqual($samJob->setHaystack($haystack));
+    expect($nextJob->job)->toEqual($samJob->setHaystack($haystack)->setHaystackBaleId($bales[0]->getKey()));
     expect($nextJob->haystackRow->getKey())->toEqual($bales[0]->getKey());
 });

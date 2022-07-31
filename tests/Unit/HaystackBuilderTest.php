@@ -147,12 +147,3 @@ test('you can dispatch a haystack right away', function () {
 
     expect($haystack->started)->toBeTrue();
 });
-
-test('it throws an exception if you try to add a job without the stackable class', function () {
-    $builder = new HaystackBuilder;
-
-    $this->expectException(InvalidArgumentException::class);
-    $this->expectExceptionMessage('The provided job does not contain the "Stackable" trait.');
-
-    $builder->addJob(new NotStackableJob);
-});
