@@ -398,12 +398,10 @@ class ProcessPodcast implements ShouldQueue, StackableJob
         // Your application code...
 
         $this->longRelease(300); // Release for 5 minutes
-		return;
 
         // Or use Carbon
 
-	    $this->longRelease(now()->addDays(2)); // Release for 2 days.
-		return;
+        $this->longRelease(now()->addDays(2)); // Release for 2 days.
     }
 ```
 
