@@ -20,7 +20,7 @@ class LongReleaseJob implements ShouldQueue, StackableJob
      *
      * @return void
      */
-    public function __construct(public CarbonInterface $releaseUntil)
+    public function __construct(public int|CarbonInterface $releaseUntil)
     {
         //
     }

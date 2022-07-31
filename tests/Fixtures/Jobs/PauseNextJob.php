@@ -2,6 +2,7 @@
 
 namespace Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs;
 
+use Carbon\CarbonInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -19,7 +20,7 @@ class PauseNextJob implements ShouldQueue, StackableJob
      *
      * @return void
      */
-    public function __construct(public string $key, public string $value, public int $pause)
+    public function __construct(public string $key, public string $value, public int|CarbonInterface $pause)
     {
         //
     }

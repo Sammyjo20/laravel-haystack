@@ -9,7 +9,7 @@ use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
 
 beforeEach(function () {
-    automaticProcessing();
+    withAutomaticProcessing();
 });
 
 test('it throws an exception if you try to queue the next job with automatic queuing turned on', function () {

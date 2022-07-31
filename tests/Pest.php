@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(TestCase::class)->in(__DIR__);
 uses(RefreshDatabase::class)->in(__DIR__);
 
-function automaticProcessing(): void
+function withAutomaticProcessing(): void
 {
     config()->set('haystack.process_automatically', true);
 

@@ -56,7 +56,7 @@ test('you can release the current job for a long time and will be picked up with
 });
 
 test('you can release the current job for a long time and will be picked up with an artisan command with automatic mode on', function () {
-    automaticProcessing();
+    withAutomaticProcessing();
 
     $releaseUntil = now()->addMinutes(5)->toImmutable();
 
@@ -138,7 +138,7 @@ test('you can pause the next job for a long time and it will be picked up with a
 });
 
 test('you can pause the next job for a long time and it will be picked up with an artisan command with automatic mode on', function () {
-    automaticProcessing();
+    withAutomaticProcessing();
 
     Carbon::setTestNow('2022-01-01 09:00');
 
