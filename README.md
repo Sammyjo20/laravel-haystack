@@ -266,7 +266,7 @@ $haystack = Haystack::build()
    ->dispatch();
 ```
 
-- If you have already configured the job with delay, connection or queue, it will use that configuration.
+> If you have already configured the job with delay, connection or queue, it will use that configuration.
 
 ## Global Middleware
 
