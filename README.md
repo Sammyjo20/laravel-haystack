@@ -493,6 +493,10 @@ class RetrieveDataFromApi implements ShouldQueue, StackableJob
         
         $this->setHaystackData('data', ['username' => 'Sammyjo20'], 'array');
         
+        // Carbon dates...
+        
+        $this->setHaystackData('currentDate', now(), 'immutable_datetime');
+        
         // Supports custom casts
         
         $this->setHaystackData('customData', $object, CustomCast::class);
@@ -559,10 +563,10 @@ $haystack = Haystack::build()
    ->addJob(new RetrieveDataFromApi)
    ->addJob(new ProcessDataFromApi)
    ->addJob(new StoreDataFromApi)
+   ->dontReturnData()
    ->then(function ($data) {
         // $data: null
    })
-   ->dontReturnData()
    ->dispatch();
 ```
 
