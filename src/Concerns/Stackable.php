@@ -3,6 +3,7 @@
 namespace Sammyjo20\LaravelHaystack\Concerns;
 
 use Carbon\CarbonInterface;
+use Illuminate\Support\Collection;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
@@ -181,5 +182,42 @@ trait Stackable
         HaystackBale::query()->whereKey($this->getHaystackBaleId())->delete();
 
         return $this;
+    }
+
+    /**
+     * Set data on the haystack.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @param  string|null  $cast
+     * @return $this
+     */
+    public function setHaystackData(string $key, mixed $value, string $cast = null): static
+    {
+        $this->haystack->setData($key, $value, $cast);
+
+        return $this;
+    }
+
+    /**
+     * Get data on the haystack.
+     *
+     * @param  string  $key
+     * @param  mixed|null  $default
+     * @return mixed
+     */
+    public function getHaystackData(string $key, mixed $default = null): mixed
+    {
+        return $this->haystack->getData($key, $default);
+    }
+
+    /**
+     * Get all data on the haystack.
+     *
+     * @return mixed
+     */
+    public function allHaystackData(): Collection
+    {
+        return $this->haystack->allData();
     }
 }

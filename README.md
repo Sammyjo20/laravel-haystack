@@ -40,6 +40,7 @@ That's right! Let's just be clear that we're not talking about **Batched Jobs**.
 - They are volatile, meaning if you lose one job in the chain - you lose the whole chain.
 - They do not provide the `then`, `catch`, `finally` callable methods that batched jobs do.
 - Long delays with memory based or SQS queue is not possible as you could lose the jobs due to expiry or if the server shuts down.
+- You can't share data between jobs as there is no "state" across the chain
 
 Laravel Haystack aims to solve this by storing the job chain in the database and queuing one job at a time. When the job is completed, Laravel Haystack listens out for the "job completed" event and queues the next job in the chain from the database.
 
@@ -49,6 +50,7 @@ Laravel Haystack aims to solve this by storing the job chain in the database and
 - It provides callback methods like `then`, `catch` and `finally`.
 - Global middleware that can be applied to every single job in the chain
 - Delay that can be added to every job in the chain
+- You can store and retrieve data/state that is accessible to every job in the chain.
 - You can store the model for later processing.
 
 ### Use Cases
@@ -426,6 +428,102 @@ class ProcessPodcast implements ShouldQueue, StackableJo
         // Your application code...
 
         $this->pauseHaystack(now()->addHours(4)); // Pause the haystack for 4 hours.
+    }
+```
+
+## Shared Job Data
+
+Laravel Haystack has the ability for your jobs to store and retrieve state/data between jobs. This is really useful if you need to store data in the first job and then in the second job, process the data and in the final job, email the processed data. You are able to create a process pipeline since each job is processed in sequential order. This is really exciting because with traditional chained jobs, you cannot share data between jobs.
+
+```php
+<?php
+
+$haystack = Haystack::build()
+   ->addJob(new RetrieveDataFromApi)
+   ->addJob(new ProcessDataFromApi)
+   ->addJob(new StoreDataFromApi)
+   ->dispatch();
+```
+
+### Storing data inside of jobs
+
+Inside your job, you can use the `setHaystackData()` method to store some data. This method accepts a key, value and optional Eloquent cast.
+
+```php
+<?php
+ 
+namespace App\Jobs;
+ 
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
+use Sammyjo20\LaravelHaystack\Concerns\Stackable;
+ 
+class RetrieveDataFromApi implements ShouldQueue, StackableJob
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable
+
+    public function handle()
+    {
+        // Your application code...
+        
+        $this->setHaystackData('username', 'Sammyjo20');
+    }
+```
+
+### Casting data 
+
+The `setHaystackData` method supports any data type. It supports fully casting your data into any of Eloquent's existing casts, or even your custom casts. Just provide a third argument to specify the cast.
+
+```php
+<?php
+ 
+namespace App\Jobs;
+ 
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
+use Sammyjo20\LaravelHaystack\Concerns\Stackable;
+ 
+class RetrieveDataFromApi implements ShouldQueue, StackableJob
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable
+
+    public function handle()
+    {
+        // Your application code...
+        
+        // Array Data, provide third argument to specify cast.
+        
+        $this->setHaystackData('data', ['username' => 'Sammyjo20'], 'array');
+        
+        // Supports custom casts
+        
+        $this->setHaystackData('customData', $object, CustomCast::class);
+    }
+```
+
+### Retrieving data inside of jobs
+
+From one job you can set the data, but that data will be available to every job in the haystack there after. Just use the `getHaystackData` method to get data by key or use the `allHaystackData` to get a collection containing the haystack data.
+
+```php
+<?php
+ 
+namespace App\Jobs;
+ 
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
+use Sammyjo20\LaravelHaystack\Concerns\Stackable;
+ 
+class RetrieveDataFromApi implements ShouldQueue, StackableJob
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable
+
+    public function handle()
+    {
+        // Get data by key
+        
+        $username = $this->getHaystackData('username'); // Sammyjo20
+        
+        // Get all data
+        
+        $allData = $this->allHaystackData(); // Collection: ['username' => 'Sammyjo20']
     }
 ```
 

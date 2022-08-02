@@ -1,9 +1,11 @@
 <?php
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\FailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\SetDataJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingOrderCheckCacheJob;
 
@@ -123,4 +125,60 @@ test('when a haystack is failed the then and finally methods are executed', func
     expect(cache()->get('then'))->toBeNull();
     expect(cache()->get('catch'))->toBeTrue();
     expect(cache()->get('finally'))->toBeTrue();
+});
+
+test('the closures can receive the data if the option is enabled', function () {
+    Haystack::build()
+        ->addJob(new SetDataJob('name', 'Sam'))
+        ->addJob(new SetDataJob('friend', 'Steve'))
+        ->then(function ($data) {
+            cache()->set('then', $data);
+        })
+        ->finally(function ($data) {
+            cache()->set('finally', $data);
+        })
+        ->dispatch();
+
+    $data = new Collection([
+        'name' => 'Sam',
+        'friend' => 'Steve',
+    ]);
+
+    expect(cache()->get('then'))->toEqual($data);
+    expect(cache()->get('finally'))->toEqual($data);
+});
+
+test('the closures can receive the data if the option is enabled on a per builder instance', function () {
+    Haystack::build()
+        ->addJob(new SetDataJob('name', 'Sam'))
+        ->addJob(new SetDataJob('friend', 'Steve'))
+        ->then(function ($data) {
+            cache()->set('then', $data);
+        })
+        ->finally(function ($data) {
+            cache()->set('finally', $data);
+        })
+        ->dontReturnData()
+        ->dispatch();
+
+    expect(cache()->get('then'))->toBeNull();
+    expect(cache()->get('finally'))->toBeNull();
+});
+
+test('the closures will not receive the data if the option is enabled', function () {
+    config()->set('haystack.return_all_haystack_data_when_finished', false);
+
+    Haystack::build()
+        ->addJob(new SetDataJob('name', 'Sam'))
+        ->addJob(new SetDataJob('friend', 'Steve'))
+        ->then(function ($data) {
+            cache()->set('then', $data);
+        })
+        ->finally(function ($data) {
+            cache()->set('finally', $data);
+        })
+        ->dispatch();
+
+    expect(cache()->get('then'))->toBeNull();
+    expect(cache()->get('finally'))->toBeNull();
 });

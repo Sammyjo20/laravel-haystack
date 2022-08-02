@@ -37,6 +37,7 @@ class Haystack extends Model
         'started_at' => 'immutable_datetime',
         'resume_at' => 'immutable_datetime',
         'finished_at' => 'immutable_datetime',
+        'return_data' => 'boolean',
     ];
 
     /**
@@ -76,6 +77,16 @@ class Haystack extends Model
     public function bales(): HasMany
     {
         return $this->hasMany(HaystackBale::class, 'haystack_id', 'id')->orderBy('id', 'asc');
+    }
+
+    /**
+     * The Haystack's data.
+     *
+     * @return HasMany
+     */
+    public function data(): HasMany
+    {
+        return $this->hasMany(HaystackData::class);
     }
 
     /**

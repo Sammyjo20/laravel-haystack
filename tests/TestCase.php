@@ -41,7 +41,7 @@ class TestCase extends Orchestra
         $migration = include __DIR__.'/../database/migrations/create_haystack_bales_table.php.stub';
         $migration->up();
 
-        $migration = include __DIR__.'/Database/Migrations/create_jobs_table.php';
+        $migration = include __DIR__.'/../database/migrations/create_haystack_data_table.php.stub';
         $migration->up();
     }
 }
