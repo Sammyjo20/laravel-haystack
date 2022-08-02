@@ -25,6 +25,7 @@ class LaravelHaystackServiceProvider extends PackageServiceProvider
             ->hasMigrations([
                 'create_haystacks_table',
                 'create_haystack_bales_table',
+                'create_haystack_data_table',
             ])
             ->hasCommand(ResumeHaystacks::class);
     }
