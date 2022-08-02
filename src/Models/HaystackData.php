@@ -20,13 +20,6 @@ class HaystackData extends Model
     protected $guarded = [];
 
     /**
-     * @var array
-     */
-    protected $casts = [
-        //
-    ];
-
-    /**
      * Create a new factory instance for the model.
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
@@ -59,5 +52,25 @@ class HaystackData extends Model
         }
 
         $this->attributes['cast'] = $cast;
+        $this->attributes['value'] = null;
+    }
+
+    /**
+     * Get the cast value.
+     *
+     * @param $value
+     * @return mixed
+     */
+    public function getValueAttribute($value): mixed
+    {
+        if (blank($this->cast)) {
+            return $value;
+        }
+
+        // We'll now manually add the cast and attempt to cast the attribute.
+
+        $this->casts = ['value' => $this->cast];
+
+        return $this->castAttribute('value', $value);
     }
 }

@@ -37,6 +37,7 @@ class Haystack extends Model
         'started_at' => 'immutable_datetime',
         'resume_at' => 'immutable_datetime',
         'finished_at' => 'immutable_datetime',
+        'return_data' => 'boolean',
     ];
 
     /**

@@ -70,6 +70,13 @@ class HaystackBuilder
     protected ?Closure $globalMiddleware = null;
 
     /**
+     * Should we return the data when the haystack finishes?
+     *
+     * @var bool
+     */
+    protected bool $returnDataOnFinish = true;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -263,11 +270,24 @@ class HaystackBuilder
         $haystack->on_catch = $this->onCatch;
         $haystack->on_finally = $this->onFinally;
         $haystack->middleware = $this->globalMiddleware;
+        $haystack->return_data = $this->returnDataOnFinish;
         $haystack->save();
 
         $haystack->bales()->insert($this->prepareJobsForInsert($haystack));
 
         return $haystack;
+    }
+
+    /**
+     * Specify if you do not want haystack to return the data.
+     *
+     * @return $this
+     */
+    public function dontReturnData(): static
+    {
+        $this->returnDataOnFinish = false;
+
+        return $this;
     }
 
     /**

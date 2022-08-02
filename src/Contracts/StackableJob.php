@@ -4,6 +4,7 @@ namespace Sammyjo20\LaravelHaystack\Contracts;
 
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Collection;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
 
@@ -96,4 +97,30 @@ interface StackableJob
      * @return $this
      */
     public function pauseHaystack(int|CarbonInterface $delayInSecondsOrCarbon): static;
+
+    /**
+     * Set data on the haystack.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @param string|null $cast
+     * @return $this
+     */
+    public function setHaystackData(string $key, mixed $value, string $cast = null): static;
+
+    /**
+     * Get data on the haystack.
+     *
+     * @param string $key
+     * @param mixed|null $default
+     * @return mixed
+     */
+    public function getHaystackData(string $key, mixed $default = null): mixed;
+
+    /**
+     * Get all data on the haystack.
+     *
+     * @return mixed
+     */
+    public function allHaystackData(): Collection;
 }

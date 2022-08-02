@@ -1,13 +1,19 @@
 <?php
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection as BaseCollection;
+use Illuminate\Support\LazyCollection;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Laravel\SerializableClosure\SerializableClosure;
 use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
+use Sammyjo20\LaravelHaystack\Models\HaystackData;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Casts\RepositoryCast;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\DataObjects\Repository;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableClass;
+use Illuminate\Support\Collection;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\TravelMiddleware;
 
 test('a haystack can have many haystack bales', function () {
@@ -43,10 +49,10 @@ test('a haystack can have many haystack bales', function () {
 });
 
 test('you can store a serialized closure on a haystack', function () {
-    $thenClosure = fn () => 'Then';
-    $catchClosure = fn () => 'Catch';
-    $finallyClosure = fn () => 'Finally';
-    $middlewareClosure = fn () => [];
+    $thenClosure = fn() => 'Then';
+    $catchClosure = fn() => 'Catch';
+    $finallyClosure = fn() => 'Finally';
+    $middlewareClosure = fn() => [];
 
     $haystack = new Haystack;
     $haystack->on_then = $thenClosure;
@@ -115,11 +121,11 @@ test('you cannot provide a non callable value to a haystack closure', function (
     $haystack->on_then = $value;
     $haystack->save();
 })->with([
-    fn () => 'Hello',
-    fn () => 123,
-    fn () => true,
-    fn () => (object) [1],
-    fn () => [1],
+    fn() => 'Hello',
+    fn() => 123,
+    fn() => true,
+    fn() => (object)[1],
+    fn() => [1],
 ]);
 
 test('you must provide an invokable class if you do not provide a closure', function () {
@@ -251,4 +257,104 @@ test('a haystack has a started at and finished at date', function () {
 
     expect($haystack->started_at)->toEqual($startDate);
     expect($haystack->finished_at)->toEqual($endDate);
+});
+
+test('you can add and get data from the haystack', function () {
+    $haystack = Haystack::factory()->create();
+
+    expect($haystack->data()->count())->toEqual(0);
+
+    $haystack = $haystack->setData('name', 'Sam');
+
+    expect($haystack->data()->count())->toEqual(1);
+
+    $name = $haystack->getData('name');
+
+    expect($name)->toEqual('Sam');
+
+    $otherName = $haystack->getData('otherName');
+
+    expect($otherName)->toBeNull();
+
+    $age = $haystack->getData('age', 22);
+
+    expect($age)->toEqual(22);
+
+    $allData = $haystack->allData();
+
+    expect($allData)->toBeInstanceOf(Collection::class);
+    expect($allData)->toHaveCount(1);
+    expect($allData['name'])->toEqual('Sam');
+});
+
+test('setting the data with the same key twice will overwrite it', function () {
+    $haystack = Haystack::factory()->create();
+
+    expect($haystack->data()->count())->toEqual(0);
+
+    $haystack = $haystack->setData('name', 'Sam');
+    $name = $haystack->getData('name');
+
+    expect($name)->toEqual('Sam');
+
+    $haystack = $haystack->setData('name', 'Leon');
+    $name = $haystack->getData('name');
+
+    expect($name)->toEqual('Leon');
+});
+
+test('you can add data with a cast', function () {
+    $haystack = Haystack::factory()->create();
+
+    expect($haystack->data()->count())->toEqual(0);
+
+    $repository = ['name' => 'Saloon', 'stars' => 700, 'isLaravel' => false];
+
+    $haystack->setData('repository', $repository, 'collection');
+
+    $data = $haystack->getData('repository');
+
+    expect($data)->toBeInstanceOf(BaseCollection::class);
+    expect($data['name'])->toEqual('Saloon');
+    expect($data['stars'])->toEqual(700);
+    expect($data['isLaravel'])->toEqual(false);
+});
+
+test('it throws an exception if you try to enter a non string data without adding a cast', function () {
+    $haystack = Haystack::factory()->create();
+
+    expect($haystack->data()->count())->toEqual(0);
+
+    $repository = ['name' => 'Saloon', 'stars' => 700, 'isLaravel' => false];
+
+    $haystack->setData('name', 'Sam');
+
+    $haystack->setData('age', 22);
+
+    $this->expectException(InvalidArgumentException::class);
+    $this->expectExceptionMessage('You must specify a cast if the value is not a string or integer.');
+
+    $haystack->setData('repository', $repository);
+});
+
+test('you can get all the data on a haystack at once', function () {
+    $haystack = Haystack::factory()->create();
+
+    $repository = new Repository(name: 'Saloon', stars: 700, isLaravel: false);
+
+    $haystack->setData('name', 'Sam');
+    $haystack->setData('data', ['name' => 'Sam', 'work' => 'Plannr Technologies'], 'array');
+    $haystack->setData('age', 21, 'integer');
+    $haystack->setData('repository', $repository, Repository::class);
+
+    expect($haystack->data()->count())->toEqual(4);
+
+    $all = $haystack->allData();
+
+    expect($all)->toEqual(new Collection([
+        'name' => 'Sam',
+        'data' => ['name' => 'Sam', 'work' => 'Plannr Technologies'],
+        'age' => 21,
+        'repository' => $repository,
+    ]));
 });

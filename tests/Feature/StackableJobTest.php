@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -7,6 +8,9 @@ use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\FailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ExcitedJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingDelayJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\GetAllAndCacheDataJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\GetAndCacheDataJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\SetDataJob;
 
 test('a stackable job can call the next job', function () {
     $haystack = Haystack::build()
@@ -72,4 +76,39 @@ test('you can dispatch the next job in the haystack with a custom delay', functi
     Queue::assertPushed(CacheJob::class, function (CacheJob $job) {
         return $job->delay === 120 && $job->queue === 'cowboy' && $job->connection === 'redis';
     });
+});
+
+test('a stackable job can set data and another job can retrieve it', function () {
+    expect(cache()->get('name'))->toBeNull();
+
+    Haystack::build()
+        ->addJob(new SetDataJob('name', 'Sam'))
+        ->addJob(new GetAndCacheDataJob('name'))
+        ->dispatch();
+
+    expect(cache()->get('name'))->toEqual('Sam');
+});
+
+test('a stackable job can add haystack data', function () {
+    Haystack::build()
+        ->addJob(new SetDataJob('name', 'Sam'))
+        ->then(function ($data) {
+            cache()->set('data', $data);
+        })
+        ->dispatch();
+
+    expect(cache()->get('data'))->toEqual(new Collection(['name' => 'Sam']));
+});
+
+test('a stackable job can get all haystack data', function () {
+    Haystack::build()
+        ->addJob(new SetDataJob('name', 'Sam'))
+        ->addJob(new SetDataJob('boss', 'Gareth'))
+        ->addJob(new GetAllAndCacheDataJob)
+        ->dispatch();
+
+    expect(cache()->get('all'))->toEqual(new Collection([
+        'name' => 'Sam',
+        'boss' => 'Gareth',
+    ]));
 });

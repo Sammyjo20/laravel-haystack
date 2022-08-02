@@ -25,14 +25,8 @@ test('a haystack data row can cast the data when retrieving', function () {
         'value' => ['name' => 'Sam', 'age' => 22],
     ]);
 
+    $haystackData->refresh();
+
     expect($haystackData->value)->toBeInstanceOf(Collection::class);
     expect($haystackData->value)->toEqual(new Collection(['name' => 'Sam', 'age' => 22]));
-});
-
-test('a haystack data row can cast the data to a custom cast when retrieving', function () {
-    //
-});
-
-test('a haystack data row can cast the data to a dto when retrieving', function () {
-    //
 });

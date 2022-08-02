@@ -5,14 +5,17 @@ namespace Sammyjo20\LaravelHaystack\Concerns;
 use Closure;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
-use Illuminate\Queue\Jobs\Job;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\LazyCollection;
+use InvalidArgumentException;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 use Sammyjo20\LaravelHaystack\Actions\CreatePendingHaystackBale;
+use Sammyjo20\LaravelHaystack\Models\HaystackData;
+use Illuminate\Support\Collection;
 
 trait ManagesBales
 {
@@ -66,8 +69,8 @@ trait ManagesBales
     /**
      * Dispatch the next job.
      *
-     * @param  StackableJob|null  $job
-     * @param  int|CarbonInterface|null  $delayInSecondsOrCarbon
+     * @param StackableJob|null $job
+     * @param int|CarbonInterface|null $delayInSecondsOrCarbon
      * @return void
      */
     public function dispatchNextJob(StackableJob $job = null, int|CarbonInterface $delayInSecondsOrCarbon = null): void
@@ -141,7 +144,7 @@ trait ManagesBales
     /**
      * Finish the Haystack.
      *
-     * @param  bool  $fail
+     * @param bool $fail
      * @return void
      */
     public function finish(bool $fail = false): void
@@ -152,13 +155,17 @@ trait ManagesBales
 
         $this->update(['finished_at' => now()]);
 
+        $returnAllData = config('haystack.return_all_haystack_data_when_finished', false);
+
+        $allData = $this->return_data === true && $returnAllData === true ? $this->allData() : null;
+
         $fail === true
-            ? $this->executeClosure($this->on_catch)
-            : $this->executeClosure($this->on_then);
+            ? $this->executeClosure($this->on_catch, $allData)
+            : $this->executeClosure($this->on_then, $allData);
 
         // Always execute the finally closure.
 
-        $this->executeClosure($this->on_finally);
+        $this->executeClosure($this->on_finally, $allData);
 
         // Now finally delete itself.
 
@@ -180,10 +187,10 @@ trait ManagesBales
     /**
      * Append a new job to the job stack.
      *
-     * @param  ShouldQueue  $job
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
+     * @param ShouldQueue $job
+     * @param int $delayInSeconds
+     * @param string|null $queue
+     * @param string|null $connection
      * @return void
      */
     public function appendJob(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): void
@@ -196,7 +203,7 @@ trait ManagesBales
     /**
      * Append the pending job to the Haystack.
      *
-     * @param  PendingHaystackBale  $pendingJob
+     * @param PendingHaystackBale $pendingJob
      * @return void
      */
     public function appendPendingJob(PendingHaystackBale $pendingJob): void
@@ -212,24 +219,73 @@ trait ManagesBales
     /**
      * Execute the closure.
      *
-     * @param  Closure|null  $closure
+     * @param Closure|null $closure
+     * @param Collection|null $data
      * @return void
      */
-    protected function executeClosure(?Closure $closure): void
+    protected function executeClosure(?Closure $closure, ?Collection $data = null): void
     {
         if ($closure instanceof Closure) {
-            $closure();
+            $closure($data);
         }
     }
 
     /**
      * Pause the haystack.
      *
-     * @param  CarbonImmutable  $resumeAt
+     * @param CarbonImmutable $resumeAt
      * @return void
      */
     public function pause(CarbonImmutable $resumeAt): void
     {
         $this->update(['resume_at' => $resumeAt]);
+    }
+
+    /**
+     * Store data on the Haystack.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @param string|null $cast
+     * @return ManagesBales|\Sammyjo20\LaravelHaystack\Models\Haystack
+     */
+    public function setData(string $key, mixed $value, string $cast = null): self
+    {
+        if (is_null($cast) && is_string($value) === false && is_int($value) === false) {
+            throw new InvalidArgumentException('You must specify a cast if the value is not a string or integer.');
+        }
+
+        $this->data()->updateOrCreate(['key' => $key], [
+            'cast' => $cast,
+            'value' => $value,
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * Retrieve data by a key from the Haystack.
+     *
+     * @param string $key
+     * @param mixed|null $default
+     * @return mixed
+     */
+    public function getData(string $key, mixed $default = null): mixed
+    {
+        $data = $this->data()->where('key', $key)->first();
+
+        return $data instanceof HaystackData ? $data->value : $default;
+    }
+
+    /**
+     * Retrieve all the data from the Haystack.
+     *
+     * @return Collection
+     */
+    public function allData(): Collection
+    {
+        return $this->data()->orderBy('id')->get()->mapWithKeys(function ($value, $key) {
+            return [$value->key => $value->value];
+        });
     }
 }
