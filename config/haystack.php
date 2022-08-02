@@ -3,6 +3,19 @@
 return [
 
     /*
+   |--------------------------------------------------------------------------
+   | Return All Haystack Data When Finished
+   |--------------------------------------------------------------------------
+   |
+   | This value if set to true, will instruct Haystack to query all the
+   | haystack data rows out of the database and return them to the
+   | then/finally/catch blocks as a collection.
+   |
+   */
+
+    'return_all_haystack_data_when_finished' => true,
+
+    /*
     |--------------------------------------------------------------------------
     | Queue Haystack Jobs Automatically
     |--------------------------------------------------------------------------

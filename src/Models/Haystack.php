@@ -79,6 +79,16 @@ class Haystack extends Model
     }
 
     /**
+     * The Haystack's data.
+     *
+     * @return HasMany
+     */
+    public function data(): HasMany
+    {
+        return $this->hasMany(HaystackData::class);
+    }
+
+    /**
      * Start building a Haystack.
      *
      * @return HaystackBuilder
