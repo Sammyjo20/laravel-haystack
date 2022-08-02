@@ -50,7 +50,7 @@ Laravel Haystack aims to solve this by storing the job chain in the database and
 - It provides callback methods like `then`, `catch` and `finally`.
 - Global middleware that can be applied to every single job in the chain
 - Delay that can be added to every job in the chain
-- You can store and retrieve data in the chain to be accessed by jobs
+- You can store and retrieve data/state that is accessible to every job in the chain.
 - You can store the model for later processing.
 
 ### Use Cases
@@ -523,7 +523,7 @@ class RetrieveDataFromApi implements ShouldQueue, StackableJob
         
         // Get all data
         
-        $allData = $this->allHaystackData();// Collection: ['username' => 'Sammyjo20']
+        $allData = $this->allHaystackData(); // Collection: ['username' => 'Sammyjo20']
     }
 ```
 
