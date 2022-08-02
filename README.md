@@ -527,6 +527,47 @@ class RetrieveDataFromApi implements ShouldQueue, StackableJob
     }
 ```
 
+### Getting The Data After Processing
+
+Laravel Haystack will conveniently pass a collection into your then/catch/finally closures with all the of the data that you stored inside the Haystack. You can then use this data however you wish.
+
+```php
+<?php
+
+$haystack = Haystack::build()
+   ->addJob(new RetrieveDataFromApi)
+   ->addJob(new ProcessDataFromApi)
+   ->addJob(new StoreDataFromApi)
+   ->then(function ($data) {
+        // $data: ['username' => 'Sammyjo20', 'other-key' => 'value', 'collection' => new Collection],
+   })
+   ->catch(function ($data) {
+        // $data: ['username' => 'Sammyjo20', 'other-key' => 'value', 'collection' => new Collection],
+   })
+   ->finally(function ($data) {
+        // $data: ['username' => 'Sammyjo20', 'other-key' => 'value', 'collection' => new Collection],
+   })
+   ->dispatch();
+```
+
+If you would like to disable this functionality, you can provide the `dontReturnData` method to the Haystack builder. If this method is provided, Haystack won't run the query that retrieves all the data at the end of a Haystack.
+
+```php
+<?php
+
+$haystack = Haystack::build()
+   ->addJob(new RetrieveDataFromApi)
+   ->addJob(new ProcessDataFromApi)
+   ->addJob(new StoreDataFromApi)
+   ->then(function ($data) {
+        // $data: null
+   })
+   ->dontReturnData()
+   ->dispatch();
+```
+
+If you would like to disable this feature entirely, you can set the `return_all_haystack_data_when_finished` config variable to false.
+
 ## Manual Processing
 
 By default, Laravel Haystack will use events to automatically process the next job in the haystack. If you would like to disable this functionality, you will need to make sure to disable the `automatic_processing` in your config/haystack.php file. After that, you will need to make sure your jobs tell Haystack when to process the next job.
