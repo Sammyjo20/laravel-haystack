@@ -3,7 +3,6 @@
 use Illuminate\Support\Collection;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackData;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 
 test('a haystack data row can belong to a haystack', function () {
     $haystack = Haystack::factory()->create();

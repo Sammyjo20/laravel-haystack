@@ -3,11 +3,8 @@
 namespace Sammyjo20\LaravelHaystack\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Sammyjo20\LaravelHaystack\Casts\SerializeJob;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Sammyjo20\LaravelHaystack\Database\Factories\HaystackBaleFactory;
 use Sammyjo20\LaravelHaystack\Database\Factories\HaystackDataFactory;
 
 class HaystackData extends Model
@@ -42,7 +39,7 @@ class HaystackData extends Model
     /**
      * Set the cast attribute and apply the casts.
      *
-     * @param string|null $cast
+     * @param  string|null  $cast
      * @return void
      */
     public function setCastAttribute(?string $cast): void

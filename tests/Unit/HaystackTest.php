@@ -1,19 +1,16 @@
 <?php
 
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection as BaseCollection;
-use Illuminate\Support\LazyCollection;
+use Illuminate\Support\Collection;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
+use Illuminate\Support\Collection as BaseCollection;
 use Laravel\SerializableClosure\SerializableClosure;
 use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
-use Sammyjo20\LaravelHaystack\Models\HaystackData;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Casts\RepositoryCast;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\DataObjects\Repository;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\DataObjects\Repository;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableClass;
-use Illuminate\Support\Collection;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\TravelMiddleware;
 
 test('a haystack can have many haystack bales', function () {
@@ -49,10 +46,10 @@ test('a haystack can have many haystack bales', function () {
 });
 
 test('you can store a serialized closure on a haystack', function () {
-    $thenClosure = fn() => 'Then';
-    $catchClosure = fn() => 'Catch';
-    $finallyClosure = fn() => 'Finally';
-    $middlewareClosure = fn() => [];
+    $thenClosure = fn () => 'Then';
+    $catchClosure = fn () => 'Catch';
+    $finallyClosure = fn () => 'Finally';
+    $middlewareClosure = fn () => [];
 
     $haystack = new Haystack;
     $haystack->on_then = $thenClosure;
@@ -121,11 +118,11 @@ test('you cannot provide a non callable value to a haystack closure', function (
     $haystack->on_then = $value;
     $haystack->save();
 })->with([
-    fn() => 'Hello',
-    fn() => 123,
-    fn() => true,
-    fn() => (object)[1],
-    fn() => [1],
+    fn () => 'Hello',
+    fn () => 123,
+    fn () => true,
+    fn () => (object) [1],
+    fn () => [1],
 ]);
 
 test('you must provide an invokable class if you do not provide a closure', function () {

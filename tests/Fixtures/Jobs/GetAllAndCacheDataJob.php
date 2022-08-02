@@ -2,7 +2,6 @@
 
 namespace Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs;
 
-use Dflydev\DotAccessData\Data;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -29,6 +28,7 @@ class GetAllAndCacheDataJob implements ShouldQueue, StackableJob
      * Execute the job.
      *
      * @return void
+     *
      * @throws \Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException
      */
     public function handle()

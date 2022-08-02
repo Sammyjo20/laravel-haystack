@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\FailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ExcitedJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingDelayJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\GetAllAndCacheDataJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\GetAndCacheDataJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\SetDataJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingDelayJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\GetAndCacheDataJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\GetAllAndCacheDataJob;
 
 test('a stackable job can call the next job', function () {
     $haystack = Haystack::build()

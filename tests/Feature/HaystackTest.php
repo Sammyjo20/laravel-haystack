@@ -5,9 +5,9 @@ use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\FailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\SetDataJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingOrderCheckCacheJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\SetDataJob;
 
 test('you can start a haystack', function () {
     Queue::fake();
