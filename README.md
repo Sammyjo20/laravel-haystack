@@ -26,6 +26,9 @@ $haystack = Haystack::build()
    ->finally(function () {
       // Always run either on success or fail.
    })
+   ->paused(function () {
+      // Run if the haystack is paused
+   })
    ->withMiddleware([
       // Middleware to apply on every job
    ])
@@ -189,6 +192,19 @@ The “finally “event is always triggered at the end of a haystack, if it was 
 $haystack = Haystack::build()
    ->addJob(new RecordPodcast)
    ->finally(function () {
+       // Do something... 
+   })
+   ->dispatch();
+```
+
+### Paused
+The "paused" event is triggered if the Haystack has been paused using the `pauseHaystack` method or a job has been released using the `longRelease` method. This is useful if you need to update the database
+to mark an import as paused, especially if the pause is for a long time.
+
+```php
+$haystack = Haystack::build()
+   ->addJob(new RecordPodcast)
+   ->paused(function () {
        // Do something... 
    })
    ->dispatch();

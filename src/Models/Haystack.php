@@ -31,6 +31,7 @@ class Haystack extends Model
         'on_then' => SerializeClosure::class,
         'on_catch' => SerializeClosure::class,
         'on_finally' => SerializeClosure::class,
+        'on_paused' => SerializeClosure::class,
         'middleware' => SerializeClosure::class,
         'started' => 'boolean',
         'finished' => 'boolean',

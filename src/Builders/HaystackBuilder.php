@@ -35,6 +35,13 @@ class HaystackBuilder
     protected ?Closure $onFinally = null;
 
     /**
+     * Closure to run when the Haystack has been paused.
+     *
+     * @var Closure|null
+     */
+    protected ?Closure $onPaused = null;
+
+    /**
      * The jobs to be added to the Haystack.
      *
      * @var Collection
@@ -119,6 +126,19 @@ class HaystackBuilder
     public function finally(Closure|callable $closure): static
     {
         $this->onFinally = ClosureHelper::fromCallable($closure);
+
+        return $this;
+    }
+
+    /**
+     * Provide a closure that will run when the haystack is paused.
+     *
+     * @param  Closure|callable  $closure
+     * @return $this
+     */
+    public function paused(Closure|callable $closure): static
+    {
+        $this->onPaused = ClosureHelper::fromCallable($closure);
 
         return $this;
     }
@@ -269,6 +289,7 @@ class HaystackBuilder
         $haystack->on_then = $this->onThen;
         $haystack->on_catch = $this->onCatch;
         $haystack->on_finally = $this->onFinally;
+        $haystack->on_paused = $this->onPaused;
         $haystack->middleware = $this->globalMiddleware;
         $haystack->return_data = $this->returnDataOnFinish;
         $haystack->save();

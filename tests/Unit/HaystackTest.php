@@ -49,12 +49,14 @@ test('you can store a serialized closure on a haystack', function () {
     $thenClosure = fn () => 'Then';
     $catchClosure = fn () => 'Catch';
     $finallyClosure = fn () => 'Finally';
+    $pausedClosure = fn () => 'Paused';
     $middlewareClosure = fn () => [];
 
     $haystack = new Haystack;
     $haystack->on_then = $thenClosure;
     $haystack->on_catch = $catchClosure;
     $haystack->on_finally = $finallyClosure;
+    $haystack->on_paused = $pausedClosure;
     $haystack->middleware = $middlewareClosure;
     $haystack->save();
 
@@ -63,21 +65,25 @@ test('you can store a serialized closure on a haystack', function () {
     $rawThen = $haystack->getRawOriginal('on_then');
     $rawCatch = $haystack->getRawOriginal('on_catch');
     $rawFinally = $haystack->getRawOriginal('on_finally');
+    $rawPaused = $haystack->getRawOriginal('on_paused');
     $rawMiddleware = $haystack->getRawOriginal('middleware');
 
     expect(unserialize($rawThen))->toBeInstanceOf(SerializableClosure::class);
     expect(unserialize($rawCatch))->toBeInstanceOf(SerializableClosure::class);
     expect(unserialize($rawFinally))->toBeInstanceOf(SerializableClosure::class);
+    expect(unserialize($rawPaused))->toBeInstanceOf(SerializableClosure::class);
     expect(unserialize($rawMiddleware))->toBeInstanceOf(SerializableClosure::class);
 
     expect($haystack->on_then)->toBeInstanceOf(Closure::class);
     expect($haystack->on_catch)->toBeInstanceOf(Closure::class);
     expect($haystack->on_finally)->toBeInstanceOf(Closure::class);
+    expect($haystack->on_paused)->toBeInstanceOf(Closure::class);
     expect($haystack->middleware)->toBeInstanceOf(Closure::class);
 
     expect(call_user_func($haystack->on_then))->toEqual('Then');
     expect(call_user_func($haystack->on_catch))->toEqual('Catch');
     expect(call_user_func($haystack->on_finally))->toEqual('Finally');
+    expect(call_user_func($haystack->on_paused))->toEqual('Paused');
     expect(call_user_func($haystack->middleware))->toEqual([]);
 
     // Check that you can make them nullable too.
