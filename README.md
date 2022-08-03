@@ -377,7 +377,7 @@ Haystack fully supports the existing `release` and `delay` methods in Laravel, h
 
 Laravel Haystack can provide this by storing the resume date in the database and using the Scheduler to dispatch the haystack when it is ready. When Laravel Haystack is paused, no job is left in your queue.
 
-**Warning: Since Laravel Haystack stores a copy of the job in the database before it is dispatched, it cannot keep track of job attempts or back-off. This is something that will be introduced a future version.**
+**Warning: Since Laravel Haystack stores a copy of the job in the database before it is dispatched, it cannot keep track of job attempts or back-off. This means that a job can be released using the "longRelease" as many times as you like. [This is something that is being looked into.](https://github.com/Sammyjo20/laravel-haystack/issues/9)**
 
 ### Setting Up
 
