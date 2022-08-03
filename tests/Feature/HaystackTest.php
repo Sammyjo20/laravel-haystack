@@ -5,6 +5,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\FailJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\LongReleaseJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\SetDataJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PauseNextJob;
@@ -132,6 +133,19 @@ test('when a haystack is failed the then and finally methods are executed', func
 test('when a haystack is paused the paused method is executed', function () {
     Haystack::build()
         ->addJob(new PauseNextJob('name', 'Sam', 300))
+        ->paused(function () {
+            cache()->put('paused', true);
+        })
+        ->dispatch();
+
+    expect(cache()->get('paused'))->toBeTrue();
+});
+
+test('when a haystack job is long released the paused method is executed', function () {
+    cache()->set('release', true);
+
+    Haystack::build()
+        ->addJob(new LongReleaseJob(300))
         ->paused(function () {
             cache()->put('paused', true);
         })
