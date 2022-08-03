@@ -96,18 +96,21 @@ test('a haystack can have closures', function () {
     $closureA = fn () => 'A';
     $closureB = fn () => 'B';
     $closureC = fn () => 'C';
+    $closureD = fn () => 'D';
 
     $haystack = Haystack::build()
         ->then($closureA)
         ->catch($closureB)
         ->finally($closureC)
+        ->paused($closureD)
         ->create();
 
     $haystack->refresh();
 
     expect($haystack->on_then)->toEqual($closureA);
-    expect($haystack->on_then)->toEqual($closureB);
-    expect($haystack->on_then)->toEqual($closureC);
+    expect($haystack->on_catch)->toEqual($closureB);
+    expect($haystack->on_finally)->toEqual($closureC);
+    expect($haystack->on_paused)->toEqual($closureC);
 });
 
 test('a haystack can be dispatched straight away', function () {

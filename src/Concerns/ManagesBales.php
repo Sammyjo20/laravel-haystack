@@ -154,17 +154,15 @@ trait ManagesBales
 
         $this->update(['finished_at' => now()]);
 
-        $returnAllData = config('haystack.return_all_haystack_data_when_finished', false);
-
-        $allData = $this->return_data === true && $returnAllData === true ? $this->allData() : null;
+        $data = $this->conditionallyGetAllData();
 
         $fail === true
-            ? $this->executeClosure($this->on_catch, $allData)
-            : $this->executeClosure($this->on_then, $allData);
+            ? $this->executeClosure($this->on_catch, $data)
+            : $this->executeClosure($this->on_then, $data);
 
         // Always execute the finally closure.
 
-        $this->executeClosure($this->on_finally, $allData);
+        $this->executeClosure($this->on_finally, $data);
 
         // Now finally delete itself.
 
@@ -238,6 +236,10 @@ trait ManagesBales
     public function pause(CarbonImmutable $resumeAt): void
     {
         $this->update(['resume_at' => $resumeAt]);
+
+        $data = $this->conditionallyGetAllData();
+
+        $this->executeClosure($this->on_paused, $data);
     }
 
     /**
@@ -286,5 +288,18 @@ trait ManagesBales
         return $this->data()->orderBy('id')->get()->mapWithKeys(function ($value, $key) {
             return [$value->key => $value->value];
         });
+    }
+
+    /**
+     * Conditionally retrieve all the data from the Haystack depending on
+     * if we are able to return the data.
+     *
+     * @return Collection|null
+     */
+    protected function conditionallyGetAllData(): ?Collection
+    {
+        $returnAllData = config('haystack.return_all_haystack_data_when_finished', false);
+
+        return $this->return_data === true && $returnAllData === true ? $this->allData() : null;
     }
 }
