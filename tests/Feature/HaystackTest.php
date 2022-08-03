@@ -1,16 +1,15 @@
 <?php
 
+use function Pest\Laravel\travel;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\FailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PauseNextJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ReleaseJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\SetDataJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PauseNextJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingOrderCheckCacheJob;
-use function Pest\Laravel\travel;
 
 test('you can start a haystack', function () {
     Queue::fake();
@@ -208,7 +207,7 @@ test('the closures will not receive the data if the option is enabled', function
             cache()->set('then', $data ?? 'empty');
         })
         ->finally(function ($data) {
-            cache()->set('finally', $data?? 'empty');
+            cache()->set('finally', $data ?? 'empty');
         })
         ->paused(function ($data) {
             cache()->set('paused', $data ?? 'empty');
