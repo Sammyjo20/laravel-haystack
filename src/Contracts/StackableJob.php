@@ -123,4 +123,19 @@ interface StackableJob
      * @return mixed
      */
     public function allHaystackData(): Collection;
+
+    /**
+     * Get the haystack bale attempts.
+     *
+     * @return int
+     */
+    public function getHaystackBaleAttempts(): int;
+
+    /**
+     * Set the haystack bale attempts.
+     *
+     * @param int $attempts
+     * @return $this
+     */
+    public function setHaystackBaleAttempts(int $attempts): static;
 }
