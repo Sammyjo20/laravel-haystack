@@ -173,7 +173,7 @@ $haystack = Haystack::build()
 
 ### Catch
 
-The “then” event is triggered when the haystack has failed. You will still have the failed job to see what the error was, but this is useful if you need to perform any cleanup.
+The “catch” event is triggered when the haystack has failed. You will still have the failed job to see what the error was, but this is useful if you need to perform any cleanup.
 
 ```php
 $haystack = Haystack::build()
