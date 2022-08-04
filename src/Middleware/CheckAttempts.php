@@ -8,6 +8,8 @@ use Sammyjo20\LaravelHaystack\Helpers\ExceptionHelper;
 class CheckAttempts
 {
     /**
+     * Check if we have exceeded the attempts.
+     *
      * @param StackableJob $job
      * @param $next
      * @return void
