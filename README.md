@@ -220,6 +220,7 @@ $haystack = Haystack::build()
    ->then(new Then)
    ->catch(new Catch)
    ->finally(new Finally)
+   ->paused(new Paused)
    ->dispatch();
 
 // Example Invokable class
