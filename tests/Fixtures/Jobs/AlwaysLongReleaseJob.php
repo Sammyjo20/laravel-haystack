@@ -2,6 +2,7 @@
 
 namespace Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs;
 
+use Throwable;
 use Carbon\CarbonInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -10,13 +11,12 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Sammyjo20\LaravelHaystack\Concerns\Stackable;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
-use Throwable;
 
 class AlwaysLongReleaseJob implements ShouldQueue, StackableJob
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable;
 
-    public $tries = 3;
+    public $tries = 2;
 
     /**
      * Create a new job instance.
@@ -45,7 +45,7 @@ class AlwaysLongReleaseJob implements ShouldQueue, StackableJob
     /**
      * Handle failed job
      *
-     * @param Throwable $exception
+     * @param  Throwable  $exception
      * @return void
      */
     public function failed(Throwable $exception)

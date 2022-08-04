@@ -9,13 +9,13 @@ use InvalidArgumentException;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
-use Sammyjo20\LaravelHaystack\Middleware\CheckAttempts;
-use Sammyjo20\LaravelHaystack\Middleware\IncrementAttempts;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Models\HaystackData;
 use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
+use Sammyjo20\LaravelHaystack\Middleware\CheckAttempts;
+use Sammyjo20\LaravelHaystack\Middleware\IncrementAttempts;
 use Sammyjo20\LaravelHaystack\Actions\CreatePendingHaystackBale;
 
 trait ManagesBales
@@ -83,8 +83,8 @@ trait ManagesBales
     /**
      * Dispatch the next job.
      *
-     * @param StackableJob|null $job
-     * @param int|CarbonInterface|null $delayInSecondsOrCarbon
+     * @param  StackableJob|null  $job
+     * @param  int|CarbonInterface|null  $delayInSecondsOrCarbon
      * @return void
      */
     public function dispatchNextJob(StackableJob $job = null, int|CarbonInterface $delayInSecondsOrCarbon = null): void
@@ -98,6 +98,7 @@ trait ManagesBales
 
         if (is_null($job) && $this->started === false) {
             $this->start();
+
             return;
         }
 
@@ -113,6 +114,7 @@ trait ManagesBales
 
         if (isset($delayInSecondsOrCarbon)) {
             $this->pause(CarbonHelper::createFromSecondsOrCarbon($delayInSecondsOrCarbon));
+
             return;
         }
 
@@ -124,6 +126,7 @@ trait ManagesBales
 
         if (! $nextJob instanceof NextJob) {
             $this->finish();
+
             return;
         }
 
@@ -155,7 +158,7 @@ trait ManagesBales
     /**
      * Finish the Haystack.
      *
-     * @param bool $fail
+     * @param  bool  $fail
      * @return void
      */
     public function finish(bool $fail = false): void
@@ -196,10 +199,10 @@ trait ManagesBales
     /**
      * Append a new job to the job stack.
      *
-     * @param ShouldQueue $job
-     * @param int $delayInSeconds
-     * @param string|null $queue
-     * @param string|null $connection
+     * @param  ShouldQueue  $job
+     * @param  int  $delayInSeconds
+     * @param  string|null  $queue
+     * @param  string|null  $connection
      * @return void
      */
     public function appendJob(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): void
@@ -212,7 +215,7 @@ trait ManagesBales
     /**
      * Append the pending job to the Haystack.
      *
-     * @param PendingHaystackBale $pendingJob
+     * @param  PendingHaystackBale  $pendingJob
      * @return void
      */
     public function appendPendingJob(PendingHaystackBale $pendingJob): void
@@ -228,8 +231,8 @@ trait ManagesBales
     /**
      * Execute the closure.
      *
-     * @param Closure|null $closure
-     * @param Collection|null $data
+     * @param  Closure|null  $closure
+     * @param  Collection|null  $data
      * @return void
      */
     protected function executeClosure(?Closure $closure, ?Collection $data = null): void
@@ -242,7 +245,7 @@ trait ManagesBales
     /**
      * Pause the haystack.
      *
-     * @param CarbonImmutable $resumeAt
+     * @param  CarbonImmutable  $resumeAt
      * @return void
      */
     public function pause(CarbonImmutable $resumeAt): void
@@ -257,9 +260,9 @@ trait ManagesBales
     /**
      * Store data on the Haystack.
      *
-     * @param string $key
-     * @param mixed $value
-     * @param string|null $cast
+     * @param  string  $key
+     * @param  mixed  $value
+     * @param  string|null  $cast
      * @return ManagesBales|\Sammyjo20\LaravelHaystack\Models\Haystack
      */
     public function setData(string $key, mixed $value, string $cast = null): self
@@ -279,8 +282,8 @@ trait ManagesBales
     /**
      * Retrieve data by a key from the Haystack.
      *
-     * @param string $key
-     * @param mixed|null $default
+     * @param  string  $key
+     * @param  mixed|null  $default
      * @return mixed
      */
     public function getData(string $key, mixed $default = null): mixed
@@ -318,7 +321,7 @@ trait ManagesBales
     /**
      * Increment the bale attempts.
      *
-     * @param StackableJob $job
+     * @param  StackableJob  $job
      * @return void
      */
     public function incrementBaleAttempts(StackableJob $job): void

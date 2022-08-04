@@ -9,7 +9,7 @@ class IncrementAttempts
     /**
      * Increment the processed attempts of a given job.
      *
-     * @param StackableJob $job
+     * @param  StackableJob  $job
      * @param $next
      * @return void
      */

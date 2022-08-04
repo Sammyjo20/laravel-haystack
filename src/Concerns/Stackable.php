@@ -5,7 +5,6 @@ namespace Sammyjo20\LaravelHaystack\Concerns;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
@@ -242,7 +241,7 @@ trait Stackable
     /**
      * Set the haystack bale attempts.
      *
-     * @param int $attempts
+     * @param  int  $attempts
      * @return $this
      */
     public function setHaystackBaleAttempts(int $attempts): static

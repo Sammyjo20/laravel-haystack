@@ -1,12 +1,12 @@
 <?php
 
-use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
+use function Pest\Laravel\travel;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AlwaysLongReleaseJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoAlwaysLongReleaseJob;
-use function Pest\Laravel\travel;
 
-test('it will record the attempts/times job has been run and fail when it reaches the limit', function (StackableJob $job, bool  $autoProcessing) {
+test('it will record the attempts/times job has been run and fail when it reaches the limit', function (StackableJob $job, bool $autoProcessing) {
     dontDeleteHaystack();
 
     if ($autoProcessing === true) {

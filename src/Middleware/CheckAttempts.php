@@ -10,7 +10,7 @@ class CheckAttempts
     /**
      * Check if we have exceeded the attempts.
      *
-     * @param StackableJob $job
+     * @param  StackableJob  $job
      * @param $next
      * @return void
      */
@@ -18,7 +18,7 @@ class CheckAttempts
     {
         $maxTries = $job->tries ?? 1;
 
-        if ($job->getHaystackBaleAttempts() >= $maxTries) {
+        if ($job->getHaystackBaleAttempts() > $maxTries) {
             $job->fail(ExceptionHelper::maxAttemptsExceededException($job));
         }
 

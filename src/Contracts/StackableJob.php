@@ -134,7 +134,7 @@ interface StackableJob
     /**
      * Set the haystack bale attempts.
      *
-     * @param int $attempts
+     * @param  int  $attempts
      * @return $this
      */
     public function setHaystackBaleAttempts(int $attempts): static;
