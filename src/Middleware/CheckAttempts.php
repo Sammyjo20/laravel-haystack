@@ -10,9 +10,10 @@ class CheckAttempts
     /**
      * Check if we have exceeded the attempts.
      *
-     * @param StackableJob $job
+     * @param  StackableJob  $job
      * @param $next
      * @return void
+     *
      * @throws \Throwable
      */
     public function handle(StackableJob $job, $next): void
