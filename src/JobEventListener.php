@@ -113,6 +113,8 @@ class JobEventListener
 
         // Todo: Attempt to increment the bale exception attempts
         // Todo: Throw
+
+        // Todo: Make sure to check that the job has not failed. If the job has failed, we shouldn't increment the exceptions.
     }
 
     /**
