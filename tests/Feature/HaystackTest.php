@@ -2,12 +2,16 @@
 
 use function Pest\Laravel\travel;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
+use function Pest\Laravel\assertModelMissing;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\FailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\SetDataJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ExceptionJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PauseNextJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NativeFailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\LongReleaseJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingOrderCheckCacheJob;
@@ -235,4 +239,52 @@ test('the closures will not receive the data if the option is enabled', function
     expect(cache()->get('then'))->toEqual('empty');
     expect(cache()->get('finally'))->toEqual('empty');
     expect(cache()->get('paused'))->toEqual('empty');
+});
+
+test('the haystack will fail if the job fails from an exception if automatic processing is turned on', function () {
+    withAutomaticProcessing();
+    withJobsTable();
+
+    config()->set('queue.default', 'database');
+
+    expect(cache()->has('failed'))->toBeFalse();
+
+    $haystack = Haystack::build()
+        ->addJob(new ExceptionJob)
+        ->catch(function () {
+            cache()->set('failed', true);
+        })
+        ->onConnection('database')
+        ->create();
+
+    $haystack->start();
+
+    expect(DB::table('jobs')->count())->toEqual(1);
+
+    $this->artisan('queue:work', ['--once' => true]);
+
+    expect(DB::table('jobs')->count())->toEqual(0);
+
+    expect(cache()->get('failed'))->toBeTrue();
+
+    assertModelMissing($haystack);
+});
+
+test('the haystack will fail if the job is manually failed', function () {
+    withAutomaticProcessing();
+
+    expect(cache()->has('failed'))->toBeFalse();
+
+    $haystack = Haystack::build()
+        ->addJob(new NativeFailJob)
+        ->catch(function () {
+            cache()->set('failed', true);
+        })
+        ->create();
+
+    $haystack->start();
+
+    expect(cache()->get('failed'))->toBeTrue();
+
+    assertModelMissing($haystack);
 });

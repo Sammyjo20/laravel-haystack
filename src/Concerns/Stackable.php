@@ -4,10 +4,10 @@ namespace Sammyjo20\LaravelHaystack\Concerns;
 
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
 
 trait Stackable
@@ -25,6 +25,13 @@ trait Stackable
      * @var int
      */
     protected int $haystackBaleId;
+
+    /**
+     * The attempts on haystack "bale".
+     *
+     * @var int
+     */
+    protected int $haystackBaleAttempts;
 
     /**
      * Get the job stack.
@@ -122,13 +129,13 @@ trait Stackable
     /**
      * Append a job to the Haystack.
      *
-     * @param  ShouldQueue  $job
+     * @param  StackableJob  $job
      * @param  int  $delayInSeconds
      * @param  string|null  $queue
      * @param  string|null  $connection
      * @return $this
      */
-    public function appendToHaystack(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
+    public function appendToHaystack(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
     {
         $this->haystack->appendJob($job, $delayInSeconds, $queue, $connection);
 
@@ -219,5 +226,28 @@ trait Stackable
     public function allHaystackData(): Collection
     {
         return $this->haystack->allData();
+    }
+
+    /**
+     * Get the haystack bale attempts.
+     *
+     * @return int
+     */
+    public function getHaystackBaleAttempts(): int
+    {
+        return $this->haystackBaleAttempts;
+    }
+
+    /**
+     * Set the haystack bale attempts.
+     *
+     * @param  int  $attempts
+     * @return $this
+     */
+    public function setHaystackBaleAttempts(int $attempts): static
+    {
+        $this->haystackBaleAttempts = $attempts;
+
+        return $this;
     }
 }

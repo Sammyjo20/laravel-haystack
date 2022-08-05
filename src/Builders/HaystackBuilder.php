@@ -9,7 +9,6 @@ use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Helpers\ClosureHelper;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
-use Sammyjo20\LaravelHaystack\Actions\CreatePendingHaystackBale;
 
 class HaystackBuilder
 {
@@ -154,7 +153,7 @@ class HaystackBuilder
      */
     public function addJob(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
     {
-        $pendingHaystackRow = CreatePendingHaystackBale::execute($job, $delayInSeconds, $queue, $connection);
+        $pendingHaystackRow = new PendingHaystackBale($job, $delayInSeconds, $queue, $connection);
 
         $this->jobs->add($pendingHaystackRow);
 

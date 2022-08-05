@@ -7,14 +7,14 @@ use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use InvalidArgumentException;
 use Illuminate\Support\Collection;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Models\HaystackData;
 use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
-use Sammyjo20\LaravelHaystack\Actions\CreatePendingHaystackBale;
+use Sammyjo20\LaravelHaystack\Middleware\CheckAttempts;
+use Sammyjo20\LaravelHaystack\Middleware\IncrementAttempts;
 
 trait ManagesBales
 {
@@ -49,7 +49,8 @@ trait ManagesBales
         // We'll now set the Haystack model on the job.
 
         $job->setHaystack($this)
-            ->setHaystackBaleId($jobRow->getKey());
+            ->setHaystackBaleId($jobRow->getKey())
+            ->setHaystackBaleAttempts($jobRow->attempts);
 
         // We'll now apply any global middleware if it was provided to us
         // while building the Haystack.
@@ -61,6 +62,18 @@ trait ManagesBales
                 $job->middleware = array_merge($job->middleware, $middleware);
             }
         }
+
+        // Apply default middleware. We'll need to make sure that
+        // the job middleware is added to the top of the array.
+
+        $defaultMiddleware = [
+            new CheckAttempts,
+            new IncrementAttempts,
+        ];
+
+        $job->middleware = array_merge($defaultMiddleware, $job->middleware);
+
+        // Return the NextJob DTO which contains the job and the row!
 
         return new NextJob($job, $jobRow);
     }
@@ -184,15 +197,15 @@ trait ManagesBales
     /**
      * Append a new job to the job stack.
      *
-     * @param  ShouldQueue  $job
+     * @param  StackableJob  $job
      * @param  int  $delayInSeconds
      * @param  string|null  $queue
      * @param  string|null  $connection
      * @return void
      */
-    public function appendJob(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): void
+    public function appendJob(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): void
     {
-        $pendingJob = CreatePendingHaystackBale::execute($job, $delayInSeconds, $queue, $connection);
+        $pendingJob = new PendingHaystackBale($job, $delayInSeconds, $queue, $connection);
 
         $this->appendPendingJob($pendingJob);
     }
@@ -301,5 +314,16 @@ trait ManagesBales
         $returnAllData = config('haystack.return_all_haystack_data_when_finished', false);
 
         return $this->return_data === true && $returnAllData === true ? $this->allData() : null;
+    }
+
+    /**
+     * Increment the bale attempts.
+     *
+     * @param  StackableJob  $job
+     * @return void
+     */
+    public function incrementBaleAttempts(StackableJob $job): void
+    {
+        HaystackBale::query()->whereKey($job->getHaystackBaleId())->increment('attempts');
     }
 }

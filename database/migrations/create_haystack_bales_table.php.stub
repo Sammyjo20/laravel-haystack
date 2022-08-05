@@ -17,6 +17,7 @@ return new class extends Migration
             $table->bigInteger('delay')->default(0);
             $table->string('on_queue')->nullable();
             $table->string('on_connection')->nullable();
+            $table->integer('attempts')->default(0);
         });
     }
 

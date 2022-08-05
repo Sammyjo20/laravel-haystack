@@ -4,7 +4,6 @@ namespace Sammyjo20\LaravelHaystack\Contracts;
 
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
 
@@ -67,13 +66,13 @@ interface StackableJob
     /**
      * Append a job to the Haystack.
      *
-     * @param  ShouldQueue  $job
+     * @param  StackableJob  $job
      * @param  int  $delayInSeconds
      * @param  string|null  $queue
      * @param  string|null  $connection
      * @return $this
      */
-    public function appendToHaystack(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static;
+    public function appendToHaystack(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static;
 
     /**
      * Get the haystack bale id
@@ -123,4 +122,19 @@ interface StackableJob
      * @return mixed
      */
     public function allHaystackData(): Collection;
+
+    /**
+     * Get the haystack bale attempts.
+     *
+     * @return int
+     */
+    public function getHaystackBaleAttempts(): int;
+
+    /**
+     * Set the haystack bale attempts.
+     *
+     * @param  int  $attempts
+     * @return $this
+     */
+    public function setHaystackBaleAttempts(int $attempts): static;
 }
