@@ -22,6 +22,10 @@ test('it will record the attempts/times job has been run and fail when it reache
 
     $bale = $haystack->bales()->sole();
 
+    // We'll manually dispatch the job three times and on the third
+    // attempt, it should throw an exception because the $tries
+    // is set to 2.
+
     expect($bale->attempts)->toEqual(0);
 
     $haystack->start();
@@ -58,3 +62,12 @@ test('it will record the attempts/times job has been run and fail when it reache
     [new AlwaysLongReleaseJob(5), false],
     [new AutoAlwaysLongReleaseJob(5), true],
 ]);
+
+it('it will record the attempts/times job has been had an exception and fail when it reaches the limit', function () {
+    // This will only work with automatic processing turned on, because
+    // we have to listen for events.
+
+    withAutomaticProcessing();
+
+    //
+});

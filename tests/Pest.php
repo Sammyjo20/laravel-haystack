@@ -21,3 +21,12 @@ function dontDeleteHaystack(): void
 {
     config()->set('haystack.delete_finished_haystacks', false);
 }
+
+function withJobsTable(): void
+{
+    $migration = include __DIR__.'/../database/migrations-testing/create_jobs_table.php';
+    $migration->up();
+
+    $migration = include __DIR__.'/../database/migrations-testing/create_failed_jobs_table.php';
+    $migration->up();
+}

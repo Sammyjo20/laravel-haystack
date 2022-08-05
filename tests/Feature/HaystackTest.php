@@ -1,5 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ExceptionJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NativeFailJob;
+use Symfony\Component\Process\Process;
+use function Pest\Laravel\assertDeleted;
+use function Pest\Laravel\assertModelMissing;
 use function Pest\Laravel\travel;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
@@ -235,4 +241,52 @@ test('the closures will not receive the data if the option is enabled', function
     expect(cache()->get('then'))->toEqual('empty');
     expect(cache()->get('finally'))->toEqual('empty');
     expect(cache()->get('paused'))->toEqual('empty');
+});
+
+test('the haystack will fail if the job fails from an exception if automatic processing is turned on', function () {
+    withAutomaticProcessing();
+    withJobsTable();
+
+    config()->set('queue.default', 'database');
+
+    expect(cache()->has('failed'))->toBeFalse();
+
+    $haystack = Haystack::build()
+        ->addJob(new ExceptionJob)
+        ->catch(function () {
+            cache()->set('failed', true);
+        })
+        ->onConnection('database')
+        ->create();
+
+    $haystack->start();
+
+    expect(DB::table('jobs')->count())->toEqual(1);
+
+    $this->artisan('queue:work', ['--stop-when-empty' => true]);
+
+    expect(DB::table('jobs')->count())->toEqual(0);
+
+    expect(cache()->get('failed'))->toBeTrue();
+
+    assertModelMissing($haystack);
+});
+
+test('the haystack will fail if the job is manually failed', function () {
+    withAutomaticProcessing();
+
+    expect(cache()->has('failed'))->toBeFalse();
+
+    $haystack = Haystack::build()
+        ->addJob(new NativeFailJob)
+        ->catch(function () {
+            cache()->set('failed', true);
+        })
+        ->create();
+
+    $haystack->start();
+
+    expect(cache()->get('failed'))->toBeTrue();
+
+    assertModelMissing($haystack);
 });

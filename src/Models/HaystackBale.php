@@ -62,7 +62,7 @@ class HaystackBale extends Model
             $job->onQueue($this->on_queue);
         }
 
-        if (filled($this->connection)) {
+        if (filled($this->on_connection)) {
             $job->onConnection($this->on_connection);
         }
 
