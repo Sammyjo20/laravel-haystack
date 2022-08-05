@@ -24,9 +24,9 @@ function dontDeleteHaystack(): void
 
 function withJobsTable(): void
 {
-    $migration = include __DIR__ . '/Migrations/create_jobs_table.php';
+    $migration = include __DIR__.'/Migrations/create_jobs_table.php';
     $migration->up();
 
-    $migration = include __DIR__ . '/Migrations/create_failed_jobs_table.php';
+    $migration = include __DIR__.'/Migrations/create_failed_jobs_table.php';
     $migration->up();
 }
