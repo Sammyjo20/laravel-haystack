@@ -15,6 +15,8 @@ class LongReleaseJob implements ShouldQueue, StackableJob
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable;
 
+    public $tries = 2;
+
     /**
      * Create a new job instance.
      *
