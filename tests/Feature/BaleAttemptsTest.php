@@ -13,6 +13,8 @@ test('it will record the attempts/times job has been run and fail when it reache
         withAutomaticProcessing();
     }
 
+    // Todo: Run on database so exceptions aren't thrown 🤠
+
     $haystack = Haystack::build()
         ->addJob($job)
         ->catch(function () {
