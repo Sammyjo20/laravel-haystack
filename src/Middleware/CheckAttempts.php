@@ -10,19 +10,21 @@ class CheckAttempts
     /**
      * Check if we have exceeded the attempts.
      *
-     * @param  StackableJob  $job
+     * @param StackableJob $job
      * @param $next
      * @return void
+     * @throws \Throwable
      */
     public function handle(StackableJob $job, $next): void
     {
         $maxTries = $job->tries ?? 1;
+        $maxExceptions = $job->maxExceptions ?? 1;
 
         if ($job->getHaystackBaleAttempts() > $maxTries) {
-            $job->fail(ExceptionHelper::maxAttemptsExceededException($job));
-
-            return;
+            throw ExceptionHelper::maxAttemptsExceededException($job);
         }
+
+        // Todo: Record max exceptions.
 
         $next($job);
     }

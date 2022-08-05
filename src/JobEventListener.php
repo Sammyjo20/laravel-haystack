@@ -110,6 +110,9 @@ class JobEventListener
     public function handleExceptionOccurred(JobExceptionOccurred $event): void
     {
         ray('Exception happened');
+
+        // Todo: Attempt to increment the bale exception attempts
+        // Todo: Throw
     }
 
     /**
