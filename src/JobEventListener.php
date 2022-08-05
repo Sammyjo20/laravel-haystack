@@ -3,11 +3,9 @@
 namespace Sammyjo20\LaravelHaystack;
 
 use Illuminate\Queue\Jobs\SyncJob;
-use Illuminate\Contracts\Queue\Job;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
-use Illuminate\Queue\Events\JobExceptionOccurred;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 
 class JobEventListener
@@ -99,22 +97,6 @@ class JobEventListener
         // we will dispatch the next job.
 
         $processedJob->hasFailed() ? $haystack->fail() : $haystack->dispatchNextJob($job);
-    }
-
-    /**
-     * Handle the "JobExceptionOccurred" event.
-     *
-     * @param  JobExceptionOccurred  $event
-     * @return void
-     */
-    public function handleExceptionOccurred(JobExceptionOccurred $event): void
-    {
-        ray('Exception happened');
-
-        // Todo: Attempt to increment the bale exception attempts
-        // Todo: Throw
-
-        // Todo: Make sure to check that the job has not failed. If the job has failed, we shouldn't increment the exceptions.
     }
 
     /**

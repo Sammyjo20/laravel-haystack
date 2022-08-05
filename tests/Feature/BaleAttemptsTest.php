@@ -7,7 +7,10 @@ use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AlwaysLongReleaseJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoAlwaysLongReleaseJob;
 
 test('it will record the attempts/times job has been run and fail when it reaches the limit', function (StackableJob $job, bool $autoProcessing) {
+    withJobsTable();
     dontDeleteHaystack();
+
+    config()->set('queue.default', 'database');
 
     if ($autoProcessing === true) {
         withAutomaticProcessing();
@@ -32,6 +35,8 @@ test('it will record the attempts/times job has been run and fail when it reache
 
     $haystack->start();
 
+    $this->artisan('queue:work', ['--once' => true]);
+
     $bale->refresh();
 
     expect($bale->attempts)->toEqual(1);
@@ -40,6 +45,7 @@ test('it will record the attempts/times job has been run and fail when it reache
 
     $this->artisan('haystacks:resume');
 
+    $this->artisan('queue:work', ['--once' => true]);
     $bale->refresh();
 
     expect($bale->attempts)->toEqual(2);
@@ -48,6 +54,7 @@ test('it will record the attempts/times job has been run and fail when it reache
 
     $this->artisan('haystacks:resume');
 
+    $this->artisan('queue:work', ['--once' => true]);
     $bale->refresh();
 
     expect($bale->attempts)->toEqual(3);
@@ -56,6 +63,7 @@ test('it will record the attempts/times job has been run and fail when it reache
 
     $this->artisan('haystacks:resume');
 
+    $this->artisan('queue:work', ['--stop-when-empty' => true]);
     $haystack->refresh();
 
     expect($haystack->finished)->toBeTrue();
@@ -64,12 +72,3 @@ test('it will record the attempts/times job has been run and fail when it reache
     [new AlwaysLongReleaseJob(5), false],
     [new AutoAlwaysLongReleaseJob(5), true],
 ]);
-
-it('it will record the attempts/times job has been had an exception and fail when it reaches the limit', function () {
-    // This will only work with automatic processing turned on, because
-    // we have to listen for events.
-
-    withAutomaticProcessing();
-
-    //
-});

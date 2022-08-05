@@ -261,7 +261,7 @@ test('the haystack will fail if the job fails from an exception if automatic pro
 
     expect(DB::table('jobs')->count())->toEqual(1);
 
-    $this->artisan('queue:work', ['--stop-when-empty' => true]);
+    $this->artisan('queue:work', ['--once' => true]);
 
     expect(DB::table('jobs')->count())->toEqual(0);
 

@@ -61,8 +61,6 @@ class LaravelHaystackServiceProvider extends PackageServiceProvider
 
         Queue::after(fn (JobProcessed $event) => JobEventListener::make()->handleJobProcessed($event));
 
-        Queue::exceptionOccurred(fn (JobExceptionOccurred $event) => JobEventListener::make()->handleExceptionOccurred($event));
-
         Queue::failing(fn (JobFailed $event) => JobEventListener::make()->handleFailedJob($event));
     }
 }

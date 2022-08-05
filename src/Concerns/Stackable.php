@@ -5,6 +5,7 @@ namespace Sammyjo20\LaravelHaystack\Concerns;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
@@ -27,7 +28,7 @@ trait Stackable
     protected int $haystackBaleId;
 
     /**
-     * The attempts haystack "bale".
+     * The attempts on haystack "bale".
      *
      * @var int
      */

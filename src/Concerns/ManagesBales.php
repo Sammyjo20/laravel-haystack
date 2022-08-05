@@ -98,7 +98,6 @@ trait ManagesBales
 
         if (is_null($job) && $this->started === false) {
             $this->start();
-
             return;
         }
 
@@ -114,7 +113,6 @@ trait ManagesBales
 
         if (isset($delayInSecondsOrCarbon)) {
             $this->pause(CarbonHelper::createFromSecondsOrCarbon($delayInSecondsOrCarbon));
-
             return;
         }
 
