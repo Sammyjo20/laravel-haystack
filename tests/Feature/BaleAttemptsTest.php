@@ -57,13 +57,8 @@ test('it will record the attempts/times job has been run and fail when it reache
     $this->artisan('queue:work', ['--once' => true]);
     $bale->refresh();
 
-    expect($bale->attempts)->toEqual(3);
+    expect($bale->attempts)->toEqual(2);
 
-    travel(10)->seconds();
-
-    $this->artisan('haystacks:resume');
-
-    $this->artisan('queue:work', ['--stop-when-empty' => true]);
     $haystack->refresh();
 
     expect($haystack->finished)->toBeTrue();
