@@ -2,15 +2,13 @@
 
 namespace Sammyjo20\LaravelHaystack;
 
+use Illuminate\Queue\Jobs\SyncJob;
 use Illuminate\Contracts\Queue\Job;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Queue\Events\JobExceptionOccurred;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;
-use Illuminate\Queue\Jobs\SyncJob;
-use Illuminate\Support\Str;
-use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
+use Illuminate\Queue\Events\JobExceptionOccurred;
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 
 class JobEventListener
 {
@@ -58,7 +56,7 @@ class JobEventListener
     /**
      * Handle the "JobProcessed" event.
      *
-     * @param JobProcessed $event
+     * @param  JobProcessed  $event
      * @return void
      */
     public function handleJobProcessed(JobProcessed $event): void
@@ -106,7 +104,7 @@ class JobEventListener
     /**
      * Handle the "JobExceptionOccurred" event.
      *
-     * @param JobExceptionOccurred $event
+     * @param  JobExceptionOccurred  $event
      * @return void
      */
     public function handleExceptionOccurred(JobExceptionOccurred $event): void
@@ -117,7 +115,7 @@ class JobEventListener
     /**
      * Handle the "JobFailed" event.
      *
-     * @param JobFailed $event
+     * @param  JobFailed  $event
      * @return void
      */
     public function handleFailedJob(JobFailed $event): void
@@ -153,7 +151,7 @@ class JobEventListener
     /**
      * Unserialize the job from the job payload.
      *
-     * @param array $payload
+     * @param  array  $payload
      * @return object|null
      */
     private function unserializeJobFromPayload(array $payload): ?object
@@ -168,7 +166,7 @@ class JobEventListener
     /**
      * Attempt to find the haystack model from the job payload.
      *
-     * @param array $payload
+     * @param  array  $payload
      * @return Haystack|null
      */
     private function getHaystackFromPayload(array $payload): ?Haystack

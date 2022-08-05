@@ -2,11 +2,11 @@
 
 namespace Sammyjo20\LaravelHaystack;
 
-use Illuminate\Queue\Events\JobExceptionOccurred;
-use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Queue\Events\JobFailed;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobExceptionOccurred;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Sammyjo20\LaravelHaystack\Console\Commands\ResumeHaystacks;
 
@@ -15,7 +15,7 @@ class LaravelHaystackServiceProvider extends PackageServiceProvider
     /**
      * Welcome to Laravel Haystack, world!
      *
-     * @param Package $package
+     * @param  Package  $package
      * @return void
      */
     public function configurePackage(Package $package): void
@@ -57,12 +57,12 @@ class LaravelHaystackServiceProvider extends PackageServiceProvider
             return;
         }
 
-        Queue::createPayloadUsing(fn($connection, $queue, $payload) => JobEventListener::make()->createPayloadUsing($connection, $queue, $payload));
+        Queue::createPayloadUsing(fn ($connection, $queue, $payload) => JobEventListener::make()->createPayloadUsing($connection, $queue, $payload));
 
-        Queue::after(fn(JobProcessed $event) => JobEventListener::make()->handleJobProcessed($event));
+        Queue::after(fn (JobProcessed $event) => JobEventListener::make()->handleJobProcessed($event));
 
-        Queue::exceptionOccurred(fn(JobExceptionOccurred $event) => JobEventListener::make()->handleExceptionOccurred($event));
+        Queue::exceptionOccurred(fn (JobExceptionOccurred $event) => JobEventListener::make()->handleExceptionOccurred($event));
 
-        Queue::failing(fn(JobFailed $event) => JobEventListener::make()->handleFailedJob($event));
+        Queue::failing(fn (JobFailed $event) => JobEventListener::make()->handleFailedJob($event));
     }
 }

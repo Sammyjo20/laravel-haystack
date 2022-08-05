@@ -1,19 +1,17 @@
 <?php
 
-use Illuminate\Support\Facades\DB;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ExceptionJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NativeFailJob;
-use Symfony\Component\Process\Process;
-use function Pest\Laravel\assertDeleted;
-use function Pest\Laravel\assertModelMissing;
 use function Pest\Laravel\travel;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
+use function Pest\Laravel\assertModelMissing;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\FailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\SetDataJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ExceptionJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PauseNextJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NativeFailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\LongReleaseJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingOrderCheckCacheJob;

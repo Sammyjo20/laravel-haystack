@@ -20,6 +20,7 @@ class CheckAttempts
 
         if ($job->getHaystackBaleAttempts() > $maxTries) {
             $job->fail(ExceptionHelper::maxAttemptsExceededException($job));
+
             return;
         }
 
