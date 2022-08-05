@@ -7,7 +7,6 @@ use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use InvalidArgumentException;
 use Illuminate\Support\Collection;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Models\HaystackData;
@@ -16,7 +15,6 @@ use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 use Sammyjo20\LaravelHaystack\Middleware\CheckAttempts;
 use Sammyjo20\LaravelHaystack\Middleware\IncrementAttempts;
-use Sammyjo20\LaravelHaystack\Actions\CreatePendingHaystackBale;
 
 trait ManagesBales
 {
@@ -199,15 +197,15 @@ trait ManagesBales
     /**
      * Append a new job to the job stack.
      *
-     * @param  ShouldQueue  $job
+     * @param  StackableJob  $job
      * @param  int  $delayInSeconds
      * @param  string|null  $queue
      * @param  string|null  $connection
      * @return void
      */
-    public function appendJob(ShouldQueue $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): void
+    public function appendJob(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): void
     {
-        $pendingJob = CreatePendingHaystackBale::execute($job, $delayInSeconds, $queue, $connection);
+        $pendingJob = new PendingHaystackBale($job, $delayInSeconds, $queue, $connection);
 
         $this->appendPendingJob($pendingJob);
     }
