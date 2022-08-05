@@ -5,7 +5,6 @@ namespace Sammyjo20\LaravelHaystack\Concerns;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;

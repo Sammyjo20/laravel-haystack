@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Queue\Events\JobFailed;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Queue\Events\JobProcessed;
-use Illuminate\Queue\Events\JobExceptionOccurred;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Sammyjo20\LaravelHaystack\Console\Commands\ResumeHaystacks;
 
