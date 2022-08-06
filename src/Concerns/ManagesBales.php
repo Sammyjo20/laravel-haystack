@@ -167,7 +167,9 @@ trait ManagesBales
 
         $this->update(['finished_at' => now()]);
 
-        $data = $this->conditionallyGetAllData();
+        $shouldQueryData = isset($this->on_then) || isset($this->on_catch) || isset($this->on_finally);
+
+        $data = $shouldQueryData ? $this->conditionallyGetAllData() : null;
 
         $fail === true
             ? $this->executeClosure($this->on_catch, $data)
@@ -249,6 +251,10 @@ trait ManagesBales
     public function pause(CarbonImmutable $resumeAt): void
     {
         $this->update(['resume_at' => $resumeAt]);
+
+        if (! isset($this->on_paused)) {
+            return;
+        }
 
         $data = $this->conditionallyGetAllData();
 
