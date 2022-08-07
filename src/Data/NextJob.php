@@ -2,9 +2,8 @@
 
 namespace Sammyjo20\LaravelHaystack\Data;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 
 class NextJob
 {

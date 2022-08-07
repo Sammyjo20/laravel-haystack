@@ -9,13 +9,13 @@ use InvalidArgumentException;
 use Illuminate\Support\Collection;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Enums\FinishStatus;
-use Sammyjo20\LaravelHaystack\Middleware\CheckFinished;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Models\HaystackData;
 use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 use Sammyjo20\LaravelHaystack\Middleware\CheckAttempts;
+use Sammyjo20\LaravelHaystack\Middleware\CheckFinished;
 use Sammyjo20\LaravelHaystack\Middleware\IncrementAttempts;
 
 trait ManagesBales
@@ -127,6 +127,7 @@ trait ManagesBales
 
         if (! $nextJob instanceof NextJob) {
             $this->finish();
+
             return;
         }
 
@@ -168,7 +169,7 @@ trait ManagesBales
     /**
      * Finish the Haystack.
      *
-     * @param FinishStatus $status
+     * @param  FinishStatus  $status
      * @return void
      */
     public function finish(FinishStatus $status = FinishStatus::Success): void
