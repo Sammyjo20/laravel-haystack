@@ -3,6 +3,7 @@
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
+use Sammyjo20\LaravelHaystack\Middleware\CheckFinished;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Illuminate\Support\Collection as BaseCollection;
@@ -219,7 +220,7 @@ test('you can get the next bale in the haystack', function () {
         ->setHaystackBaleId($bales[0]->getKey())
         ->setHaystackBaleAttempts(0);
 
-    $job->middleware = [new CheckAttempts, new IncrementAttempts];
+    $job->middleware = [new CheckFinished, new CheckAttempts, new IncrementAttempts];
 
     expect($nextJob->job)->toEqual($job);
     expect($nextJob->haystackRow->getKey())->toEqual($bales[0]->getKey());

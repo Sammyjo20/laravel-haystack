@@ -3,6 +3,7 @@
 namespace Sammyjo20\LaravelHaystack\Data;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 
 class NextJob
@@ -10,11 +11,11 @@ class NextJob
     /**
      * Constructor
      *
-     * @param  ShouldQueue  $job
+     * @param  StackableJob  $job
      * @param  HaystackBale  $haystackRow
      */
     public function __construct(
-        readonly public ShouldQueue $job,
+        readonly public StackableJob $job,
         readonly public HaystackBale $haystackRow,
     ) {
         //
