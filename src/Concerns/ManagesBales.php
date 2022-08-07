@@ -8,12 +8,14 @@ use Carbon\CarbonInterface;
 use InvalidArgumentException;
 use Illuminate\Support\Collection;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
+use Sammyjo20\LaravelHaystack\Enums\FinishStatus;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Models\HaystackData;
 use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 use Sammyjo20\LaravelHaystack\Middleware\CheckAttempts;
+use Sammyjo20\LaravelHaystack\Middleware\CheckFinished;
 use Sammyjo20\LaravelHaystack\Middleware\IncrementAttempts;
 
 trait ManagesBales
@@ -67,6 +69,7 @@ trait ManagesBales
         // the job middleware is added to the top of the array.
 
         $defaultMiddleware = [
+            new CheckFinished,
             new CheckAttempts,
             new IncrementAttempts,
         ];
@@ -154,12 +157,22 @@ trait ManagesBales
     }
 
     /**
-     * Finish the Haystack.
+     * Cancel the haystack.
      *
-     * @param  bool  $fail
      * @return void
      */
-    public function finish(bool $fail = false): void
+    public function cancel(): void
+    {
+        $this->finish(FinishStatus::Cancelled);
+    }
+
+    /**
+     * Finish the Haystack.
+     *
+     * @param  FinishStatus  $status
+     * @return void
+     */
+    public function finish(FinishStatus $status = FinishStatus::Success): void
     {
         if ($this->finished === true) {
             return;
@@ -171,9 +184,11 @@ trait ManagesBales
 
         $data = $shouldQueryData ? $this->conditionallyGetAllData() : null;
 
-        $fail === true
-            ? $this->executeClosure($this->on_catch, $data)
-            : $this->executeClosure($this->on_then, $data);
+        match ($status) {
+            FinishStatus::Success => $this->executeClosure($this->on_then, $data),
+            FinishStatus::Failure => $this->executeClosure($this->on_catch, $data),
+            default => null,
+        };
 
         // Always execute the finally closure.
 
@@ -193,7 +208,7 @@ trait ManagesBales
      */
     public function fail(): void
     {
-        $this->finish(true);
+        $this->finish(FinishStatus::Failure);
     }
 
     /**

@@ -9,6 +9,7 @@ use Illuminate\Support\Collection as BaseCollection;
 use Laravel\SerializableClosure\SerializableClosure;
 use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
 use Sammyjo20\LaravelHaystack\Middleware\CheckAttempts;
+use Sammyjo20\LaravelHaystack\Middleware\CheckFinished;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Middleware\IncrementAttempts;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\DataObjects\Repository;
@@ -219,7 +220,7 @@ test('you can get the next bale in the haystack', function () {
         ->setHaystackBaleId($bales[0]->getKey())
         ->setHaystackBaleAttempts(0);
 
-    $job->middleware = [new CheckAttempts, new IncrementAttempts];
+    $job->middleware = [new CheckFinished, new CheckAttempts, new IncrementAttempts];
 
     expect($nextJob->job)->toEqual($job);
     expect($nextJob->haystackRow->getKey())->toEqual($bales[0]->getKey());

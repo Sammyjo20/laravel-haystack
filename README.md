@@ -154,6 +154,30 @@ $haystack = Haystack::build()
 $haystack->start(); // Initiate haystack
 ```
 
+### Cancelling Haystacks
+
+If you need to cancel the Haystack during processing, you can do this by using the `cancel` method on the Haystack model. If a job is being processed when you cancel it, it will process the next 
+job and then stop before the job is executed.
+
+```php
+use Sammyjo20\LaravelHaystack\Models\Haystack;
+
+$haystack = Haystack::build()
+   ->addJob(new RecordPodcast)
+   ->addJob(new PublishPodcast)
+   ->addJob(new TweetAboutPodcast)
+   ->create();
+
+// Store Haystack
+
+$haystack->start();
+
+// Do other things...
+
+$haystack->cancel();
+```
+> When a haystack is cancelled, we will not run the `then` or `catch` closures, but we will execute the `finally` closure.
+
 ## Callback Events
 
 Laravel Haystack provides you with three really simple callback events that will be serialized and used at certain points in time.

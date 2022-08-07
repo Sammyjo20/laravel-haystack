@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Middleware\CheckAttempts;
+use Sammyjo20\LaravelHaystack\Middleware\CheckFinished;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Middleware\IncrementAttempts;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
@@ -66,7 +67,7 @@ test('a haystack can be created with middleware', function () {
 
     // Check the middleware is applied to all jobs.
 
-    $defaultMiddleware = [new CheckAttempts, new IncrementAttempts];
+    $defaultMiddleware = [new CheckFinished, new CheckAttempts, new IncrementAttempts];
 
     expect($samJob->middleware)->toEqual(array_merge($defaultMiddleware, [new Middleware]));
     expect($garethJob->middleware)->toEqual(array_merge($defaultMiddleware, [new Middleware]));

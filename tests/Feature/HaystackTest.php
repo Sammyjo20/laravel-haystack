@@ -8,6 +8,7 @@ use function Pest\Laravel\assertModelMissing;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\FailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\SetDataJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ExceptionJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PauseNextJob;
@@ -287,4 +288,31 @@ test('the haystack will fail if the job is manually failed', function () {
     expect(cache()->get('failed'))->toBeTrue();
 
     assertModelMissing($haystack);
+});
+
+test('a haystack can be cancelled early and future jobs wont be processed', function () {
+    withJobsTable();
+    dontDeleteHaystack();
+
+    config()->set('queue.default', 'database');
+
+    $haystack = Haystack::build()
+        ->addJob(new CacheJob('name', 'Sam'))
+        ->finally(function () {
+            cache()->set('finished', true);
+        })
+        ->onConnection('database')
+        ->create();
+
+    $haystack->start();
+
+    expect(DB::table('jobs')->count())->toEqual(1);
+
+    $haystack->cancel();
+
+    expect(cache()->get('finished'))->toBeTrue();
+
+    $this->artisan('queue:work', ['--once' => true]);
+
+    expect(cache()->get('name'))->toBeNull();
 });
