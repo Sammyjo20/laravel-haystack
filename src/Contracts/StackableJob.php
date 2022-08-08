@@ -64,7 +64,18 @@ interface StackableJob
     public function failHaystack(): static;
 
     /**
-     * Append a job to the Haystack.
+     * Append a job to the end of the Haystack.
+     *
+     * @param StackableJob $job
+     * @param int $delayInSeconds
+     * @param string|null $queue
+     * @param string|null $connection
+     * @return $this
+     */
+    public function appendToHaystack(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static;
+
+    /**
+     * Set the next job to run on the Haystack.
      *
      * @param  StackableJob  $job
      * @param  int  $delayInSeconds
@@ -72,7 +83,7 @@ interface StackableJob
      * @param  string|null  $connection
      * @return $this
      */
-    public function appendToHaystack(StackableJob $job, bool $next = true, int $delayInSeconds = 0, string $queue = null, string $connection = null): static;
+    public function appendToHaystackNext(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static;
 
     /**
      * Get the haystack bale id
