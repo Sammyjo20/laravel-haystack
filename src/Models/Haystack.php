@@ -77,7 +77,7 @@ class Haystack extends Model
      */
     public function bales(): HasMany
     {
-        return $this->hasMany(HaystackBale::class, 'haystack_id', 'id')->orderBy('id', 'asc');
+        return $this->hasMany(HaystackBale::class, 'haystack_id', 'id')->orderBy('priority', 'desc')->orderBy('id', 'asc');
     }
 
     /**

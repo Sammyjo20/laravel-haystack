@@ -23,6 +23,7 @@ class HaystackBale extends Model
      */
     protected $casts = [
         'job' => SerializeJob::class,
+        'priority' => 'boolean',
     ];
 
     /**

@@ -214,15 +214,16 @@ trait ManagesBales
     /**
      * Append a new job to the job stack.
      *
-     * @param  StackableJob  $job
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
+     * @param StackableJob $job
+     * @param bool $priority
+     * @param int $delayInSeconds
+     * @param string|null $queue
+     * @param string|null $connection
      * @return void
      */
-    public function appendJob(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): void
+    public function appendJob(StackableJob $job, bool $priority = true, int $delayInSeconds = 0, string $queue = null, string $connection = null): void
     {
-        $pendingJob = new PendingHaystackBale($job, $delayInSeconds, $queue, $connection);
+        $pendingJob = new PendingHaystackBale($job, $delayInSeconds, $queue, $connection, $priority);
 
         $this->appendPendingJob($pendingJob);
     }
@@ -240,6 +241,7 @@ trait ManagesBales
             'delay' => $pendingJob->delayInSeconds,
             'on_queue' => $pendingJob->queue,
             'on_connection' => $pendingJob->connection,
+            'priority' => $pendingJob->priority,
         ]);
     }
 

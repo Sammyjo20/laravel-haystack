@@ -28,12 +28,15 @@ class AppendingOrderCheckCacheJob implements ShouldQueue, StackableJob
      * Execute the job.
      *
      * @return void
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException
      */
     public function handle()
     {
         cache()->put('order', array_merge(cache()->get('order', []), [$this->value]));
 
-        $this->appendToHaystack(new OrderCheckCacheJob($this->value));
+        $this->appendToHaystack(new OrderCheckCacheJob($this->value), false);
 
         $this->nextJob();
     }

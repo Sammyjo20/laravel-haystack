@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('on_queue')->nullable();
             $table->string('on_connection')->nullable();
             $table->integer('attempts')->default(0);
+            $table->boolean('priority')->default(false);
+
+            $table->index(['priority', 'id']);
         });
     }
 

@@ -1,5 +1,9 @@
 <?php
 
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingArrayJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingCacheJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingOrderCheckCacheJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ArrayJob;
 use function Pest\Laravel\travel;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +19,7 @@ use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PauseNextJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NativeFailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\LongReleaseJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingOrderCheckCacheJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingNextOrderCheckCacheJob;
 
 test('you can start a haystack', function () {
     Queue::fake();
@@ -88,7 +92,16 @@ test('jobs are processed in the right order', function () {
     expect(cache()->get('order'))->toEqual(['Sam', 'Steve', 'Taylor']);
 });
 
-test('you can append a job onto the haystack in a job and it is run at the end', function () {
+test('you can append a job onto the haystack in a job and it is run right after', function () {
+    Haystack::build()
+        ->addJob(new AppendingNextOrderCheckCacheJob('Sam'))
+        ->addJob(new OrderCheckCacheJob('Taylor'))
+        ->dispatch();
+
+    expect(cache()->get('order'))->toEqual(['Sam', 'Sam', 'Taylor']);
+});
+
+test('you can append a job onto the haystack and specify it to run at the end', function () {
     Haystack::build()
         ->addJob(new AppendingOrderCheckCacheJob('Sam'))
         ->addJob(new OrderCheckCacheJob('Taylor'))

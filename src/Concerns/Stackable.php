@@ -130,15 +130,16 @@ trait Stackable
     /**
      * Append a job to the Haystack.
      *
-     * @param  StackableJob  $job
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
+     * @param StackableJob $job
+     * @param bool $runNext
+     * @param int $delayInSeconds
+     * @param string|null $queue
+     * @param string|null $connection
      * @return $this
      */
-    public function appendToHaystack(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
+    public function appendToHaystack(StackableJob $job, bool $runNext = true, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
     {
-        $this->haystack->appendJob($job, $delayInSeconds, $queue, $connection);
+        $this->haystack->appendJob($job, $runNext, $delayInSeconds, $queue, $connection);
 
         return $this;
     }
