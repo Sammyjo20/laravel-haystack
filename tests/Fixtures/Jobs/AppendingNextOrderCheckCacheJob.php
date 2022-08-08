@@ -9,9 +9,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Sammyjo20\LaravelHaystack\Concerns\Stackable;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
-use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
 
-class AppendingCacheJob implements ShouldQueue, StackableJob
+class AppendingNextOrderCheckCacheJob implements ShouldQueue, StackableJob
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Stackable;
 
@@ -20,7 +19,7 @@ class AppendingCacheJob implements ShouldQueue, StackableJob
      *
      * @return void
      */
-    public function __construct(public string $key, public string $value)
+    public function __construct(public string $value)
     {
         //
     }
@@ -30,13 +29,15 @@ class AppendingCacheJob implements ShouldQueue, StackableJob
      *
      * @return void
      *
-     * @throws StackableException
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException
      */
     public function handle()
     {
-        cache()->put($this->key, $this->value);
+        cache()->put('order', array_merge(cache()->get('order', []), [$this->value]));
 
-        $this->appendToHaystack(new CacheJob('is_appended', true));
+        $this->appendToHaystack(new OrderCheckCacheJob($this->value));
 
         $this->nextJob();
     }

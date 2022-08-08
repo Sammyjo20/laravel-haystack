@@ -374,7 +374,8 @@ class PodcastMiddleware {
 
 ## Appending Jobs
 
-You can append to the haystack inside of your job. If you choose to do this, the appended job will go at the end of the chain. Just use the `appendToHaystack` method.
+You can append to the haystack inside a job. The appended job will go at the end of the chain. Just use the `appendToHaystack` method. If you would like to append a job to the haystack to be processed
+immediately, use the `appendToHaystackNext` method.
 
 ```php
 <?php
@@ -390,9 +391,13 @@ class ProcessPodcast implements ShouldQueue, StackableJob
 
     public function handle()
     {
-        // Your application code...
+        // Append a job to the end of the haystack
 
         $this->appendToHaystack(new DifferentJob);
+        
+        // Append a job and put it right at the top of the haystack
+        
+        $this->appendToHaystackNext(new NextJob);
     }
 ```
 

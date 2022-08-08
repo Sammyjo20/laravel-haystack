@@ -128,7 +128,7 @@ trait Stackable
     }
 
     /**
-     * Append a job to the Haystack.
+     * Append a job to the end of the Haystack.
      *
      * @param  StackableJob  $job
      * @param  int  $delayInSeconds
@@ -138,7 +138,23 @@ trait Stackable
      */
     public function appendToHaystack(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
     {
-        $this->haystack->appendJob($job, $delayInSeconds, $queue, $connection);
+        $this->haystack->appendJob($job, false, $delayInSeconds, $queue, $connection);
+
+        return $this;
+    }
+
+    /**
+     * Set the next job on the haystack.
+     *
+     * @param  StackableJob  $job
+     * @param  int  $delayInSeconds
+     * @param  string|null  $queue
+     * @param  string|null  $connection
+     * @return $this
+     */
+    public function appendToHaystackNext(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
+    {
+        $this->haystack->appendJob($job, true, $delayInSeconds, $queue, $connection);
 
         return $this;
     }

@@ -10,6 +10,7 @@ class PendingHaystackBale
      * Constructor
      *
      * @param  StackableJob  $job
+     * @param  bool  $priority
      * @param  int  $delayInSeconds
      * @param  string|null  $queue
      * @param  string|null  $connection
@@ -19,6 +20,7 @@ class PendingHaystackBale
         public int $delayInSeconds = 0,
         public ?string $queue = null,
         public ?string $connection = null,
+        public bool $priority = false,
     ) {
         $nativeDelay = $this->job->delay;
         $nativeQueue = $this->job->queue;
