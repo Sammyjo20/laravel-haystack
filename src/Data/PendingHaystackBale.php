@@ -9,11 +9,11 @@ class PendingHaystackBale
     /**
      * Constructor
      *
-     * @param StackableJob $job
-     * @param bool $priority
-     * @param int $delayInSeconds
-     * @param string|null $queue
-     * @param string|null $connection
+     * @param  StackableJob  $job
+     * @param  bool  $priority
+     * @param  int  $delayInSeconds
+     * @param  string|null  $queue
+     * @param  string|null  $connection
      */
     public function __construct(
         public StackableJob $job,

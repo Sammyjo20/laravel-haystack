@@ -28,6 +28,7 @@ class AddNextOrderCheckCacheJob implements ShouldQueue, StackableJob
      * Execute the job.
      *
      * @return void
+     *
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException

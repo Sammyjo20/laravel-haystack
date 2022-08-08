@@ -29,11 +29,12 @@ class AppendingDelayJob implements ShouldQueue, StackableJob
      * Execute the job.
      *
      * @return void
+     *
      * @throws StackableException
      */
     public function handle()
     {
-        $this->appendToHaystack(new CacheJob('is_appended', true),120, 'cowboy', 'redis');
+        $this->appendToHaystack(new CacheJob('is_appended', true), 120, 'cowboy', 'redis');
 
         $this->nextJob();
     }

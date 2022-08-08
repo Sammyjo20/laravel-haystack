@@ -66,10 +66,10 @@ interface StackableJob
     /**
      * Append a job to the end of the Haystack.
      *
-     * @param StackableJob $job
-     * @param int $delayInSeconds
-     * @param string|null $queue
-     * @param string|null $connection
+     * @param  StackableJob  $job
+     * @param  int  $delayInSeconds
+     * @param  string|null  $queue
+     * @param  string|null  $connection
      * @return $this
      */
     public function appendToHaystack(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static;

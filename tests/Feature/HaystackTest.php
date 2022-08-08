@@ -1,9 +1,5 @@
 <?php
 
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingArrayJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingCacheJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AddNextOrderCheckCacheJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ArrayJob;
 use function Pest\Laravel\travel;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +15,7 @@ use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PauseNextJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NativeFailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\LongReleaseJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AddNextOrderCheckCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingNextOrderCheckCacheJob;
 
 test('you can start a haystack', function () {
