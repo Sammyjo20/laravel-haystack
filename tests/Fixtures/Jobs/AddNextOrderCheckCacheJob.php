@@ -37,7 +37,7 @@ class AddNextOrderCheckCacheJob implements ShouldQueue, StackableJob
     {
         cache()->put('order', array_merge(cache()->get('order', []), [$this->value]));
 
-        $this->appendToHaystackNext(new OrderCheckCacheJob($this->value));
+        $this->prependToHaystack(new OrderCheckCacheJob($this->value));
 
         $this->nextJob();
     }
