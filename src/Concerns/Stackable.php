@@ -152,7 +152,7 @@ trait Stackable
      * @param  string|null  $connection
      * @return $this
      */
-    public function appendToHaystackNext(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
+    public function prependToHaystack(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
     {
         $this->haystack->appendJob($job, true, $delayInSeconds, $queue, $connection);
 
