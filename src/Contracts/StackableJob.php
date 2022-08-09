@@ -66,10 +66,10 @@ interface StackableJob
     /**
      * Append jobs to the haystack.
      *
-     * @param StackableJob|Collection|array $jobs
-     * @param int $delayInSeconds
-     * @param string|null $queue
-     * @param string|null $connection
+     * @param  StackableJob|Collection|array  $jobs
+     * @param  int  $delayInSeconds
+     * @param  string|null  $queue
+     * @param  string|null  $connection
      * @return $this
      */
     public function appendToHaystack(StackableJob|Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static;
@@ -77,10 +77,10 @@ interface StackableJob
     /**
      * Prepend jobs to the haystack.
      *
-     * @param StackableJob|Collection|array $jobs
-     * @param int $delayInSeconds
-     * @param string|null $queue
-     * @param string|null $connection
+     * @param  StackableJob|Collection|array  $jobs
+     * @param  int  $delayInSeconds
+     * @param  string|null  $queue
+     * @param  string|null  $connection
      * @return $this
      */
     public function prependToHaystack(StackableJob|Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static;

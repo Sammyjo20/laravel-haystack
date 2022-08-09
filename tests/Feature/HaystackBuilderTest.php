@@ -180,7 +180,7 @@ test('can add multiple jobs to the haystack at once', function () {
         ->addJob(new OrderCheckCacheJob('Teo'))
         ->create();
 
-     expect($haystack->bales()->count())->toEqual(6);
+    expect($haystack->bales()->count())->toEqual(6);
 
     $haystack->start();
 
@@ -190,6 +190,6 @@ test('can add multiple jobs to the haystack at once', function () {
         'Gareth',
         'Patrick',
         'Mantas',
-        'Teo'
+        'Teo',
     ]);
 });

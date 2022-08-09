@@ -100,7 +100,7 @@ class HaystackBuilder
     /**
      * Specify a name for the haystack.
      *
-     * @param string $name
+     * @param  string  $name
      * @return $this
      */
     public function withName(string $name): static
@@ -183,10 +183,10 @@ class HaystackBuilder
     /**
      * Add multiple jobs to the haystack at a time.
      *
-     * @param Collection|array $jobs
-     * @param int $delayInSeconds
-     * @param string|null $queue
-     * @param string|null $connection
+     * @param  Collection|array  $jobs
+     * @param  int  $delayInSeconds
+     * @param  string|null  $queue
+     * @param  string|null  $connection
      * @return $this
      */
     public function addJobs(Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
@@ -225,10 +225,10 @@ class HaystackBuilder
      *
      * @alias addJobs()
      *
-     * @param Collection|array $jobs
-     * @param int $delayInSeconds
-     * @param string|null $queue
-     * @param string|null $connection
+     * @param  Collection|array  $jobs
+     * @param  int  $delayInSeconds
+     * @param  string|null  $queue
+     * @param  string|null  $connection
      * @return $this
      */
     public function addBales(Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static

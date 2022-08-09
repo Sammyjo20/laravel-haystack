@@ -2,9 +2,8 @@
 
 namespace Sammyjo20\LaravelHaystack\Data;
 
-use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
-use Sammyjo20\LaravelHaystack\Models\HaystackBale;
+use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 
 class PendingHaystackBale
 {
@@ -44,7 +43,7 @@ class PendingHaystackBale
     /**
      * Convert to a haystack bale for casting.
      *
-     * @param Haystack $haystack
+     * @param  Haystack  $haystack
      * @return array
      */
     public function toDatabaseRow(Haystack $haystack): array
