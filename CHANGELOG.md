@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-haystack` will be documented in this file.
 
+## Version v0.7.0 - 2022-08-09
+
+### What's Changed
+
+- Names and appending multiple jobs by @Sammyjo20 in https://github.com/Sammyjo20/laravel-haystack/pull/26
+
+**Full Changelog**: https://github.com/Sammyjo20/laravel-haystack/compare/v0.6.0...v0.7.0
+
 ## Version v0.6.0 - 2022-08-08
 
 ### What's Changed
