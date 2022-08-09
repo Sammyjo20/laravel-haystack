@@ -2,6 +2,7 @@
 
 namespace Sammyjo20\LaravelHaystack\Data;
 
+use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 
 class PendingHaystackBale
@@ -37,5 +38,22 @@ class PendingHaystackBale
         if (isset($nativeConnection) && ! isset($this->connection)) {
             $this->connection = $nativeConnection;
         }
+    }
+
+    /**
+     * Convert to a haystack bale for casting.
+     *
+     * @param  Haystack  $haystack
+     * @return array
+     */
+    public function toDatabaseRow(Haystack $haystack): array
+    {
+        return $haystack->bales()->make([
+            'job' => $this->job,
+            'delay' => $this->delayInSeconds,
+            'on_queue' => $this->queue,
+            'on_connection' => $this->connection,
+            'priority' => $this->priority,
+        ])->getAttributes();
     }
 }

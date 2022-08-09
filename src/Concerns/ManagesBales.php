@@ -212,37 +212,52 @@ trait ManagesBales
     }
 
     /**
-     * Append a new job to the job stack.
+     * Add new jobs to the haystack.
      *
-     * @param  StackableJob  $job
-     * @param  bool  $priority
+     * @param  StackableJob|Collection|array  $jobs
      * @param  int  $delayInSeconds
      * @param  string|null  $queue
      * @param  string|null  $connection
+     * @param  bool  $prepend
      * @return void
      */
-    public function appendJob(StackableJob $job, bool $priority = true, int $delayInSeconds = 0, string $queue = null, string $connection = null): void
+    public function addJobs(StackableJob|Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null, bool $prepend = false): void
     {
-        $pendingJob = new PendingHaystackBale($job, $delayInSeconds, $queue, $connection, $priority);
+        if ($jobs instanceof StackableJob) {
+            $jobs = [$jobs];
+        }
 
-        $this->appendPendingJob($pendingJob);
+        if ($jobs instanceof Collection) {
+            $jobs = $jobs->all();
+        }
+
+        $pendingJobs = [];
+
+        foreach ($jobs as $job) {
+            $pendingJobs[] = new PendingHaystackBale($job, $delayInSeconds, $queue, $connection, $prepend);
+        }
+
+        $this->addPendingJobs($pendingJobs);
     }
 
     /**
-     * Append the pending job to the Haystack.
+     * Add pending jobs to the haystack.
      *
-     * @param  PendingHaystackBale  $pendingJob
+     * @param  array  $pendingJobs
      * @return void
      */
-    public function appendPendingJob(PendingHaystackBale $pendingJob): void
+    public function addPendingJobs(array $pendingJobs): void
     {
-        $this->bales()->create([
-            'job' => $pendingJob->job,
-            'delay' => $pendingJob->delayInSeconds,
-            'on_queue' => $pendingJob->queue,
-            'on_connection' => $pendingJob->connection,
-            'priority' => $pendingJob->priority,
-        ]);
+        $pendingJobRows = collect($pendingJobs)
+            ->filter(fn ($pendingJob) => $pendingJob instanceof PendingHaystackBale)
+            ->map(fn (PendingHaystackBale $pendingJob) => $pendingJob->toDatabaseRow($this))
+            ->all();
+
+        if (empty($pendingJobRows)) {
+            return;
+        }
+
+        $this->bales()->insert($pendingJobRows);
     }
 
     /**

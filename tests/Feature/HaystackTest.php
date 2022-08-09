@@ -14,7 +14,9 @@ use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ExceptionJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PauseNextJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NativeFailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\LongReleaseJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendMultipleJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PrependMultipleJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AddNextOrderCheckCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingNextOrderCheckCacheJob;
 
@@ -105,6 +107,46 @@ test('you can set the next job to process on the haystack', function () {
         ->dispatch();
 
     expect(cache()->get('order'))->toEqual(['Sam', 'Sam', 'Taylor']);
+});
+
+test('you can append multiple jobs to the haystack', function () {
+    Haystack::build()
+        ->addJob(new OrderCheckCacheJob('Steve'))
+        ->addJob(new AppendMultipleJob('Sam', 'Gareth', 'Mantas'))
+        ->addJob(new OrderCheckCacheJob('Taylor'))
+        ->dispatch();
+
+    expect(cache()->get('order'))->toEqual(['Steve', 'Taylor', 'Sam', 'Gareth', 'Mantas']);
+});
+
+test('you can append multiple jobs as a collection to the haystack', function () {
+    Haystack::build()
+        ->addJob(new OrderCheckCacheJob('Steve'))
+        ->addJob(new AppendMultipleJob('Sam', 'Gareth', 'Mantas', true))
+        ->addJob(new OrderCheckCacheJob('Taylor'))
+        ->dispatch();
+
+    expect(cache()->get('order'))->toEqual(['Steve', 'Taylor', 'Sam', 'Gareth', 'Mantas']);
+});
+
+test('you can prepend multiple jobs to the haystack', function () {
+    Haystack::build()
+        ->addJob(new OrderCheckCacheJob('Steve'))
+        ->addJob(new PrependMultipleJob('Sam', 'Gareth', 'Mantas'))
+        ->addJob(new OrderCheckCacheJob('Taylor'))
+        ->dispatch();
+
+    expect(cache()->get('order'))->toEqual(['Steve', 'Sam', 'Gareth', 'Mantas', 'Taylor']);
+});
+
+test('you can prepend multiple jobs as a collection to the haystack', function () {
+    Haystack::build()
+        ->addJob(new OrderCheckCacheJob('Steve'))
+        ->addJob(new PrependMultipleJob('Sam', 'Gareth', 'Mantas', true))
+        ->addJob(new OrderCheckCacheJob('Taylor'))
+        ->dispatch();
+
+    expect(cache()->get('order'))->toEqual(['Steve', 'Sam', 'Gareth', 'Mantas', 'Taylor']);
 });
 
 test('when a haystack is finished the then and finally methods are executed', function () {

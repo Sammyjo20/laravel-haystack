@@ -8,6 +8,7 @@ use Sammyjo20\LaravelHaystack\Middleware\CheckFinished;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Middleware\IncrementAttempts;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
 
 test('a haystack can be created with jobs', function () {
     $haystack = Haystack::build()
@@ -152,4 +153,43 @@ test('a haystack can be dispatched straight away', function () {
 
         return $job->name === 'Taylor';
     });
+});
+
+test('you can specify a name for the haystack', function () {
+    $haystack = Haystack::build()
+        ->addJob(new NameJob('Sam'))
+        ->withName('My Custom Name')
+        ->create();
+
+    $haystack->refresh();
+
+    expect($haystack->name)->toEqual('My Custom Name');
+});
+
+test('can add multiple jobs to the haystack at once', function () {
+    $haystack = Haystack::build()
+        ->addJobs([
+            new OrderCheckCacheJob('Taylor'),
+            new OrderCheckCacheJob('Steve'),
+            new OrderCheckCacheJob('Gareth'),
+        ])
+        ->addJobs(collect([
+            new OrderCheckCacheJob('Patrick'),
+            new OrderCheckCacheJob('Mantas'),
+        ]))
+        ->addJob(new OrderCheckCacheJob('Teo'))
+        ->create();
+
+    expect($haystack->bales()->count())->toEqual(6);
+
+    $haystack->start();
+
+    expect(cache()->get('order'))->toEqual([
+        'Taylor',
+        'Steve',
+        'Gareth',
+        'Patrick',
+        'Mantas',
+        'Teo',
+    ]);
 });

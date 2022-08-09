@@ -13,6 +13,13 @@ use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 class HaystackBuilder
 {
     /**
+     * The name of the haystack.
+     *
+     * @var string|null
+     */
+    protected ?string $name = null;
+
+    /**
      * Closure to run when the Haystack is finished.
      *
      * @var Closure|null
@@ -91,6 +98,19 @@ class HaystackBuilder
     }
 
     /**
+     * Specify a name for the haystack.
+     *
+     * @param  string  $name
+     * @return $this
+     */
+    public function withName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
      * Provide a closure that will run when the haystack is complete.
      *
      * @param  Closure|callable  $closure
@@ -161,6 +181,30 @@ class HaystackBuilder
     }
 
     /**
+     * Add multiple jobs to the haystack at a time.
+     *
+     * @param  Collection|array  $jobs
+     * @param  int  $delayInSeconds
+     * @param  string|null  $queue
+     * @param  string|null  $connection
+     * @return $this
+     */
+    public function addJobs(Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
+    {
+        if (is_array($jobs)) {
+            $jobs = collect($jobs);
+        }
+
+        $jobs = $jobs->filter(fn ($job) => $job instanceof StackableJob);
+
+        foreach ($jobs as $job) {
+            $this->addJob($job, $delayInSeconds, $queue, $connection);
+        }
+
+        return $this;
+    }
+
+    /**
      * Add a bale onto the haystack. Yee-haw!
      *
      * @alias addJob()
@@ -174,6 +218,22 @@ class HaystackBuilder
     public function addBale(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
     {
         return $this->addJob($job, $delayInSeconds, $queue, $connection);
+    }
+
+    /**
+     * Add multiple bales onto the haystack. Yee-haw!
+     *
+     * @alias addJobs()
+     *
+     * @param  Collection|array  $jobs
+     * @param  int  $delayInSeconds
+     * @param  string|null  $queue
+     * @param  string|null  $connection
+     * @return $this
+     */
+    public function addBales(Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
+    {
+        return $this->addJobs($jobs, $delayInSeconds, $queue, $connection);
     }
 
     /**
@@ -267,13 +327,15 @@ class HaystackBuilder
         return $this->jobs->map(function (PendingHaystackBale $pendingJob) use ($haystack) {
             $hasDelay = isset($pendingJob->delayInSeconds) && $pendingJob->delayInSeconds > 0;
 
-            return [
-                'haystack_id' => $haystack->getKey(),
-                'job' => serialize($pendingJob->job),
+            // We'll create a dummy Haystack bale model for each row
+            // and convert it into its attributes just for the casting.
+
+            return $haystack->bales()->make([
+                'job' => $pendingJob->job,
                 'delay' => $hasDelay ? $pendingJob->delayInSeconds : $this->globalDelayInSeconds,
                 'on_queue' => $pendingJob->queue ?? $this->globalQueue,
                 'on_connection' => $pendingJob->connection ?? $this->globalConnection,
-            ];
+            ])->getAttributes();
         })->toArray();
     }
 
@@ -285,6 +347,7 @@ class HaystackBuilder
     protected function createHaystack(): Haystack
     {
         $haystack = new Haystack;
+        $haystack->name = $this->name;
         $haystack->on_then = $this->onThen;
         $haystack->on_catch = $this->onCatch;
         $haystack->on_finally = $this->onFinally;
