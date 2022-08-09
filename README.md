@@ -14,6 +14,7 @@ Laravel Haystack is a package that allows you to have a job chain stored in the 
 
 ```php
 $haystack = Haystack::build()
+   ->withName('Podcast Chain')
    ->addJob(new RecordPodcast)
    ->addJob(new ProcessPodcast)
    ->addJob(new PublishPodcast)
@@ -117,6 +118,7 @@ Haystack::build()
    ->addJob(new PublishPodcast)
    ->addJob(new TweetAboutPodcast);
 ```
+> You may also use the `addJobs()` method which accepts an array or collection of stackable jobs.
 
 ### Dispatching Haystacks
 
@@ -372,7 +374,7 @@ class PodcastMiddleware {
 }
 ```
 
-## Appending Jobs
+## Appending & Prepending Jobs
 
 You can append to the haystack inside a job. The appended job will go at the end of the chain. Just use the `appendToHaystack` method. If you would like to append a job to the haystack to be processed
 immediately, use the `prependToHaystack` method.
@@ -400,6 +402,7 @@ class ProcessPodcast implements ShouldQueue, StackableJob
         $this->prependToHaystack(new NextJob);
     }
 ```
+> The `appendToHaystack` and `prependToHaystack` methods also accept an array or Collection of jobs.
 
 ## Long Delays & Pausing Haystack
 
@@ -615,6 +618,20 @@ $haystack = Haystack::build()
 ```
 
 If you would like to disable this feature entirely, you can set the `return_all_haystack_data_when_finished` config variable to false.
+
+## Naming Haystacks
+
+Sometimes you may with to give your haystack a custom name. This is especially useful for debugging, as you could check your database and see what haystacks are currently being processed. To give the haystack a name, use the `withName` method when building the haystack.
+
+```php
+<?php
+
+$haystack = Haystack::build()
+   ->withName('Process API Data')
+   ->addJob(new RetrieveDataFromApi)
+   ->addJob(new ProcessDataFromApi)
+   ->addJob(new StoreDataFromApi)
+```
 
 ## Manual Processing
 
