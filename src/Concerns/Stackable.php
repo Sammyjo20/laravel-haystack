@@ -128,33 +128,33 @@ trait Stackable
     }
 
     /**
-     * Append a job to the end of the Haystack.
+     * Append jobs to the haystack.
      *
-     * @param  StackableJob  $job
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
+     * @param StackableJob|Collection|array $jobs
+     * @param int $delayInSeconds
+     * @param string|null $queue
+     * @param string|null $connection
      * @return $this
      */
-    public function appendToHaystack(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
+    public function appendToHaystack(StackableJob|Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
     {
-        $this->haystack->appendJob($job, false, $delayInSeconds, $queue, $connection);
+        $this->haystack->addJobs($jobs, $delayInSeconds, $queue, $connection, false);
 
         return $this;
     }
 
     /**
-     * Set the next job on the haystack.
+     * Prepend jobs to the haystack.
      *
-     * @param  StackableJob  $job
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
+     * @param StackableJob|Collection|array $jobs
+     * @param int $delayInSeconds
+     * @param string|null $queue
+     * @param string|null $connection
      * @return $this
      */
-    public function prependToHaystack(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
+    public function prependToHaystack(StackableJob|Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
     {
-        $this->haystack->appendJob($job, true, $delayInSeconds, $queue, $connection);
+        $this->haystack->addJobs($jobs, $delayInSeconds, $queue, $connection, true);
 
         return $this;
     }
