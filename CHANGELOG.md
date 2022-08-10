@@ -2,6 +2,18 @@
 
 All notable changes to `laravel-haystack` will be documented in this file.
 
+## Version v0.7.1 - 2022-08-10
+
+### What's Changed
+
+- Add `haystacks:clear` and `haystacks:forget` commands by @viicslen in https://github.com/Sammyjo20/laravel-haystack/pull/29
+
+### New Contributors
+
+- @viicslen made their first contribution in https://github.com/Sammyjo20/laravel-haystack/pull/29
+
+**Full Changelog**: https://github.com/Sammyjo20/laravel-haystack/compare/v0.7.0...v0.7.1
+
 ## Version v0.7.0 - 2022-08-09
 
 ### What's Changed
