@@ -4,11 +4,11 @@ namespace Sammyjo20\LaravelHaystack;
 
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Queue\Events\JobFailed;
-use Sammyjo20\LaravelHaystack\Console\Commands\HaystacksClear;
-use Sammyjo20\LaravelHaystack\Console\Commands\HaystacksForget;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Queue\Events\JobProcessed;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Sammyjo20\LaravelHaystack\Console\Commands\HaystacksClear;
+use Sammyjo20\LaravelHaystack\Console\Commands\HaystacksForget;
 use Sammyjo20\LaravelHaystack\Console\Commands\ResumeHaystacks;
 
 class LaravelHaystackServiceProvider extends PackageServiceProvider

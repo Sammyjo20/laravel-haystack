@@ -1,9 +1,9 @@
 <?php
 
+use function Pest\Laravel\artisan;
 use Illuminate\Support\Collection;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
-use function Pest\Laravel\artisan;
 
 it('can delete a haystack by ID', function () {
     $haystack = Haystack::build()

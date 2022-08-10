@@ -17,6 +17,7 @@ class HaystacksForget extends Command
 
         if (! $haystack) {
             $this->error('No haystack matches the given ID.');
+
             return self::FAILURE;
         }
 
