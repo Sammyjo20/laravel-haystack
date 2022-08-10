@@ -701,6 +701,18 @@ $schedule->command('model:prune', [
 ])->daily();
 ```
 
+## Deleting A Specific Haystack
+If a haystack was created by mistake, and you would like to delete it without directly accessing the database, you may use the `haystacks:forget` command. The `haystacks:forget` command accepts the ID of the haystack as its only argument:
+```bash
+php artisan haystacks:forget <id>
+```
+
+## Clearing All Haystacks
+If you would like to clear all haystacks from the database, you may use the `haystacks:clear` command. The `haystacks:clear` command accepts no arguments:
+```bash
+php artisan haystacks:clear
+```
+
 ## Support Haystack's Development
 While I never expect anything, if you would like to support my work, you can donate to my Ko-Fi page by simply buying me a coffee or two! https://ko-fi.com/sammyjo20
 
