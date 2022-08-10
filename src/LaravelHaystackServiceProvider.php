@@ -4,6 +4,8 @@ namespace Sammyjo20\LaravelHaystack;
 
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Queue\Events\JobFailed;
+use Sammyjo20\LaravelHaystack\Console\Commands\HaystacksClear;
+use Sammyjo20\LaravelHaystack\Console\Commands\HaystacksForget;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Queue\Events\JobProcessed;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -32,7 +34,9 @@ class LaravelHaystackServiceProvider extends PackageServiceProvider
                 'create_haystack_bales_table',
                 'create_haystack_data_table',
             ])
-            ->hasCommand(ResumeHaystacks::class);
+            ->hasCommand(ResumeHaystacks::class)
+            ->hasCommand(HaystacksForget::class)
+            ->hasCommand(HaystacksClear::class);
     }
 
     /**
