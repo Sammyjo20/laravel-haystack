@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;

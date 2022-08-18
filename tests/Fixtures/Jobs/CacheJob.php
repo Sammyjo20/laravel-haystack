@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs;
 
 use Illuminate\Bus\Queueable;
@@ -9,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Sammyjo20\LaravelHaystack\Concerns\Stackable;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
+use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
 
 class CacheJob implements ShouldQueue, StackableJob
 {
@@ -19,7 +22,7 @@ class CacheJob implements ShouldQueue, StackableJob
      *
      * @return void
      */
-    public function __construct(public string $key, public string $value)
+    public function __construct(public string $key, public string|bool $value)
     {
         //
     }
@@ -28,6 +31,7 @@ class CacheJob implements ShouldQueue, StackableJob
      * Execute the job.
      *
      * @return void
+     * @throws StackableException
      */
     public function handle()
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use function Pest\Laravel\artisan;
 use Illuminate\Support\Collection;
 use Sammyjo20\LaravelHaystack\Models\Haystack;

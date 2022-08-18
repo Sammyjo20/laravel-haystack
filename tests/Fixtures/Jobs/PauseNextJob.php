@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs;
 
 use Carbon\CarbonInterface;
@@ -20,7 +22,7 @@ class PauseNextJob implements ShouldQueue, StackableJob
      *
      * @return void
      */
-    public function __construct(public string $key, public string $value, public int|CarbonInterface $pause)
+    public function __construct(public string $key, public string|bool $value, public int|CarbonInterface $pause)
     {
         //
     }

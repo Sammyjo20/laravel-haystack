@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
