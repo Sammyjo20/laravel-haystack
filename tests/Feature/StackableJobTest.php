@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\FailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ExcitedJob;
@@ -113,4 +114,10 @@ test('a stackable job can get all haystack data', function () {
         'name' => 'Sam',
         'boss' => 'Gareth',
     ]));
+});
+
+test('a stackable job can be dispatched without being on a haystack', function () {
+    AutoCacheJob::dispatch('name', 'Sammy');
+
+    expect(cache()->get('name'))->toEqual('Sammy');
 });
