@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Sammyjo20\LaravelHaystack\Data\NextJob;

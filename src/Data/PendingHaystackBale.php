@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sammyjo20\LaravelHaystack\Data;
 
 use Sammyjo20\LaravelHaystack\Models\Haystack;

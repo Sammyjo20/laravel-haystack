@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use function Pest\Laravel\travel;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
@@ -8,6 +10,7 @@ use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\FailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ExcitedJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\SetDataJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingDelayJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\GetAndCacheDataJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\GetAllAndCacheDataJob;
@@ -111,4 +114,10 @@ test('a stackable job can get all haystack data', function () {
         'name' => 'Sam',
         'boss' => 'Gareth',
     ]));
+});
+
+test('a stackable job can be dispatched without being on a haystack', function () {
+    AutoCacheJob::dispatch('name', 'Sammy');
+
+    expect(cache()->get('name'))->toEqual('Sammy');
 });

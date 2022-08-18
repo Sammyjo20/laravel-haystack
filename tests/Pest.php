@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Sammyjo20\LaravelHaystack\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Sammyjo20\LaravelHaystack\LaravelHaystackServiceProvider;
