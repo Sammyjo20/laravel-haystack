@@ -2,6 +2,18 @@
 
 All notable changes to `laravel-haystack` will be documented in this file.
 
+## Version v0.7.2 - 2022-08-18
+
+### What's Changed
+
+- Add conditional objects when adding job to haystack by @faisuc in https://github.com/Sammyjo20/laravel-haystack/pull/30
+
+### New Contributors
+
+- @faisuc made their first contribution in https://github.com/Sammyjo20/laravel-haystack/pull/30
+
+**Full Changelog**: https://github.com/Sammyjo20/laravel-haystack/compare/v0.7.1...v0.7.2
+
 ## Version v0.7.1 - 2022-08-10
 
 ### What's Changed
