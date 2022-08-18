@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-haystack` will be documented in this file.
 
+## Version v0.7.3 - 2022-08-18
+
+### What's Changed
+
+- Feature | Added declare strict types by @Sammyjo20 in https://github.com/Sammyjo20/laravel-haystack/pull/31
+
+**Full Changelog**: https://github.com/Sammyjo20/laravel-haystack/compare/v0.7.2...v0.7.3
+
 ## Version v0.7.2 - 2022-08-18
 
 ### What's Changed
