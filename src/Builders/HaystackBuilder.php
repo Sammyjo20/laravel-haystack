@@ -181,23 +181,27 @@ class HaystackBuilder
     }
 
     /**
-     * @param $boolean
+     * Add a job when a condition is true.
+     *
+     * @param bool $condition
      * @param ...$arguments
      * @return $this
      */
-    public function addJobIf($boolean, ...$arguments)
+    public function addJobWhen(bool $condition, ...$arguments): static
     {
-        return $boolean ? $this->addJob(...$arguments) : $this;
+        return $condition === true ? $this->addJob(...$arguments) : $this;
     }
 
     /**
-     * @param $boolean
+     * Add a job when a condition is false.
+     *
+     * @param bool $condition
      * @param ...$arguments
      * @return $this
      */
-    public function addJobUnless($boolean, ...$arguments)
+    public function addJobUnless(bool $condition, ...$arguments): static
     {
-        return $this->addJobIf(! $boolean, ...$arguments);
+        return $this->addJobWhen(! $condition, ...$arguments);
     }
 
     /**
@@ -222,6 +226,30 @@ class HaystackBuilder
         }
 
         return $this;
+    }
+
+    /**
+     * Add jobs when a condition is true.
+     *
+     * @param bool $condition
+     * @param ...$arguments
+     * @return $this
+     */
+    public function addJobsWhen(bool $condition, ...$arguments): static
+    {
+        return $condition === true ? $this->addJobs(...$arguments) : $this;
+    }
+
+    /**
+     * Add jobs when a condition is false.
+     *
+     * @param bool $condition
+     * @param ...$arguments
+     * @return $this
+     */
+    public function addJobsUnless(bool $condition, ...$arguments): static
+    {
+        return $this->addJobsWhen(! $condition, ...$arguments);
     }
 
     /**
