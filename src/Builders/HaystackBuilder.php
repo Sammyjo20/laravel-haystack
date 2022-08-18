@@ -181,6 +181,30 @@ class HaystackBuilder
     }
 
     /**
+     * Add a job when a condition is true.
+     *
+     * @param bool $condition
+     * @param ...$arguments
+     * @return $this
+     */
+    public function addJobWhen(bool $condition, ...$arguments): static
+    {
+        return $condition === true ? $this->addJob(...$arguments) : $this;
+    }
+
+    /**
+     * Add a job when a condition is false.
+     *
+     * @param bool $condition
+     * @param ...$arguments
+     * @return $this
+     */
+    public function addJobUnless(bool $condition, ...$arguments): static
+    {
+        return $this->addJobWhen(! $condition, ...$arguments);
+    }
+
+    /**
      * Add multiple jobs to the haystack at a time.
      *
      * @param  Collection|array  $jobs
@@ -202,6 +226,30 @@ class HaystackBuilder
         }
 
         return $this;
+    }
+
+    /**
+     * Add jobs when a condition is true.
+     *
+     * @param bool $condition
+     * @param ...$arguments
+     * @return $this
+     */
+    public function addJobsWhen(bool $condition, ...$arguments): static
+    {
+        return $condition === true ? $this->addJobs(...$arguments) : $this;
+    }
+
+    /**
+     * Add jobs when a condition is false.
+     *
+     * @param bool $condition
+     * @param ...$arguments
+     * @return $this
+     */
+    public function addJobsUnless(bool $condition, ...$arguments): static
+    {
+        return $this->addJobsWhen(! $condition, ...$arguments);
     }
 
     /**
