@@ -187,7 +187,7 @@ class HaystackBuilder
      */
     public function addJobIf($boolean, ...$arguments)
     {
-        return $boolean ? static::addJob(...$arguments) : $this;
+        return $boolean ? $this->addJob(...$arguments) : $this;
     }
 
     /**
@@ -197,7 +197,7 @@ class HaystackBuilder
      */
     public function addJobUnless($boolean, ...$arguments)
     {
-        return static::addJobIf(! $boolean, ...$arguments);
+        return $this->addJobIf(! $boolean, ...$arguments);
     }
 
     /**
