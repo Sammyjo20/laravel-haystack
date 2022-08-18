@@ -181,6 +181,26 @@ class HaystackBuilder
     }
 
     /**
+     * @param $boolean
+     * @param ...$arguments
+     * @return $this
+     */
+    public function addJobIf($boolean, ...$arguments)
+    {
+        return $boolean ? static::addJob(...$arguments) : $this;
+    }
+
+    /**
+     * @param $boolean
+     * @param ...$arguments
+     * @return $this
+     */
+    public function addJobUnless($boolean, ...$arguments)
+    {
+        return static::addJobIf(! $boolean, ...$arguments);
+    }
+
+    /**
      * Add multiple jobs to the haystack at a time.
      *
      * @param  Collection|array  $jobs

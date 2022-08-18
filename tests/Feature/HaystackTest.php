@@ -100,6 +100,18 @@ test('you can append a job onto the haystack and the job will be executed at the
     expect(cache()->get('order'))->toEqual(['Sam', 'Taylor', 'Sam']);
 });
 
+test('you can conditionally append a job onto the haystack', function () {
+    Haystack::build()
+        ->addJob(new OrderCheckCacheJob('Sam'))
+        ->addJobIf(true, new OrderCheckCacheJob('Neil'))
+        ->addJobIf(false, new OrderCheckCacheJob('Carlo'))
+        ->addJobUnless(true, new OrderCheckCacheJob('Alex'))
+        ->addJobUnless(false, new OrderCheckCacheJob('Marie'))
+        ->dispatch();
+
+    expect(cache()->get('order'))->toEqual(['Sam', 'Neil', 'Marie']);
+});
+
 test('you can set the next job to process on the haystack', function () {
     Haystack::build()
         ->addJob(new AddNextOrderCheckCacheJob('Sam'))
