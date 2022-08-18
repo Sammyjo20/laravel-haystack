@@ -183,7 +183,7 @@ class HaystackBuilder
     /**
      * Add a job when a condition is true.
      *
-     * @param bool $condition
+     * @param  bool  $condition
      * @param ...$arguments
      * @return $this
      */
@@ -195,7 +195,7 @@ class HaystackBuilder
     /**
      * Add a job when a condition is false.
      *
-     * @param bool $condition
+     * @param  bool  $condition
      * @param ...$arguments
      * @return $this
      */
@@ -231,7 +231,7 @@ class HaystackBuilder
     /**
      * Add jobs when a condition is true.
      *
-     * @param bool $condition
+     * @param  bool  $condition
      * @param ...$arguments
      * @return $this
      */
@@ -243,7 +243,7 @@ class HaystackBuilder
     /**
      * Add jobs when a condition is false.
      *
-     * @param bool $condition
+     * @param  bool  $condition
      * @param ...$arguments
      * @return $this
      */
