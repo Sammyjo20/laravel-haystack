@@ -31,6 +31,7 @@ class CacheJob implements ShouldQueue, StackableJob
      * Execute the job.
      *
      * @return void
+     *
      * @throws StackableException
      */
     public function handle()
