@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-haystack` will be documented in this file.
 
+## Version v0.7.4 - 2022-08-19
+
+### What's Changed
+
+- Use conditional clauses when building haystack by @faisuc in https://github.com/Sammyjo20/laravel-haystack/pull/32
+
+**Full Changelog**: https://github.com/Sammyjo20/laravel-haystack/compare/v0.7.3...v0.7.4
+
 ## Version v0.7.3 - 2022-08-18
 
 ### What's Changed
