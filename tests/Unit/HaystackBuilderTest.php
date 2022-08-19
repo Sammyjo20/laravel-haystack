@@ -197,7 +197,7 @@ test('you can use conditional clauses when building your haystack', function () 
     $builder = new HaystackBuilder;
     $neilJob = new NameJob('Neil');
 
-    $builder->when(true, function($haystack) use ($neilJob) {
+    $builder->when(true, function ($haystack) use ($neilJob) {
         $haystack->addJob($neilJob);
     })->when(false, function ($haystack) {
         $haystack->withDelay(30);
@@ -211,7 +211,7 @@ test('you can use conditional clauses when building your haystack', function () 
 
     expect($jobs)->toHaveCount(1);
     expect($jobs[0]->job)->toEqual($neilJob);
-    
+
     expect($builder->getGlobalDelayInSeconds())->toEqual(50);
     expect($builder->getGlobalConnection())->toEqual('database');
 });

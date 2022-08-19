@@ -16,7 +16,7 @@ use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 class HaystackBuilder
 {
     use Conditionable;
-    
+
     /**
      * The name of the haystack.
      *
