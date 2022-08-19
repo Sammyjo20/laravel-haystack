@@ -5,6 +5,7 @@ namespace Sammyjo20\LaravelHaystack\Builders;
 use Closure;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Traits\Conditionable;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Helpers\ClosureHelper;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
@@ -12,6 +13,8 @@ use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 
 class HaystackBuilder
 {
+    use Conditionable;
+    
     /**
      * The name of the haystack.
      *

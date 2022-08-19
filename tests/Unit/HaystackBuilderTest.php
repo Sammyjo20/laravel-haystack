@@ -190,3 +190,26 @@ test('you can dispatch a haystack right away', function () {
 
     expect($haystack->started)->toBeTrue();
 });
+
+test('you can use conditional clauses when building your haystack', function () {
+    $builder = new HaystackBuilder;
+    $neilJob = new NameJob('Neil');
+
+    $builder->when(true, function($haystack) use ($neilJob) {
+        $haystack->addJob($neilJob);
+    })->when(false, function ($haystack) {
+        $haystack->withDelay(30);
+    }, function ($haystack) {
+        $haystack->withDelay(50);
+    })->when(true, function ($haystack) {
+        $haystack->onConnection('database');
+    });
+
+    $jobs = $builder->getJobs();
+
+    expect($jobs)->toHaveCount(1);
+    expect($jobs[0]->job)->toEqual($neilJob);
+    
+    expect($builder->getGlobalDelayInSeconds())->toEqual(50);
+    expect($builder->getGlobalConnection())->toEqual('database');
+});
