@@ -621,7 +621,7 @@ If you would like to disable this feature entirely, you can set the `return_all_
 
 ## Setting data when creating haystacks
 
-Sometimes it's useful to set some data for your jobs to consume without having to pass every piece of data down into each job. You can use the `withData` method while you are building your Haystack to add data before the Haystack starts.
+Sometimes it's useful to set some data for your jobs to consume without having to pass every piece of data down into each job. You can use the `withData` method while you are building your Haystack to add data before the Haystack starts. It also accepts a key, value and optional Eloquent cast.
 
 ```php
 <?php
