@@ -8,11 +8,10 @@ use Closure;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Traits\Conditionable;
-use InvalidArgumentException;
-use Sammyjo20\LaravelHaystack\Data\PendingData;
-use Sammyjo20\LaravelHaystack\Helpers\DataValidator;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
+use Sammyjo20\LaravelHaystack\Data\PendingData;
 use Sammyjo20\LaravelHaystack\Helpers\ClosureHelper;
+use Sammyjo20\LaravelHaystack\Helpers\DataValidator;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 
@@ -359,9 +358,9 @@ class HaystackBuilder
     /**
      * Provide data before the haystack is created.
      *
-     * @param string $key
-     * @param mixed $value
-     * @param string|null $cast
+     * @param  string  $key
+     * @param  mixed  $value
+     * @param  string|null  $cast
      * @return $this
      */
     public function withData(string $key, mixed $value, string $cast = null): static

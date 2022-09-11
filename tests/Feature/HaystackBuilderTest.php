@@ -8,9 +8,9 @@ use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Middleware\CheckAttempts;
 use Sammyjo20\LaravelHaystack\Middleware\CheckFinished;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Middleware\IncrementAttempts;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
 
@@ -204,12 +204,12 @@ test('you can add data to the haystack before it is dispatched', function () {
         ->then(function ($data) {
             expect($data)->toEqual(new Collection([
                 'example' => ['c' => 'd'],
-                'test' => (object)['yo' => 'hi']
+                'test' => (object) ['yo' => 'hi'],
             ]));
         })
         ->withData('example', ['a' => 'b'], 'array')
         ->withData('example', ['c' => 'd'], 'array') // This will overwrite example
-        ->withData('test', (object)['yo' => 'hi'], 'object')
+        ->withData('test', (object) ['yo' => 'hi'], 'object')
         ->dispatch();
 });
 
@@ -227,5 +227,5 @@ test('you cannot leave the cast blank for non integer or string values when prov
 })->with([
     ['hello', true],
     [123, true],
-    [['a' => 'b'], false]
+    [['a' => 'b'], false],
 ]);
