@@ -9,7 +9,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Traits\Conditionable;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
+use Sammyjo20\LaravelHaystack\Data\PendingData;
 use Sammyjo20\LaravelHaystack\Helpers\ClosureHelper;
+use Sammyjo20\LaravelHaystack\Helpers\DataValidator;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 
@@ -95,11 +97,19 @@ class HaystackBuilder
     protected bool $returnDataOnFinish = true;
 
     /**
+     * Array of pending data objects containing the initial data.
+     *
+     * @var Collection
+     */
+    protected Collection $initialData;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->jobs = new Collection;
+        $this->initialData = new Collection;
     }
 
     /**
@@ -346,6 +356,23 @@ class HaystackBuilder
     }
 
     /**
+     * Provide data before the haystack is created.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @param  string|null  $cast
+     * @return $this
+     */
+    public function withData(string $key, mixed $value, string $cast = null): static
+    {
+        DataValidator::validateCast($value, $cast);
+
+        $this->initialData->put($key, new PendingData($key, $value, $cast));
+
+        return $this;
+    }
+
+    /**
      * Create the Haystack
      *
      * @return Haystack
@@ -393,6 +420,26 @@ class HaystackBuilder
     }
 
     /**
+     * Map the initial data to be ready for inserting.
+     *
+     * @param  Haystack  $haystack
+     * @return array
+     */
+    protected function prepareDataForInsert(Haystack $haystack): array
+    {
+        return $this->initialData->map(function (PendingData $pendingData) use ($haystack) {
+            // We'll create a dummy Haystack data model for each row
+            // and convert it into its attributes just for the casting.
+
+            return $haystack->data()->make([
+                'key' => $pendingData->key,
+                'cast' => $pendingData->cast,
+                'value' => $pendingData->value,
+            ])->getAttributes();
+        })->toArray();
+    }
+
+    /**
      * Create the haystack.
      *
      * @return Haystack
@@ -409,7 +456,15 @@ class HaystackBuilder
         $haystack->return_data = $this->returnDataOnFinish;
         $haystack->save();
 
-        $haystack->bales()->insert($this->prepareJobsForInsert($haystack));
+        // We'll bulk insert the jobs and the data for efficient querying.
+
+        if ($this->jobs->isNotEmpty()) {
+            $haystack->bales()->insert($this->prepareJobsForInsert($haystack));
+        }
+
+        if ($this->initialData->isNotEmpty()) {
+            $haystack->data()->insert($this->prepareDataForInsert($haystack));
+        }
 
         return $haystack;
     }

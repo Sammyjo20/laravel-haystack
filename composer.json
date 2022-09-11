@@ -31,8 +31,7 @@
         "orchestra/testbench": "^7.0",
         "pestphp/pest": "^1.21",
         "pestphp/pest-plugin-laravel": "^1.2",
-        "spatie/laravel-ray": "^1.26",
-        "thecodingmachine/safe": "2.2.2"
+        "spatie/laravel-ray": "^1.26"
     },
     "minimum-stability": "stable",
     "autoload": {

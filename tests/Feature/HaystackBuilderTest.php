@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
@@ -9,6 +10,7 @@ use Sammyjo20\LaravelHaystack\Middleware\CheckAttempts;
 use Sammyjo20\LaravelHaystack\Middleware\CheckFinished;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Middleware\IncrementAttempts;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
 
@@ -195,3 +197,35 @@ test('can add multiple jobs to the haystack at once', function () {
         'Teo',
     ]);
 });
+
+test('you can add data to the haystack before it is dispatched', function () {
+    Haystack::build()
+        ->addJob(new CacheJob('name', 'Sam'))
+        ->then(function ($data) {
+            expect($data)->toEqual(new Collection([
+                'example' => ['c' => 'd'],
+                'test' => (object) ['yo' => 'hi'],
+            ]));
+        })
+        ->withData('example', ['a' => 'b'], 'array')
+        ->withData('example', ['c' => 'd'], 'array') // This will overwrite example
+        ->withData('test', (object) ['yo' => 'hi'], 'object')
+        ->dispatch();
+});
+
+test('you cannot leave the cast blank for non integer or string values when providing initial data', function (mixed $value, bool $passes) {
+    if ($passes === false) {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('You must specify a cast if the value is not a string or integer.');
+    }
+
+    Haystack::build()
+        ->withData('test', $value)
+        ->dispatch();
+
+    expect(true)->toBeTrue();
+})->with([
+    ['hello', true],
+    [123, true],
+    [['a' => 'b'], false],
+]);

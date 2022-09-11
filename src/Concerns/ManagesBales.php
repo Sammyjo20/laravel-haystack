@@ -7,13 +7,13 @@ namespace Sammyjo20\LaravelHaystack\Concerns;
 use Closure;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
-use InvalidArgumentException;
 use Illuminate\Support\Collection;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Enums\FinishStatus;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Models\HaystackData;
 use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
+use Sammyjo20\LaravelHaystack\Helpers\DataValidator;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 use Sammyjo20\LaravelHaystack\Middleware\CheckAttempts;
@@ -305,9 +305,7 @@ trait ManagesBales
      */
     public function setData(string $key, mixed $value, string $cast = null): self
     {
-        if (is_null($cast) && is_string($value) === false && is_int($value) === false) {
-            throw new InvalidArgumentException('You must specify a cast if the value is not a string or integer.');
-        }
+        DataValidator::validateCast($value, $cast);
 
         $this->data()->updateOrCreate(['key' => $key], [
             'cast' => $cast,
