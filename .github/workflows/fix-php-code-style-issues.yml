@@ -18,7 +18,7 @@ jobs:
           token: ${{ secrets.COMMIT_TOKEN }}
 
       - name: Fix PHP code style issues
-        uses: aglipanci/laravel-pint-action@0.1.0
+        uses: aglipanci/laravel-pint-action@1.0.0
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
