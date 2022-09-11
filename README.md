@@ -494,7 +494,7 @@ $haystack = Haystack::build()
 
 ### Storing data inside of jobs
 
-Inside your job, you can use the `setHaystackData()` method to store some data. This method accepts a key, value and optional Eloquent cast.
+Inside your job, you can use the `setHaystackData()` method to store some data. This method accepts a key, value and optional [Eloquent cast](https://laravel.com/docs/eloquent-mutators).
 
 ```php
 <?php
@@ -518,7 +518,7 @@ class RetrieveDataFromApi implements ShouldQueue, StackableJob
 
 ### Casting data 
 
-The `setHaystackData` method supports any data type. It supports fully casting your data into any of Eloquent's existing casts, or even your custom casts. Just provide a third argument to specify the cast.
+The `setHaystackData` method supports any data type. It supports fully casting your data into any of [Eloquent's existing casts](https://laravel.com/docs/eloquent-mutators), or even your custom casts. Just provide a third argument to specify the cast.
 
 ```php
 <?php
@@ -618,6 +618,21 @@ $haystack = Haystack::build()
 ```
 
 If you would like to disable this feature entirely, you can set the `return_all_haystack_data_when_finished` config variable to false.
+
+## Setting data when creating haystacks
+
+Sometimes it's useful to set some data for your jobs to consume without having to pass every piece of data down into each job. You can use the `withData` method while you are building your Haystack to add data before the Haystack starts.
+
+```php
+<?php
+
+$haystack = Haystack::build()
+   ->addJob(new RetrieveDataFromApi)
+   ->addJob(new ProcessDataFromApi)
+   ->addJob(new StoreDataFromApi)
+   ->withData('username', 'Sammyjo20')
+   ->dispatch();
+```
 
 ## Naming Haystacks
 
