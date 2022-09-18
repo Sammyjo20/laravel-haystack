@@ -478,6 +478,44 @@ class ProcessPodcast implements ShouldQueue, StackableJo
     }
 ```
 
+## Chunking Jobs
+
+Sometimes it's useful to split up the processing of something into multiple jobs, like processing a large file or scraping data from a paginated API. Laravel haystack uses the Laravel Chunkable Job package and allows you to split a job up into chunks. Just create a job, remove the `handle` method and extend the `ChunkableHaystackJob` class. It's important that you extend this class and not `ChunkableJob` as it will use Haystack's methods to keep processing on the same Haystack.
+
+You do not need to add the `StackableJob` interface or `Stackable` trait since the `ChunkableHaystackJob` will already add this for you.
+
+To read more about the chunkable jobs documentation [click here](https://github.com/sammyjo20/laravel-chunkable-jobs).
+
+```php
+<?php
+
+use Sammyjo20\ChunkableJobs\Chunk;
+use Sammyjo20\LaravelHaystack\ChunkableHaystackJob;
+
+class GetPageOfPokemon extends ChunkableHaystackJob implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public function defineChunk(): ?Chunk
+    {
+        $response = Http::asJson()->get('https://pokeapi.co/api/v2/pokemon');
+
+    	$count = $response->json('count'); // 1154
+
+    	return new Chunk(totalItems: $count, chunkSize: 1, startingPosition: 1);
+    }
+
+    protected function handleChunk(Chunk $chunk): void
+    {
+        $response = Http::asJson()->get(sprintf('https://pokeapi.co/api/v2/pokemon?limit=%s&offset=%s', $chunk->limit, $chunk->offset));
+
+    	$data = $response->json();
+
+    	// Store data of response
+    }
+}
+```
+
 ## Shared Job Data
 
 Laravel Haystack has the ability for your jobs to store and retrieve state/data between jobs. This is really useful if you need to store data in the first job and then in the second job, process the data and in the final job, email the processed data. You are able to create a process pipeline since each job is processed in sequential order. This is really exciting because with traditional chained jobs, you cannot share data between jobs.
@@ -729,6 +767,8 @@ php artisan haystacks:clear
 ```
 
 ## Support Haystack's Development
-While I never expect anything, if you would like to support my work, you can donate to my Ko-Fi page by simply buying me a coffee or two! https://ko-fi.com/sammyjo20
+While I never expect anything, if you would like to support my work, you can donate to my Ko-Fi page by simply buying me a coffee or two!
+
+<a href='https://ko-fi.com/sammyjo20' target='_blank'><img height='35' style='border:0px;height:46px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' />
 
 Thank you for using Laravel Haystack ❤️

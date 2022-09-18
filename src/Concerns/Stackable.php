@@ -18,9 +18,9 @@ trait Stackable
     /**
      * The Haystack the job has.
      *
-     * @var Haystack
+     * @var Haystack|null
      */
-    protected Haystack $haystack;
+    protected ?Haystack $haystack = null;
 
     /**
      * The ID of the haystack "bale". Used for deleting.
