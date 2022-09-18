@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sammyjo20\LaravelHaystack;
 
 use Sammyjo20\ChunkableJobs\ChunkableJob;
@@ -22,13 +24,14 @@ abstract class ChunkableHaystackJob extends ChunkableJob implements StackableJob
     /**
      * Dispatch the next chunk
      *
-     * @param object $job
+     * @param  object  $job
      * @return void
      */
     protected function dispatchNextChunk(object $job): void
     {
         if (is_null($this->haystack)) {
             parent::dispatchNextChunk($job);
+
             return;
         }
 

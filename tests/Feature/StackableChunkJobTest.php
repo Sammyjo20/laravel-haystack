@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Sammyjo20\ChunkableJobs\Chunk;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ChunkableJob;
