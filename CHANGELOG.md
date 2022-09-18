@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-haystack` will be documented in this file.
 
+## Version v0.7.6 - 2022-09-18
+
+### What's Changed
+
+- Feature | Chunkable Jobs by @Sammyjo20 in https://github.com/Sammyjo20/laravel-haystack/pull/40
+
+**Full Changelog**: https://github.com/Sammyjo20/laravel-haystack/compare/v0.7.5...v0.7.6
+
 ## Version v0.7.5 - 2022-09-11
 
 ### What's Changed
