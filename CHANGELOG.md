@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-haystack` will be documented in this file.
 
+## Version v0.8.1 - 2022-09-29
+
+- Revised documentation
+
+**Full Changelog**: https://github.com/Sammyjo20/laravel-haystack/compare/v0.8.0...v0.8.1
+
 ## Version v0.8.0 - 2022-09-29
 
 ### New Features
