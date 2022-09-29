@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-haystack` will be documented in this file.
 
+## Version v0.8.2 - 2022-09-29
+
+### What's Changed
+
+- Feature | Allow Failures Improvements by @Sammyjo20 in https://github.com/Sammyjo20/laravel-haystack/pull/43
+
+**Full Changelog**: https://github.com/Sammyjo20/laravel-haystack/compare/v0.8.1...v0.8.2
+
 ## Version v0.8.1 - 2022-09-29
 
 - Revised documentation
