@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
+use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 use Illuminate\Support\Collection as BaseCollection;
 use Laravel\SerializableClosure\SerializableClosure;
 use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
@@ -63,6 +64,7 @@ test('you can store a serialized closure on a haystack', function () {
     $haystack->on_finally = $finallyClosure;
     $haystack->on_paused = $pausedClosure;
     $haystack->middleware = $middlewareClosure;
+    $haystack->options = new HaystackOptions;
     $haystack->save();
 
     $haystack->refresh();
@@ -109,6 +111,7 @@ test('you can store an invokable class on a haystack', function () {
     $invokableClass = new InvokableClass();
 
     $haystack = new Haystack;
+    $haystack->options = new HaystackOptions;
     $haystack->on_then = $invokableClass;
     $haystack->save();
 

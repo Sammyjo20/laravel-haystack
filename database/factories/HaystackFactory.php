@@ -6,6 +6,7 @@ namespace Sammyjo20\LaravelHaystack\Database\Factories;
 
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 
 class HaystackFactory extends Factory
 {
@@ -18,6 +19,8 @@ class HaystackFactory extends Factory
      */
     public function definition()
     {
-        return [];
+        return [
+            'options' => new HaystackOptions,
+        ];
     }
 }

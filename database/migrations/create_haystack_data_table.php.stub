@@ -14,7 +14,7 @@ return new class extends Migration
             $table->timestamps();
             $table->foreignIdFor(Haystack::class)->constrained()->cascadeOnDelete();
             $table->string('key');
-            $table->binary('value');
+            $table->longText('value');
             $table->string('cast')->nullable();
 
             $table->unique(['haystack_id', 'key']);

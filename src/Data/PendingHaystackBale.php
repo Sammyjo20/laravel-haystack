@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Sammyjo20\LaravelHaystack\Data;
 
+use Carbon\Carbon;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 
@@ -50,7 +51,11 @@ class PendingHaystackBale
      */
     public function toDatabaseRow(Haystack $haystack): array
     {
+        $now = Carbon::now();
+
         return $haystack->bales()->make([
+            'created_at' => $now,
+            'updated_at' => $now,
             'job' => $this->job,
             'delay' => $this->delayInSeconds,
             'on_queue' => $this->queue,

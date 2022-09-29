@@ -90,7 +90,7 @@ class JobEventListener
         // processed job is a "SyncJob" we should ignore the check since
         // sync jobs will be processed straight away.
 
-        if ($processedJob instanceof SyncJob === false && $processedJob->isReleased() === true && $processedJob->hasFailed() === false) {
+        if ($processedJob instanceof SyncJob === false && $processedJob->isReleased() === true) {
             return;
         }
 
@@ -98,7 +98,15 @@ class JobEventListener
         // failed. If it has, then we'll fail the whole haystack. Otherwise,
         // we will dispatch the next job.
 
-        $processedJob->hasFailed() ? $haystack->fail() : $haystack->dispatchNextJob($job);
+        if ($haystack->options->allowFailures === false && $processedJob->hasFailed()) {
+            $haystack->fail();
+
+            return;
+        }
+
+        // Dispatch the next job...
+
+        $haystack->dispatchNextJob($job);
     }
 
     /**
@@ -132,7 +140,15 @@ class JobEventListener
             return;
         }
 
-        // We'll mark the haystack as failed.
+        // If allow failures is turned on, we'll dispatch the next job.
+
+        if ($haystack->options->allowFailures === true) {
+            $haystack->dispatchNextJob($job);
+
+            return;
+        }
+
+        // Otherwise we'll fail the Haystack
 
         $haystack->fail();
     }

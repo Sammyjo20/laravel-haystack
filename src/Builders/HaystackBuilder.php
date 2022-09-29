@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Sammyjo20\LaravelHaystack\Builders;
 
 use Closure;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Traits\Conditionable;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Data\PendingData;
+use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 use Sammyjo20\LaravelHaystack\Helpers\ClosureHelper;
 use Sammyjo20\LaravelHaystack\Helpers\DataValidator;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
@@ -90,11 +92,11 @@ class HaystackBuilder
     protected ?Closure $globalMiddleware = null;
 
     /**
-     * Should we return the data when the haystack finishes?
+     * Other Haystack Options
      *
-     * @var bool
+     * @var HaystackOptions
      */
-    protected bool $returnDataOnFinish = true;
+    protected HaystackOptions $options;
 
     /**
      * Array of pending data objects containing the initial data.
@@ -110,6 +112,7 @@ class HaystackBuilder
     {
         $this->jobs = new Collection;
         $this->initialData = new Collection;
+        $this->options = new HaystackOptions;
     }
 
     /**
@@ -404,18 +407,29 @@ class HaystackBuilder
      */
     protected function prepareJobsForInsert(Haystack $haystack): array
     {
-        return $this->jobs->map(function (PendingHaystackBale $pendingJob) use ($haystack) {
+        $now = Carbon::now();
+
+        $timestamps = [
+            'created_at' => $now,
+            'updated_at' => $now,
+        ];
+
+        return $this->jobs->map(function (PendingHaystackBale $pendingJob) use ($haystack, $timestamps) {
             $hasDelay = isset($pendingJob->delayInSeconds) && $pendingJob->delayInSeconds > 0;
 
             // We'll create a dummy Haystack bale model for each row
             // and convert it into its attributes just for the casting.
 
-            return $haystack->bales()->make([
+            $baseAttributes = $haystack->bales()->make([
                 'job' => $pendingJob->job,
                 'delay' => $hasDelay ? $pendingJob->delayInSeconds : $this->globalDelayInSeconds,
                 'on_queue' => $pendingJob->queue ?? $this->globalQueue,
                 'on_connection' => $pendingJob->connection ?? $this->globalConnection,
             ])->getAttributes();
+
+            // Next we'll merge in the timestamps
+
+            return array_merge($timestamps, $baseAttributes);
         })->toArray();
     }
 
@@ -453,7 +467,7 @@ class HaystackBuilder
         $haystack->on_finally = $this->onFinally;
         $haystack->on_paused = $this->onPaused;
         $haystack->middleware = $this->globalMiddleware;
-        $haystack->return_data = $this->returnDataOnFinish;
+        $haystack->options = $this->options;
         $haystack->save();
 
         // We'll bulk insert the jobs and the data for efficient querying.
@@ -476,7 +490,19 @@ class HaystackBuilder
      */
     public function dontReturnData(): static
     {
-        $this->returnDataOnFinish = false;
+        $this->options->returnDataOnFinish = false;
+
+        return $this;
+    }
+
+    /**
+     * Allow failures on the Haystack
+     *
+     * @return $this
+     */
+    public function allowFailures(): static
+    {
+        $this->options->allowFailures = true;
 
         return $this;
     }

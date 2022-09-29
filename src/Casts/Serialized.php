@@ -6,7 +6,7 @@ namespace Sammyjo20\LaravelHaystack\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
-class SerializeJob implements CastsAttributes
+class Serialized implements CastsAttributes
 {
     /**
      * Unserialize a job.
