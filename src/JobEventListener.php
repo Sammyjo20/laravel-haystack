@@ -100,6 +100,7 @@ class JobEventListener
 
         if ($haystack->options->allowFailures === false && $processedJob->hasFailed()) {
             $haystack->fail();
+
             return;
         }
 
@@ -143,6 +144,7 @@ class JobEventListener
 
         if ($haystack->options->allowFailures === true) {
             $haystack->dispatchNextJob($job);
+
             return;
         }
 
