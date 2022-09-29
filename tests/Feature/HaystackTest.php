@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Carbon;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoCacheJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ManuallyFailedJob;
 use function Pest\Laravel\travel;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -15,11 +13,13 @@ use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\FailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\SetDataJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ExceptionJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PauseNextJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NativeFailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\LongReleaseJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendMultipleJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ManuallyFailedJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PrependMultipleJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AddNextOrderCheckCacheJob;
