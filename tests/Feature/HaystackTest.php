@@ -476,7 +476,11 @@ test('allow failures will not stop the job from processing if a job fails', func
         ->allowFailures()
         ->dispatch();
 
+    expect(DB::table('jobs')->count())->toEqual(1);
+
     $this->artisan('queue:work', ['--once' => true]);
+
+    expect(DB::table('jobs')->count())->toEqual(1);
 
     expect(cache()->get('name'))->toEqual('Sam');
 
@@ -485,6 +489,8 @@ test('allow failures will not stop the job from processing if a job fails', func
     expect($failedJobs)->toHaveCount(0);
 
     $this->artisan('queue:work', ['--once' => true]);
+
+    expect(DB::table('jobs')->count())->toEqual(1);
 
     $failedJobs = DB::table('failed_jobs')->get();
 
@@ -497,6 +503,8 @@ test('allow failures will not stop the job from processing if a job fails', func
     expect($haystack->finished)->toBeFalse();
 
     $this->artisan('queue:work', ['--once' => true]);
+
+    expect(DB::table('jobs')->count())->toEqual(0);
 
     expect(cache()->get('friend'))->toEqual('Steve');
 
