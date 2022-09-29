@@ -2,6 +2,25 @@
 
 All notable changes to `laravel-haystack` will be documented in this file.
 
+## Version v0.8.0 - 2022-09-29
+
+### New Features
+
+- New `allowFailures` option added when building Haystacks to continue processing the next job even if jobs fail. @Sammyjo20 in https://github.com/Sammyjo20/laravel-haystack/pull/42
+
+### Other Changes
+
+- Switched to a new HaystackOptions class instead of multiple database options for better compatibility with future options.
+- Fixed an issue where timestamps weren't being set when haystack bales are added to the queue
+
+### Breaking Changes
+
+- Added a new text "options" column to store the new HaystackOptions class.
+- Removed old `return_data` column on the `haystacks` table
+- Changed `value` column on the `haystack_data` table to a longText to support more data.
+
+**Full Changelog**: https://github.com/Sammyjo20/laravel-haystack/compare/v0.7.6...v0.8.0
+
 ## Version v0.7.6 - 2022-09-18
 
 ### What's Changed
