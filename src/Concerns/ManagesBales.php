@@ -86,11 +86,11 @@ trait ManagesBales
     /**
      * Dispatch the next job.
      *
-     * @param  StackableJob|null  $job
+     * @param  StackableJob|null  $currentJob
      * @param  int|CarbonInterface|null  $delayInSecondsOrCarbon
      * @return void
      */
-    public function dispatchNextJob(StackableJob $job = null, int|CarbonInterface $delayInSecondsOrCarbon = null): void
+    public function dispatchNextJob(StackableJob $currentJob = null, int|CarbonInterface $delayInSecondsOrCarbon = null): void
     {
         // If the resume_at has been set, and the date is in the future, we're not allowed to process
         // the next job, so we stop.
@@ -99,7 +99,7 @@ trait ManagesBales
             return;
         }
 
-        if (is_null($job) && $this->started === false) {
+        if (is_null($currentJob) && $this->started === false) {
             $this->start();
 
             return;
@@ -108,8 +108,8 @@ trait ManagesBales
         // If the job has been provided, we will delete the haystack bale to prevent
         // the same bale being retrieved on the next job.
 
-        if (isset($job)) {
-            HaystackBale::query()->whereKey($job->getHaystackBaleId())->delete();
+        if (isset($currentJob)) {
+            HaystackBale::query()->whereKey($currentJob->getHaystackBaleId())->delete();
         }
 
         // If the delay in seconds has been provided, we need to pause the haystack by the
@@ -351,7 +351,7 @@ trait ManagesBales
     {
         $returnAllData = config('haystack.return_all_haystack_data_when_finished', false);
 
-        return $this->return_data === true && $returnAllData === true ? $this->allData() : null;
+        return $this->options->returnDataOnFinish === true && $returnAllData === true ? $this->allData() : null;
     }
 
     /**

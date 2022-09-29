@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Sammyjo20\LaravelHaystack\Casts\Serialized;
 use Sammyjo20\LaravelHaystack\Concerns\ManagesBales;
 use Sammyjo20\LaravelHaystack\Casts\SerializeClosure;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -35,12 +36,10 @@ class Haystack extends Model
         'on_finally' => SerializeClosure::class,
         'on_paused' => SerializeClosure::class,
         'middleware' => SerializeClosure::class,
-        'started' => 'boolean',
-        'finished' => 'boolean',
         'started_at' => 'immutable_datetime',
         'resume_at' => 'immutable_datetime',
         'finished_at' => 'immutable_datetime',
-        'return_data' => 'boolean',
+        'options' => Serialized::class,
     ];
 
     /**

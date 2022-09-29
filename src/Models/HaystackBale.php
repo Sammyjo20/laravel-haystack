@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Sammyjo20\LaravelHaystack\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Sammyjo20\LaravelHaystack\Casts\SerializeJob;
+use Sammyjo20\LaravelHaystack\Casts\Serialized;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,7 +24,7 @@ class HaystackBale extends Model
      * @var array
      */
     protected $casts = [
-        'job' => SerializeJob::class,
+        'job' => Serialized::class,
         'priority' => 'boolean',
     ];
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Sammyjo20\LaravelHaystack\Database\Factories;
 
+use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,6 +19,8 @@ class HaystackFactory extends Factory
      */
     public function definition()
     {
-        return [];
+        return [
+            'options' => new HaystackOptions,
+        ];
     }
 }

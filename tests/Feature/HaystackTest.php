@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoCacheJob;
+use TiMacDonald\Log\LogEntry;
+use TiMacDonald\Log\LogFake;
 use function Pest\Laravel\travel;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -415,4 +420,89 @@ test('a haystack can be cancelled early and future jobs wont be processed', func
     $this->artisan('queue:work', ['--once' => true]);
 
     expect(cache()->get('name'))->toBeNull();
+});
+
+test('haystacks have timestamps configured when you create the jobs', function () {
+    Carbon::setTestNow('2022-09-29 20:37');
+
+    $haystack = Haystack::build()
+        ->addJob(new NameJob('Sam'))
+        ->addJob(new NameJob('Gareth'))
+        ->create();
+
+    $bales = $haystack->bales()->get();
+
+    expect($bales)->toHaveCount(2);
+
+    expect($bales[0]->created_at)->toEqual(now());
+    expect($bales[0]->updated_at)->toEqual(now());
+
+    expect($bales[1]->created_at)->toEqual(now());
+    expect($bales[1]->updated_at)->toEqual(now());
+});
+
+test('jobs that are added to the haystack after it has been created will have timestamps', function () {
+    Carbon::setTestNow('2022-09-29 20:37');
+
+    $haystack = Haystack::build()
+        ->addJob(new NameJob('Sam'))
+        ->create();
+
+    $haystack->addJobs([
+        new NameJob('Gareth'),
+    ]);
+
+    $bales = $haystack->bales()->get();
+
+    expect($bales)->toHaveCount(2);
+
+    expect($bales[0]->created_at)->toEqual(now());
+    expect($bales[0]->updated_at)->toEqual(now());
+
+    expect($bales[1]->created_at)->toEqual(now());
+    expect($bales[1]->updated_at)->toEqual(now());
+});
+
+test('allow failures will not stop the job from processing if a job fails', function () {
+    withJobsTable();
+    dontDeleteHaystack();
+    withAutomaticProcessing();
+
+    config()->set('queue.default', 'database');
+    config()->set('queue.failed.database', 'testing');
+
+    $haystack = Haystack::build()
+        ->addJob(new AutoCacheJob('name', 'Sam'))
+        ->addJob(new ExceptionJob)
+        ->addJob(new AutoCacheJob('friend', 'Steve'))
+        ->allowFailures()
+        ->dispatch();
+
+    $this->artisan('queue:work', ['--once' => true]);
+
+    expect(cache()->get('name'))->toEqual('Sam');
+
+    $failedJobs = DB::table('failed_jobs')->get();
+
+    expect($failedJobs)->toHaveCount(0);
+
+    $this->artisan('queue:work', ['--once' => true]);
+
+    $failedJobs = DB::table('failed_jobs')->get();
+
+    expect($failedJobs)->toHaveCount(1);
+
+    expect($failedJobs[0]->exception)->toStartWith('Exception: Oh yee-naw! Something bad happened.');
+
+    $haystack->refresh();
+
+    expect($haystack->finished)->toBeFalse();
+
+    $this->artisan('queue:work', ['--once' => true]);
+
+    expect(cache()->get('friend'))->toEqual('Steve');
+
+    $bales = $haystack->bales()->get();
+
+    expect($bales)->toHaveCount(0);
 });

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
+use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Middleware\CheckAttempts;
@@ -21,6 +22,16 @@ test('a haystack can be created with jobs', function () {
         ->create();
 
     expect($haystack)->toBeInstanceOf(Haystack::class);
+
+    // We'll check that all the default options are there
+
+    $options = $haystack->options;
+
+    expect($options)->toBeInstanceOf(HaystackOptions::class);
+    expect($options->returnDataOnFinish)->toBeTrue();
+    expect($options->allowFailures)->toBeFalse();
+
+    // Next we'll check the jobs were properly added
 
     $haystackBales = $haystack->bales()->get();
 
@@ -229,3 +240,18 @@ test('you cannot leave the cast blank for non integer or string values when prov
     [123, true],
     [['a' => 'b'], false],
 ]);
+
+test('you can allow failures on the haystack', function () {
+    $haystack = Haystack::build()
+        ->addJob(new NameJob('Sam'))
+        ->addJob(new NameJob('Gareth'))
+        ->allowFailures()
+        ->create();
+
+    expect($haystack)->toBeInstanceOf(Haystack::class);
+
+    $options = $haystack->options;
+
+    expect($options)->toBeInstanceOf(HaystackOptions::class);
+    expect($options->allowFailures)->toBeTrue();
+});

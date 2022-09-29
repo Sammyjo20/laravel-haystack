@@ -20,7 +20,7 @@ return new class extends Migration
             $table->dateTime('started_at')->nullable();
             $table->dateTime('resume_at')->nullable();
             $table->dateTime('finished_at')->nullable();
-            $table->boolean('return_data')->default(true);
+            $table->text('options');
         });
     }
 
