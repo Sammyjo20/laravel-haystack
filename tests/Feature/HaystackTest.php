@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Carbon;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoCacheJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ManuallyFailedJob;
 use function Pest\Laravel\travel;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +15,6 @@ use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\FailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\SetDataJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ExceptionJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PauseNextJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NativeFailJob;
@@ -496,6 +497,48 @@ test('allow failures will not stop the job from processing if a job fails', func
     expect($haystack->finished)->toBeFalse();
 
     $this->artisan('queue:work', ['--once' => true]);
+
+    expect(cache()->get('friend'))->toEqual('Steve');
+
+    $bales = $haystack->bales()->get();
+
+    expect($bales)->toHaveCount(0);
+});
+
+test('allow failures will not stop the job from processing if a job manually fails', function () {
+    withJobsTable();
+    dontDeleteHaystack();
+    withAutomaticProcessing();
+
+    config()->set('queue.default', 'database');
+    config()->set('queue.failed.database', 'testing');
+
+    $haystack = Haystack::build()
+        ->addJob(new AutoCacheJob('name', 'Sam'))
+        ->addJob(new ManuallyFailedJob)
+        ->addJob(new AutoCacheJob('friend', 'Steve'))
+        ->allowFailures()
+        ->dispatch();
+
+    expect(DB::table('jobs')->count())->toEqual(1);
+
+    $this->artisan('queue:work', ['--once' => true]);
+
+    expect(DB::table('jobs')->count())->toEqual(1);
+
+    expect(cache()->get('name'))->toEqual('Sam');
+
+    $this->artisan('queue:work', ['--once' => true]);
+
+    expect(DB::table('jobs')->count())->toEqual(1);
+
+    $haystack->refresh();
+
+    expect($haystack->finished)->toBeFalse();
+
+    $this->artisan('queue:work', ['--once' => true]);
+
+    expect(DB::table('jobs')->count())->toEqual(0);
 
     expect(cache()->get('friend'))->toEqual('Steve');
 
