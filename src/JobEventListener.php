@@ -95,12 +95,10 @@ class JobEventListener
         }
 
         // Once we have found the Haystack, we'll check if the current job has
-        // failed. If it has, then we'll fail the whole haystack. Otherwise,
-        // we will dispatch the next job.
+        // failed. If it has, then we'll just stop here. If it has failed
+        // the fail handler will continue for us.
 
-        if ($haystack->options->allowFailures === false && $processedJob->hasFailed()) {
-            $haystack->fail();
-
+        if ($processedJob->hasFailed()) {
             return;
         }
 

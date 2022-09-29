@@ -19,6 +19,7 @@ use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PauseNextJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NativeFailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\LongReleaseJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendMultipleJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ManuallyFailedJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PrependMultipleJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AddNextOrderCheckCacheJob;
@@ -475,7 +476,11 @@ test('allow failures will not stop the job from processing if a job fails', func
         ->allowFailures()
         ->dispatch();
 
+    expect(DB::table('jobs')->count())->toEqual(1);
+
     $this->artisan('queue:work', ['--once' => true]);
+
+    expect(DB::table('jobs')->count())->toEqual(1);
 
     expect(cache()->get('name'))->toEqual('Sam');
 
@@ -484,6 +489,8 @@ test('allow failures will not stop the job from processing if a job fails', func
     expect($failedJobs)->toHaveCount(0);
 
     $this->artisan('queue:work', ['--once' => true]);
+
+    expect(DB::table('jobs')->count())->toEqual(1);
 
     $failedJobs = DB::table('failed_jobs')->get();
 
@@ -496,6 +503,50 @@ test('allow failures will not stop the job from processing if a job fails', func
     expect($haystack->finished)->toBeFalse();
 
     $this->artisan('queue:work', ['--once' => true]);
+
+    expect(DB::table('jobs')->count())->toEqual(0);
+
+    expect(cache()->get('friend'))->toEqual('Steve');
+
+    $bales = $haystack->bales()->get();
+
+    expect($bales)->toHaveCount(0);
+});
+
+test('allow failures will not stop the job from processing if a job manually fails', function () {
+    withJobsTable();
+    dontDeleteHaystack();
+    withAutomaticProcessing();
+
+    config()->set('queue.default', 'database');
+    config()->set('queue.failed.database', 'testing');
+
+    $haystack = Haystack::build()
+        ->addJob(new AutoCacheJob('name', 'Sam'))
+        ->addJob(new ManuallyFailedJob)
+        ->addJob(new AutoCacheJob('friend', 'Steve'))
+        ->allowFailures()
+        ->dispatch();
+
+    expect(DB::table('jobs')->count())->toEqual(1);
+
+    $this->artisan('queue:work', ['--once' => true]);
+
+    expect(DB::table('jobs')->count())->toEqual(1);
+
+    expect(cache()->get('name'))->toEqual('Sam');
+
+    $this->artisan('queue:work', ['--once' => true]);
+
+    expect(DB::table('jobs')->count())->toEqual(1);
+
+    $haystack->refresh();
+
+    expect($haystack->finished)->toBeFalse();
+
+    $this->artisan('queue:work', ['--once' => true]);
+
+    expect(DB::table('jobs')->count())->toEqual(0);
 
     expect(cache()->get('friend'))->toEqual('Steve');
 
