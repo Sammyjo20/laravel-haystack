@@ -5,17 +5,20 @@ declare(strict_types=1);
 namespace Sammyjo20\LaravelHaystack\Builders;
 
 use Closure;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Data\PendingData;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
+use Sammyjo20\LaravelHaystack\Casts\SerializedModel;
 use Sammyjo20\LaravelHaystack\Helpers\ClosureHelper;
 use Sammyjo20\LaravelHaystack\Helpers\DataValidator;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
+use Sammyjo20\LaravelHaystack\Exceptions\HaystackModelExists;
 
 class HaystackBuilder
 {
@@ -104,6 +107,13 @@ class HaystackBuilder
      * @var Collection
      */
     protected Collection $initialData;
+
+    /**
+     * Closure to execute before saving
+     *
+     * @var Closure|null
+     */
+    protected ?Closure $beforeSave = null;
 
     /**
      * Constructor
@@ -376,6 +386,28 @@ class HaystackBuilder
     }
 
     /**
+     * Store a model to be shared across all haystack jobs.
+     *
+     * @param  Model  $model
+     * @param  string|null  $key
+     * @return $this
+     *
+     * @throws HaystackModelExists
+     */
+    public function withModel(Model $model, string $key = null): static
+    {
+        $key = 'model:'.($key ?? $model::class);
+
+        if ($this->initialData->has($key)) {
+            throw new HaystackModelExists($key);
+        }
+
+        $this->initialData->put($key, new PendingData($key, $model, SerializedModel::class));
+
+        return $this;
+    }
+
+    /**
      * Create the Haystack
      *
      * @return Haystack
@@ -468,6 +500,11 @@ class HaystackBuilder
         $haystack->on_paused = $this->onPaused;
         $haystack->middleware = $this->globalMiddleware;
         $haystack->options = $this->options;
+
+        if ($this->beforeSave instanceof Closure) {
+            $haystack = tap($haystack, $this->beforeSave);
+        }
+
         $haystack->save();
 
         // We'll bulk insert the jobs and the data for efficient querying.
@@ -585,5 +622,32 @@ class HaystackBuilder
     public function getGlobalMiddleware(): ?Closure
     {
         return $this->globalMiddleware;
+    }
+
+    /**
+     * Specify a closure to run before saving the Haystack
+     *
+     * @param  Closure  $closure
+     * @return $this
+     */
+    public function beforeSave(Closure $closure): static
+    {
+        $this->beforeSave = $closure;
+
+        return $this;
+    }
+
+    /**
+     * Set an option on the Haystack Options.
+     *
+     * @param  string  $option
+     * @param  mixed  $value
+     * @return $this
+     */
+    public function setOption(string $option, mixed $value): static
+    {
+        $this->options->$option = $value;
+
+        return $this;
     }
 }

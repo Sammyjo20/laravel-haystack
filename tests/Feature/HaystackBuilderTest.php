@@ -12,7 +12,10 @@ use Sammyjo20\LaravelHaystack\Middleware\CheckFinished;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Middleware\IncrementAttempts;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
+use Sammyjo20\LaravelHaystack\Exceptions\HaystackModelExists;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Models\CountrySinger;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CountrySingerJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
 
 test('a haystack can be created with jobs', function () {
@@ -254,4 +257,83 @@ test('you can allow failures on the haystack', function () {
 
     expect($options)->toBeInstanceOf(HaystackOptions::class);
     expect($options->allowFailures)->toBeTrue();
+});
+
+test('you can use the beforeSave method to run additional logic on the haystack model before it is saved', function () {
+    $haystack = Haystack::build()
+        ->addJob(new NameJob('Sam'))
+        ->addJob(new NameJob('Gareth'))
+        ->beforeSave(function (Haystack $haystack) {
+            $haystack->options->yeeHaw = true;
+        })
+        ->create();
+
+    $haystack->refresh();
+
+    expect($haystack->options)->toHaveKey('yeeHaw', true);
+});
+
+test('you can provide a model to be shared across the whole haystack', function () {
+    dontDeleteHaystack();
+
+    $migration = include __DIR__.'/../Migrations/create_country_singers_table.php';
+    $migration->up();
+
+    $countrySinger = CountrySinger::create(['name' => 'Kelsea Ballerini'])->fresh();
+
+    Haystack::build()
+        ->addJob(new CountrySingerJob(CountrySinger::class))
+        ->withModel($countrySinger)
+        ->dispatch();
+
+    expect(cache()->get('singer'))->toEqual('Kelsea Ballerini');
+});
+
+test('you can provide a model with a custom key to be shared across the whole haystack', function () {
+    dontDeleteHaystack();
+
+    $migration = include __DIR__.'/../Migrations/create_country_singers_table.php';
+    $migration->up();
+
+    $countrySinger = CountrySinger::create(['name' => 'Kelsea Ballerini'])->fresh();
+
+    Haystack::build()
+        ->addJob(new CountrySingerJob('singer'))
+        ->withModel($countrySinger, 'singer')
+        ->dispatch();
+
+    expect(cache()->get('singer'))->toEqual('Kelsea Ballerini');
+});
+
+test('it will throw an exception if you try to define two models without specifying a key', function () {
+    dontDeleteHaystack();
+
+    $migration = include __DIR__.'/../Migrations/create_country_singers_table.php';
+    $migration->up();
+
+    $countrySingerA = CountrySinger::create(['name' => 'Kelsea Ballerini'])->fresh();
+    $countrySingerB = CountrySinger::create(['name' => 'Luke Combs'])->fresh();
+
+    $this->expectException(HaystackModelExists::class);
+    $this->expectExceptionMessage('Model with the key "Sammyjo20\LaravelHaystack\Tests\Fixtures\Models\CountrySinger" has already been defined on the Haystack. Use the second argument to define a custom key.');
+
+    Haystack::build()
+        ->addJob(new CountrySingerJob('singer'))
+        ->withModel($countrySingerA)
+        ->withModel($countrySingerB)
+        ->dispatch();
+});
+
+test('you can specify a custom option or overwrite an existing option on the haystack', function () {
+    $haystack = Haystack::build()
+        ->setOption('yeeHaw', '🤠')
+        ->setOption('returnDataOnFinish', false)
+        ->create();
+
+    $options = $haystack->options;
+
+    expect($options)->toBeInstanceOf(HaystackOptions::class);
+    expect($options->yeeHaw)->toEqual('🤠');
+    expect($options->returnDataOnFinish)->toBeFalse();
+    expect($options->allowFailures)->toBeFalse();
 });

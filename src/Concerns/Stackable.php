@@ -6,9 +6,11 @@ namespace Sammyjo20\LaravelHaystack\Concerns;
 
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Enums\FinishStatus;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
+use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
@@ -238,6 +240,18 @@ trait Stackable
     }
 
     /**
+     * Get a shared model
+     *
+     * @param  string  $model
+     * @param  mixed|null  $default
+     * @return Model|null
+     */
+    public function getHaystackModel(string $model, mixed $default = null): ?Model
+    {
+        return $this->haystack->getModel($model, $default);
+    }
+
+    /**
      * Get all data on the haystack.
      *
      * @return mixed
@@ -268,5 +282,27 @@ trait Stackable
         $this->haystackBaleAttempts = $attempts;
 
         return $this;
+    }
+
+    /**
+     * Get the options on the Haystack
+     *
+     * @return HaystackOptions
+     */
+    public function getHaystackOptions(): HaystackOptions
+    {
+        return $this->haystack->options;
+    }
+
+    /**
+     * Retrieve a haystack option
+     *
+     * @param  string  $option
+     * @param  mixed|null  $default
+     * @return mixed
+     */
+    public function getHaystackOption(string $option, mixed $default = null): mixed
+    {
+        return $this->haystack->options->$option ?? $default;
     }
 }
