@@ -41,7 +41,7 @@ test('models stored in haystack data wont be returned when retrieving all data',
     $countrySinger = CountrySinger::create(['name' => 'Kenny Rogers']);
 
     $haystack = Haystack::build()
-        ->withModel('singer', $countrySinger)
+        ->withModel($countrySinger)
         ->create();
 
     $haystackData = $haystack->data()->sole();
@@ -58,5 +58,5 @@ test('models stored in haystack data wont be returned when retrieving all data',
     $data = $haystack->allData(true);
 
     expect($data)->toHaveCount(1);
-    expect($data['model:singer'])->toEqual($countrySinger->fresh());
+    expect($data['model:' . CountrySinger::class])->toEqual($countrySinger->fresh());
 });
