@@ -9,6 +9,7 @@ use Illuminate\Queue\Events\JobFailed;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Queue\Events\JobProcessed;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Sammyjo20\LaravelHaystack\Console\Commands\HaystacksClear;
 use Sammyjo20\LaravelHaystack\Console\Commands\HaystacksForget;
 use Sammyjo20\LaravelHaystack\Console\Commands\ResumeHaystacks;
@@ -38,7 +39,14 @@ class LaravelHaystackServiceProvider extends PackageServiceProvider
             ])
             ->hasCommand(ResumeHaystacks::class)
             ->hasCommand(HaystacksForget::class)
-            ->hasCommand(HaystacksClear::class);
+            ->hasCommand(HaystacksClear::class)
+            ->hasInstallCommand(function (InstallCommand $command) {
+                $command
+                    ->publishConfigFile()
+                    ->publishMigrations()
+                    ->askToRunMigrations()
+                    ->askToStarRepoOnGitHub('sammyjo20/laravel-haystack');
+            });
     }
 
     /**
