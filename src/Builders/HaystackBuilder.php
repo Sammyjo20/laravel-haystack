@@ -6,9 +6,11 @@ namespace Sammyjo20\LaravelHaystack\Builders;
 
 use Closure;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Traits\Conditionable;
+use Sammyjo20\LaravelHaystack\Casts\SerializedModel;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Data\PendingData;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
@@ -383,6 +385,22 @@ class HaystackBuilder
     }
 
     /**
+     * Store a model to be shared across all haystack jobs.
+     *
+     * @param string $key
+     * @param Model $model
+     * @return $this
+     */
+    public function withModel(string $key, Model $model): static
+    {
+        $key = 'model:' . $key;
+
+        $this->initialData->put($key, new PendingData($key, $model, SerializedModel::class));
+
+        return $this;
+    }
+
+    /**
      * Create the Haystack
      *
      * @return Haystack
@@ -475,7 +493,11 @@ class HaystackBuilder
         $haystack->on_paused = $this->onPaused;
         $haystack->middleware = $this->globalMiddleware;
         $haystack->options = $this->options;
-        $haystack = tap($haystack, $this->beforeSave);
+
+        if ($this->beforeSave instanceof Closure) {
+            $haystack = tap($haystack, $this->beforeSave);
+        }
+
         $haystack->save();
 
         // We'll bulk insert the jobs and the data for efficient querying.

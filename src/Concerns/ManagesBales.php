@@ -330,13 +330,30 @@ trait ManagesBales
     }
 
     /**
+     * Retrieve a shared model
+     *
+     * @param string $key
+     * @param mixed|null $default
+     * @return mixed
+     */
+    public function getModel(string $key, mixed $default = null): mixed
+    {
+        return $this->getData('model:' . $key, $default);
+    }
+
+    /**
      * Retrieve all the data from the Haystack.
      *
+     * @param bool $includeModels
      * @return Collection
      */
-    public function allData(): Collection
+    public function allData(bool $includeModels = false): Collection
     {
-        return $this->data()->orderBy('id')->get()->mapWithKeys(function ($value, $key) {
+        $data = $this->data()
+            ->when($includeModels === false, fn ($query) => $query->where('key', 'NOT LIKE', 'model:%'))
+            ->orderBy('id')->get();
+
+        return $data->mapWithKeys(function ($value, $key) {
             return [$value->key => $value->value];
         });
     }

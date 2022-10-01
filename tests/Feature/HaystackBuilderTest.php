@@ -3,17 +3,20 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 use Sammyjo20\LaravelHaystack\Middleware\CheckAttempts;
 use Sammyjo20\LaravelHaystack\Middleware\CheckFinished;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CountrySingerJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Middleware\IncrementAttempts;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Models\CountrySinger;
 
 test('a haystack can be created with jobs', function () {
     $haystack = Haystack::build()
@@ -268,4 +271,31 @@ test('you can use the beforeSave method to run additional logic on the haystack 
     $haystack->refresh();
 
     expect($haystack->options)->toHaveKey('yeeHaw', true);
+});
+
+test('you can provide a model to be shared across the whole haystack', function () {
+    dontDeleteHaystack();
+
+    $migration = include __DIR__.'/../Migrations/create_country_singers_table.php';
+    $migration->up();
+
+    $countrySinger = CountrySinger::create(['name' => 'Kelsea Ballerini'])->fresh();
+
+    $haystack = Haystack::build()
+        ->addJob(new CountrySingerJob)
+        ->withModel('singer', $countrySinger)
+        ->dispatch();
+
+    expect(cache()->get('singer'))->toEqual('Kelsea Ballerini');
+
+    // Let's also make sure the data does not include the model by default
+
+    $data = $haystack->allData();
+
+    expect($data)->toHaveCount(0);
+
+    $data = $haystack->allData(true);
+
+    expect($data)->toHaveCount(1);
+    expect($data['model:singer'])->toEqual($countrySinger);
 });
