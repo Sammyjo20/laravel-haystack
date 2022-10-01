@@ -332,19 +332,19 @@ trait ManagesBales
     /**
      * Retrieve a shared model
      *
-     * @param string $key
-     * @param mixed|null $default
+     * @param  string  $key
+     * @param  mixed|null  $default
      * @return mixed
      */
     public function getModel(string $key, mixed $default = null): mixed
     {
-        return $this->getData('model:' . $key, $default);
+        return $this->getData('model:'.$key, $default);
     }
 
     /**
      * Retrieve all the data from the Haystack.
      *
-     * @param bool $includeModels
+     * @param  bool  $includeModels
      * @return Collection
      */
     public function allData(bool $includeModels = false): Collection

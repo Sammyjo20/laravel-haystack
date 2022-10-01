@@ -6,14 +6,14 @@ namespace Sammyjo20\LaravelHaystack\Builders;
 
 use Closure;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
-use Sammyjo20\LaravelHaystack\Casts\SerializedModel;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Data\PendingData;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
+use Sammyjo20\LaravelHaystack\Casts\SerializedModel;
 use Sammyjo20\LaravelHaystack\Helpers\ClosureHelper;
 use Sammyjo20\LaravelHaystack\Helpers\DataValidator;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
@@ -387,13 +387,13 @@ class HaystackBuilder
     /**
      * Store a model to be shared across all haystack jobs.
      *
-     * @param string $key
-     * @param Model $model
+     * @param  string  $key
+     * @param  Model  $model
      * @return $this
      */
     public function withModel(string $key, Model $model): static
     {
-        $key = 'model:' . $key;
+        $key = 'model:'.$key;
 
         $this->initialData->put($key, new PendingData($key, $model, SerializedModel::class));
 
@@ -620,7 +620,7 @@ class HaystackBuilder
     /**
      * Specify a closure to run before saving the Haystack
      *
-     * @param Closure $closure
+     * @param  Closure  $closure
      * @return $this
      */
     public function beforeSave(Closure $closure): static

@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Sammyjo20\LaravelHaystack\Models;
 
-use Carbon\CarbonImmutable;
 use Closure;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Prunable;
 use Sammyjo20\LaravelHaystack\Casts\Serialized;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 use Sammyjo20\LaravelHaystack\Concerns\ManagesBales;
 use Sammyjo20\LaravelHaystack\Casts\SerializeClosure;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
-use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 use Sammyjo20\LaravelHaystack\Database\Factories\HaystackFactory;
 
 /**

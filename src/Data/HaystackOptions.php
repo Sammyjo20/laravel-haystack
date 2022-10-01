@@ -23,7 +23,7 @@ class HaystackOptions
     /**
      * Allow additional properties to be added to Haystack options.
      *
-     * @param string $name
+     * @param  string  $name
      * @param $value
      * @return void
      */

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Sammyjo20\LaravelHaystack\Casts;
 
-use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
-use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Sammyjo20\LaravelHaystack\Data\SerializedModel as SerializedModelData;
 
 class SerializedModel implements CastsAttributes

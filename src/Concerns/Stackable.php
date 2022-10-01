@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Sammyjo20\LaravelHaystack\Concerns;
 
 use Carbon\CarbonInterface;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Enums\FinishStatus;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
@@ -241,8 +241,8 @@ trait Stackable
     /**
      * Get a shared model
      *
-     * @param string $key
-     * @param mixed|null $default
+     * @param  string  $key
+     * @param  mixed|null  $default
      * @return Model|null
      */
     public function getHaystackModel(string $key, mixed $default = null): ?Model

@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Sammyjo20\LaravelHaystack\Casts\SerializedModel;
+use Illuminate\Database\Eloquent\Model;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackData;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Models\CountrySinger;
