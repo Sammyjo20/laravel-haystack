@@ -6,6 +6,7 @@ namespace Sammyjo20\LaravelHaystack;
 
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Queue\Events\JobFailed;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Queue\Events\JobProcessed;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -38,7 +39,14 @@ class LaravelHaystackServiceProvider extends PackageServiceProvider
             ])
             ->hasCommand(ResumeHaystacks::class)
             ->hasCommand(HaystacksForget::class)
-            ->hasCommand(HaystacksClear::class);
+            ->hasCommand(HaystacksClear::class)
+            ->hasInstallCommand(function(InstallCommand $command) {
+                $command
+                    ->publishConfigFile()
+                    ->publishMigrations()
+                    ->askToRunMigrations()
+                    ->askToStarRepoOnGitHub('sammyjo20/laravel-haystack');
+            });
     }
 
     /**
