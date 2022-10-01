@@ -7,18 +7,18 @@ namespace Sammyjo20\LaravelHaystack\Builders;
 use Closure;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
-use Sammyjo20\LaravelHaystack\Casts\SerializedModel;
-use Sammyjo20\LaravelHaystack\Exceptions\HaystackModelExists;
+use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Data\PendingData;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
+use Sammyjo20\LaravelHaystack\Casts\SerializedModel;
 use Sammyjo20\LaravelHaystack\Helpers\ClosureHelper;
 use Sammyjo20\LaravelHaystack\Helpers\DataValidator;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
-use Sammyjo20\LaravelHaystack\Models\Haystack;
+use Sammyjo20\LaravelHaystack\Exceptions\HaystackModelExists;
 
 class HaystackBuilder
 {
@@ -388,14 +388,15 @@ class HaystackBuilder
     /**
      * Store a model to be shared across all haystack jobs.
      *
-     * @param Model $model
-     * @param string|null $key
+     * @param  Model  $model
+     * @param  string|null  $key
      * @return $this
+     *
      * @throws HaystackModelExists
      */
     public function withModel(Model $model, string $key = null): static
     {
-        $key = 'model:' . ($key ?? $model::class);
+        $key = 'model:'.($key ?? $model::class);
 
         if ($this->initialData->has($key)) {
             throw new HaystackModelExists($key);

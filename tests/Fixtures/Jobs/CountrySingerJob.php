@@ -12,7 +12,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Sammyjo20\LaravelHaystack\Concerns\Stackable;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Models\CountrySinger;
 
 class CountrySingerJob implements ShouldQueue, StackableJob
 {

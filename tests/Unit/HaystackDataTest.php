@@ -58,5 +58,5 @@ test('models stored in haystack data wont be returned when retrieving all data',
     $data = $haystack->allData(true);
 
     expect($data)->toHaveCount(1);
-    expect($data['model:' . CountrySinger::class])->toEqual($countrySinger->fresh());
+    expect($data['model:'.CountrySinger::class])->toEqual($countrySinger->fresh());
 });

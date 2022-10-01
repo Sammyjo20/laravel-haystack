@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sammyjo20\LaravelHaystack\Exceptions;
 
 use Exception;
@@ -10,7 +12,7 @@ class HaystackModelExists extends Exception
     /**
      * Constructor
      *
-     * @param string $key
+     * @param  string  $key
      */
     public function __construct(string $key)
     {
