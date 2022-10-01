@@ -323,3 +323,17 @@ test('it will throw an exception if you try to define two models without specify
         ->withModel($countrySingerB)
         ->dispatch();
 });
+
+test('you can specify a custom option or overwrite an existing option on the haystack', function () {
+    $haystack = Haystack::build()
+        ->setOption('yeeHaw', '🤠')
+        ->setOption('returnDataOnFinish', false)
+        ->create();
+
+    $options = $haystack->options;
+
+    expect($options)->toBeInstanceOf(HaystackOptions::class);
+    expect($options->yeeHaw)->toEqual('🤠');
+    expect($options->returnDataOnFinish)->toBeFalse();
+    expect($options->allowFailures)->toBeFalse();
+});

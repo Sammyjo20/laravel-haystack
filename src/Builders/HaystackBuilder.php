@@ -636,4 +636,18 @@ class HaystackBuilder
 
         return $this;
     }
+
+    /**
+     * Set an option on the Haystack Options.
+     *
+     * @param string $option
+     * @param mixed $value
+     * @return $this
+     */
+    public function setOption(string $option, mixed $value): static
+    {
+        $this->options->$option = $value;
+
+        return $this;
+    }
 }
