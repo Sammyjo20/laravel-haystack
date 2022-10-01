@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
+use Sammyjo20\LaravelHaystack\Exceptions\HaystackModelExists;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
@@ -281,9 +282,44 @@ test('you can provide a model to be shared across the whole haystack', function 
     $countrySinger = CountrySinger::create(['name' => 'Kelsea Ballerini'])->fresh();
 
     Haystack::build()
-        ->addJob(new CountrySingerJob)
-        ->withModel('singer', $countrySinger)
+        ->addJob(new CountrySingerJob(CountrySinger::class))
+        ->withModel($countrySinger)
         ->dispatch();
 
     expect(cache()->get('singer'))->toEqual('Kelsea Ballerini');
+});
+
+test('you can provide a model with a custom key to be shared across the whole haystack', function () {
+    dontDeleteHaystack();
+
+    $migration = include __DIR__.'/../Migrations/create_country_singers_table.php';
+    $migration->up();
+
+    $countrySinger = CountrySinger::create(['name' => 'Kelsea Ballerini'])->fresh();
+
+    Haystack::build()
+        ->addJob(new CountrySingerJob('singer'))
+        ->withModel($countrySinger, 'singer')
+        ->dispatch();
+
+    expect(cache()->get('singer'))->toEqual('Kelsea Ballerini');
+});
+
+test('it will throw an exception if you try to define two models without specifying a key', function () {
+    dontDeleteHaystack();
+
+    $migration = include __DIR__.'/../Migrations/create_country_singers_table.php';
+    $migration->up();
+
+    $countrySingerA = CountrySinger::create(['name' => 'Kelsea Ballerini'])->fresh();
+    $countrySingerB = CountrySinger::create(['name' => 'Luke Combs'])->fresh();
+
+    $this->expectException(HaystackModelExists::class);
+    $this->expectExceptionMessage('Model with the key "Sammyjo20\LaravelHaystack\Tests\Fixtures\Models\CountrySinger" has already been defined on the Haystack. Use the second argument to define a custom key.');
+
+    Haystack::build()
+        ->addJob(new CountrySingerJob('singer'))
+        ->withModel($countrySingerA)
+        ->withModel($countrySingerB)
+        ->dispatch();
 });

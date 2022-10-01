@@ -241,13 +241,13 @@ trait Stackable
     /**
      * Get a shared model
      *
-     * @param  string  $key
-     * @param  mixed|null  $default
+     * @param string $model
+     * @param mixed|null $default
      * @return Model|null
      */
-    public function getHaystackModel(string $key, mixed $default = null): ?Model
+    public function getHaystackModel(string $model, mixed $default = null): ?Model
     {
-        return $this->haystack->getModel($key, $default);
+        return $this->haystack->getModel($model, $default);
     }
 
     /**

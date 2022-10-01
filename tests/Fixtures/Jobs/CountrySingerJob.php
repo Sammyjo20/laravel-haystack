@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Sammyjo20\LaravelHaystack\Concerns\Stackable;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Models\CountrySinger;
 
 class CountrySingerJob implements ShouldQueue, StackableJob
 {
@@ -22,7 +23,7 @@ class CountrySingerJob implements ShouldQueue, StackableJob
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(public string $key)
     {
         //
     }
@@ -36,7 +37,7 @@ class CountrySingerJob implements ShouldQueue, StackableJob
      */
     public function handle()
     {
-        $model = $this->getHaystackModel('singer');
+        $model = $this->getHaystackModel($this->key);
 
         cache()->put('singer', $model->name);
 
