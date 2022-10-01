@@ -1,6 +1,6 @@
 {
     "name": "sammyjo20/laravel-haystack",
-    "description": "Beautifully simple, database-driven job chains.",
+    "description": "Powerful database-driven job chains for Laravel",
     "license": "MIT",
     "keywords": [
         "Sammyjo20",
