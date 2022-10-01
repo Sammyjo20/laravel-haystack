@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-haystack` will be documented in this file.
 
+## Version v0.8.3 - 2022-10-01
+
+### What's Changed
+
+- Feature | Models on Haystacks by @Sammyjo20 in https://github.com/Sammyjo20/laravel-haystack/pull/45
+
+**Full Changelog**: https://github.com/Sammyjo20/laravel-haystack/compare/v0.8.2...v0.8.3
+
 ## Version v0.8.2 - 2022-09-29
 
 ### What's Changed
