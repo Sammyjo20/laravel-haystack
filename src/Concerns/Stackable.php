@@ -7,10 +7,10 @@ namespace Sammyjo20\LaravelHaystack\Concerns;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Enums\FinishStatus;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
+use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Tests\Exceptions\StackableException;
@@ -297,8 +297,8 @@ trait Stackable
     /**
      * Retrieve a haystack option
      *
-     * @param string $option
-     * @param mixed|null $default
+     * @param  string  $option
+     * @param  mixed|null  $default
      * @return mixed
      */
     public function getHaystackOption(string $option, mixed $default = null): mixed

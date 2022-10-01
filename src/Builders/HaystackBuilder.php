@@ -640,8 +640,8 @@ class HaystackBuilder
     /**
      * Set an option on the Haystack Options.
      *
-     * @param string $option
-     * @param mixed $value
+     * @param  string  $option
+     * @param  mixed  $value
      * @return $this
      */
     public function setOption(string $option, mixed $value): static

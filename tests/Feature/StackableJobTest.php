@@ -6,16 +6,15 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CustomOptionJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\FailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ExcitedJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\SetDataJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoCacheJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CustomOptionJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingDelayJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\GetAndCacheDataJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\GetAllAndCacheDataJob;
-use function Symfony\Component\Translation\t;
 
 test('a stackable job can call the next job', function () {
     $haystack = Haystack::build()
