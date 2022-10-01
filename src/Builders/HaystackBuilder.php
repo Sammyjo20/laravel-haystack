@@ -106,6 +106,13 @@ class HaystackBuilder
     protected Collection $initialData;
 
     /**
+     * Closure to execute before saving
+     *
+     * @var Closure|null
+     */
+    protected ?Closure $beforeSave = null;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -468,6 +475,7 @@ class HaystackBuilder
         $haystack->on_paused = $this->onPaused;
         $haystack->middleware = $this->globalMiddleware;
         $haystack->options = $this->options;
+        $haystack = tap($haystack, $this->beforeSave);
         $haystack->save();
 
         // We'll bulk insert the jobs and the data for efficient querying.
@@ -585,5 +593,18 @@ class HaystackBuilder
     public function getGlobalMiddleware(): ?Closure
     {
         return $this->globalMiddleware;
+    }
+
+    /**
+     * Specify a closure to run before saving the Haystack
+     *
+     * @param Closure $closure
+     * @return $this
+     */
+    public function beforeSave(Closure $closure): static
+    {
+        $this->beforeSave = $closure;
+
+        return $this;
     }
 }

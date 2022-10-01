@@ -255,3 +255,17 @@ test('you can allow failures on the haystack', function () {
     expect($options)->toBeInstanceOf(HaystackOptions::class);
     expect($options->allowFailures)->toBeTrue();
 });
+
+test('you can use the beforeSave method to run additional logic on the haystack model before it is saved', function () {
+    $haystack = Haystack::build()
+        ->addJob(new NameJob('Sam'))
+        ->addJob(new NameJob('Gareth'))
+        ->beforeSave(function (Haystack $haystack) {
+            $haystack->options->yeeHaw = true;
+        })
+        ->create();
+
+    $haystack->refresh();
+
+    expect($haystack->options)->toHaveKey('yeeHaw', true);
+});
