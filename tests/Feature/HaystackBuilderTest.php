@@ -281,21 +281,10 @@ test('you can provide a model to be shared across the whole haystack', function 
 
     $countrySinger = CountrySinger::create(['name' => 'Kelsea Ballerini'])->fresh();
 
-    $haystack = Haystack::build()
+    Haystack::build()
         ->addJob(new CountrySingerJob)
         ->withModel('singer', $countrySinger)
         ->dispatch();
 
     expect(cache()->get('singer'))->toEqual('Kelsea Ballerini');
-
-    // Let's also make sure the data does not include the model by default
-
-    $data = $haystack->allData();
-
-    expect($data)->toHaveCount(0);
-
-    $data = $haystack->allData(true);
-
-    expect($data)->toHaveCount(1);
-    expect($data['model:singer'])->toEqual($countrySinger);
 });
