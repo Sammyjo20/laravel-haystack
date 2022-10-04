@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-haystack` will be documented in this file.
 
+## Version v0.9.0 - 2022-10-04
+
+### What's Changed
+
+- Fix | Removed Spatie Laravel Package Tools by @Sammyjo20 in https://github.com/Sammyjo20/laravel-haystack/pull/47
+
+**Full Changelog**: https://github.com/Sammyjo20/laravel-haystack/compare/v0.8.5...v0.9.0
+
 ## Version v0.8.5 - 2022-10-04
 
 - Updated docs
