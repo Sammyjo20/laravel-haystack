@@ -25,21 +25,41 @@ class HaystackInstall extends Command
      */
     public function handle(): int
     {
-        $this->info('Publishing migrations...');
+        $this->info(' 🚀 | Installing Haystack');
 
-        $this->call('vendor:publish', ['--tag' => 'haystack-migrations']);
+        $this->info(' 🪐 | Publishing migrations...');
 
-        $this->info('Publishing config...');
+        $this->callSilently('vendor:publish', ['--tag' => 'haystack-migrations']);
 
-        $this->call('vendor:publish', ['--tag' => 'haystack-config']);
+        $this->info(' 🔭 | Publishing config...');
+
+        $this->callSilently('vendor:publish', ['--tag' => 'haystack-config']);
 
         $runMigrations = $this->confirm('Would you like to run migrations?', false);
 
         if ($runMigrations) {
-            $this->call('migrate');
-        }g
+            $this->callSilently('migrate');
 
-        // Todo: Add star on Github?
+            $this->info(' 🎯 | Migrations run successfully');
+        }
+
+        if ($this->confirm(' 🤩 | Would you like to star the repo on GitHub?')) {
+            $repoUrl = 'https://github.com/sammyjo20/laravel-haystack';
+
+            if (PHP_OS_FAMILY == 'Darwin') {
+                exec("open {$repoUrl}");
+            }
+
+            if (PHP_OS_FAMILY == 'Windows') {
+                exec("start {$repoUrl}");
+            }
+
+            if (PHP_OS_FAMILY == 'Linux') {
+                exec("xdg-open {$repoUrl}");
+            }
+        }
+
+        $this->info(' ✅ | Haystack has been installed. Thank you for using Haystack. Happy developing! ❤️');
 
         return self::SUCCESS;
     }

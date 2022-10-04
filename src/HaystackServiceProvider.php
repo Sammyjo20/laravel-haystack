@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Queue\Events\JobProcessed;
-use Sammyjo20\LaravelHaystack\Console\Commands\HaystackInstall;
 use Sammyjo20\LaravelHaystack\Console\Commands\HaystacksClear;
+use Sammyjo20\LaravelHaystack\Console\Commands\HaystackInstall;
 use Sammyjo20\LaravelHaystack\Console\Commands\HaystacksForget;
 use Sammyjo20\LaravelHaystack\Console\Commands\HaystacksResume;
 
@@ -52,9 +52,9 @@ class HaystackServiceProvider extends ServiceProvider
         ], 'haystack-config');
 
         $this->publishes([
-            __DIR__ . '/../database/migrations/create_haystacks_table.php.stub' => database_path('migrations/' . now()->format('Y_m_d_His') . '_create_haystacks_table.php'),
-            __DIR__ . '/../database/migrations/create_haystack_bales_table.php.stub' => database_path('migrations/' . now()->addSeconds(1)->format('Y_m_d_His') . '_create_haystack_bales_table.php'),
-            __DIR__ . '/../database/migrations/create_haystack_data_table.php.stub' => database_path('migrations/' . now()->addSeconds(2)->format('Y_m_d_His') . '_create_haystack_data_table.php'),
+            __DIR__.'/../database/migrations/create_haystacks_table.php.stub' => database_path('migrations/'.now()->format('Y_m_d_His').'_create_haystacks_table.php'),
+            __DIR__.'/../database/migrations/create_haystack_bales_table.php.stub' => database_path('migrations/'.now()->addSeconds(1)->format('Y_m_d_His').'_create_haystack_bales_table.php'),
+            __DIR__.'/../database/migrations/create_haystack_data_table.php.stub' => database_path('migrations/'.now()->addSeconds(2)->format('Y_m_d_His').'_create_haystack_data_table.php'),
         ], 'haystack-migrations');
 
         return $this;
