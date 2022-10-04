@@ -3,7 +3,7 @@
 <img src="https://user-images.githubusercontent.com/29132017/181642184-e95e6214-2ff0-4a32-985e-938432b7b3f5.jpeg" width="250">
 
 # Laravel Haystack
-Powerful database-driven job chains for Laravel
+⚡️ Supercharged job chains for Laravel
 
 ![Build Status](https://github.com/sammyjo20/laravel-haystack/actions/workflows/tests.yml/badge.svg)
 
