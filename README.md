@@ -11,7 +11,7 @@
 
 </div>
 
-Laravel Haystack allows you to have a job chain stored in the database. It comes with powerful features like delaying jobs for as long as you like, applying middleware to every job, sharing data and models between jobs and even chunking jobs.  Laravel Haystack supports every queue connection/worker out of the box. (Database, Redis/Horizon, SQS).
+Laravel Haystack provides supercharged job chains for Laravel. It comes with powerful features like delaying jobs for as long as you like, applying middleware to every job, sharing data and models between jobs and even chunking jobs. Laravel Haystack supports every queue connection/worker out of the box. (Database, Redis/Horizon, SQS). It's great if you need to queue thousands of jobs in a chain or if you are looking for features that the original Bus chain doesn't provide.
 
 ```php
 $haystack = Haystack::build()
