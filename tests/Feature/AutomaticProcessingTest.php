@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
@@ -35,7 +36,7 @@ test('it can process jobs automatically', function () {
 });
 
 test('if a job is released it will not be processed', function () {
-    Queue::fake([
+    Bus::fake([
         ReleaseJob::class,
     ]);
 
@@ -50,7 +51,7 @@ test('if a job is released it will not be processed', function () {
     expect(cache()->get('friend'))->toEqual('Michael');
     expect(cache()->get('boss'))->toBeNull();
 
-    Queue::assertPushed(ReleaseJob::class);
+    Bus::assertDispatched(ReleaseJob::class);
 
     // We'll make sure that Gareth's job is still queued.
 

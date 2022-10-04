@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -69,7 +70,7 @@ test('when a stackable job is created the haystack is loaded', function () {
 });
 
 test('you can dispatch the next job in the haystack with a custom delay', function () {
-    Queue::fake([
+    Bus::fake([
         CacheJob::class,
     ]);
 
@@ -77,7 +78,7 @@ test('you can dispatch the next job in the haystack with a custom delay', functi
         ->addJob(new AppendingDelayJob)
         ->dispatch();
 
-    Queue::assertPushed(CacheJob::class, function (CacheJob $job) {
+    Bus::assertDispatched(CacheJob::class, function (CacheJob $job) {
         return $job->delay === 120 && $job->queue === 'cowboy' && $job->connection === 'redis';
     });
 });
