@@ -6,68 +6,86 @@ namespace Sammyjo20\LaravelHaystack;
 
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Queue\Events\JobFailed;
-use Spatie\LaravelPackageTools\Package;
+use Illuminate\Support\ServiceProvider;
 use Illuminate\Queue\Events\JobProcessed;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Sammyjo20\LaravelHaystack\Console\Commands\HaystacksClear;
 use Sammyjo20\LaravelHaystack\Console\Commands\HaystacksForget;
-use Sammyjo20\LaravelHaystack\Console\Commands\ResumeHaystacks;
+use Sammyjo20\LaravelHaystack\Console\Commands\HaystacksResume;
 
-class LaravelHaystackServiceProvider extends PackageServiceProvider
+class LaravelHaystackServiceProvider extends ServiceProvider
 {
     /**
-     * Welcome to Laravel Haystack, world!
+     * Register any application services.
      *
-     * @param  Package  $package
      * @return void
      */
-    public function configurePackage(Package $package): void
+    public function register()
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
-        $package
-            ->name('laravel-haystack')
-            ->hasConfigFile()
-            ->hasMigrations([
-                'create_haystacks_table',
-                'create_haystack_bales_table',
-                'create_haystack_data_table',
-            ])
-            ->hasCommand(ResumeHaystacks::class)
-            ->hasCommand(HaystacksForget::class)
-            ->hasCommand(HaystacksClear::class)
-            ->hasInstallCommand(function (InstallCommand $command) {
-                $command
-                    ->publishConfigFile()
-                    ->publishMigrations()
-                    ->askToRunMigrations()
-                    ->askToStarRepoOnGitHub('sammyjo20/laravel-haystack');
-            });
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/haystack.php',
+            'haystack'
+        );
     }
 
     /**
-     * Hook when the package is booting.
+     * Bootstrap any package services.
      *
      * @return void
      */
-    public function bootingPackage(): void
+    public function boot(): void
     {
-        $this->listenToQueueEvents();
+        $this->publishConfigAndMigrations()
+            ->registerCommands()
+            ->registerQueueListeners();
+    }
+
+    /**
+     * Public the config file and migrations
+     *
+     * @return $this
+     */
+    protected function publishConfigAndMigrations(): static
+    {
+        $this->publishes([
+            __DIR__.'/../config/haystack.php' => config_path('haystack.php'),
+        ], 'haystack-config');
+
+        $this->publishes([
+            __DIR__.'/../database/migrations/' => database_path('migrations'),
+        ], 'haystack-migrations');
+
+        return $this;
+    }
+
+    /**
+     * Register commands
+     *
+     * @return $this
+     */
+    protected function registerCommands(): static
+    {
+        if (! $this->app->runningInConsole()) {
+            return $this;
+        }
+
+        $this->commands([
+            HaystacksClear::class,
+            HaystacksForget::class,
+            HaystacksResume::class,
+        ]);
+
+        return $this;
     }
 
     /**
      * Listen to the queue events.
      *
-     * @return void
+     * @return $this
      */
-    public function listenToQueueEvents(): void
+    public function registerQueueListeners(): static
     {
         if (config('haystack.process_automatically') !== true) {
-            return;
+            return $this;
         }
 
         Queue::createPayloadUsing(fn ($connection, $queue, $payload) => JobEventListener::make()->createPayloadUsing($connection, $queue, $payload));
@@ -75,5 +93,7 @@ class LaravelHaystackServiceProvider extends PackageServiceProvider
         Queue::after(fn (JobProcessed $event) => JobEventListener::make()->handleJobProcessed($event));
 
         Queue::failing(fn (JobFailed $event) => JobEventListener::make()->handleFailedJob($event));
+
+        return $this;
     }
 }

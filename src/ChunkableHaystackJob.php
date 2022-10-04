@@ -17,7 +17,7 @@ abstract class ChunkableHaystackJob extends ChunkableJob implements StackableJob
      *
      * @var array|string[]
      */
-    protected array $extraUnsetProperties = [
+    protected array $ignoredProperties = [
         'haystack', 'haystackBaleId', 'haystackBaleAttempts',
     ];
 

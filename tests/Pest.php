@@ -16,7 +16,7 @@ function withAutomaticProcessing(): void
     // It's a bit hacky, but we'll run the "bootingPackage" method
     // on the provider to start recording events.
 
-    (new LaravelHaystackServiceProvider(app()))->bootingPackage();
+    (new LaravelHaystackServiceProvider(app()))->registerQueueListeners();
 }
 
 function dontDeleteHaystack(): void
