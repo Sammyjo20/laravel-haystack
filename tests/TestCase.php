@@ -6,7 +6,7 @@ namespace Sammyjo20\LaravelHaystack\Tests;
 
 use Orchestra\Testbench\TestCase as Orchestra;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Sammyjo20\LaravelHaystack\LaravelHaystackServiceProvider;
+use Sammyjo20\LaravelHaystack\HaystackServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -22,7 +22,7 @@ class TestCase extends Orchestra
     protected function getPackageProviders($app)
     {
         return [
-            LaravelHaystackServiceProvider::class,
+            HaystackServiceProvider::class,
         ];
     }
 

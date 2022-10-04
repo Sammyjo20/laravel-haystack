@@ -25,15 +25,21 @@ class HaystackInstall extends Command
      */
     public function handle(): int
     {
-        $this->call('vendor:publish --tag=haystack-config');
+        $this->info('Publishing migrations...');
 
-        $this->call('vendor:publish --tag=haystack-migrations');
+        $this->call('vendor:publish', ['--tag' => 'haystack-migrations']);
+
+        $this->info('Publishing config...');
+
+        $this->call('vendor:publish', ['--tag' => 'haystack-config']);
 
         $runMigrations = $this->confirm('Would you like to run migrations?', false);
 
         if ($runMigrations) {
             $this->call('migrate');
-        }
+        }g
+
+        // Todo: Add star on Github?
 
         return self::SUCCESS;
     }
