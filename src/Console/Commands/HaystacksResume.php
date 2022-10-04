@@ -7,7 +7,7 @@ namespace Sammyjo20\LaravelHaystack\Console\Commands;
 use Illuminate\Console\Command;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 
-class ResumeHaystacks extends Command
+class HaystacksResume extends Command
 {
     public $signature = 'haystacks:resume';
 

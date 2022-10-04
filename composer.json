@@ -22,17 +22,19 @@
         "illuminate/database": "^8.0 || ^9.0",
         "illuminate/queue": "^8.0 || ^9.0",
         "illuminate/support": "^8.0 || ^9.0",
-        "laravel/serializable-closure": "^1.2",
-        "sammyjo20/laravel-chunkable-jobs": "^0.1.1",
-        "spatie/laravel-package-tools": "^1.13.5"
+        "laravel/serializable-closure": "^1.2"
     },
     "require-dev": {
         "jessarcher/laravel-castable-data-transfer-object": "^2.2",
         "laravel/pint": "^1.0",
-        "orchestra/testbench": "^7.0",
+        "orchestra/testbench": "^6.24|^7.8",
         "pestphp/pest": "^1.21",
         "pestphp/pest-plugin-laravel": "^1.2",
+        "sammyjo20/laravel-chunkable-jobs": "^0.2.0",
         "spatie/laravel-ray": "^1.26"
+    },
+    "suggest": {
+        "sammyjo20/laravel-chunkable-jobs": "Allows you to use the job chunking feature"
     },
     "minimum-stability": "stable",
     "autoload": {
@@ -55,7 +57,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Sammyjo20\\LaravelHaystack\\LaravelHaystackServiceProvider"
+                "Sammyjo20\\LaravelHaystack\\HaystackServiceProvider"
             ]
         }
     },
