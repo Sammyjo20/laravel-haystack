@@ -33,6 +33,9 @@
         "sammyjo20/laravel-chunkable-jobs": "^0.2.0",
         "spatie/laravel-ray": "^1.26"
     },
+    "suggest": {
+        "sammyjo20/laravel-chunkable-jobs": "Allows you to use the job chunking feature"
+    },
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
@@ -68,8 +71,5 @@
         "test": [
             "./vendor/bin/pest"
         ]
-    },
-    "suggest": {
-        "sammyjo20/laravel-chunkable-jobs": "Allows you to use the job chunking feature"
     }
 }
