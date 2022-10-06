@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Prunable;
 use Sammyjo20\LaravelHaystack\Casts\SerializeClosures;
 use Sammyjo20\LaravelHaystack\Casts\Serialized;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Sammyjo20\LaravelHaystack\Casts\SerializedCallbacks;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 use Sammyjo20\LaravelHaystack\Concerns\ManagesBales;
 use Sammyjo20\LaravelHaystack\Casts\SerializeClosure;
@@ -42,10 +43,7 @@ class Haystack extends Model
      * @var array
      */
     protected $casts = [
-        'on_then' => SerializeClosures::class,
-        'on_catch' => SerializeClosures::class,
-        'on_finally' => SerializeClosures::class,
-        'on_paused' => SerializeClosures::class,
+        'callbacks' => SerializedCallbacks::class,
         'middleware' => SerializeClosure::class,
         'started_at' => 'immutable_datetime',
         'resume_at' => 'immutable_datetime',

@@ -59,13 +59,13 @@ test('you can specify a closure or a callable to happen at the end of a successf
 
     $builder->then(fn() => 'Hello');
 
-    expect($builder->getOnThen())->toEqual([
+    expect($builder->getCallbacks()->onThen)->toEqual([
         new SerializableClosure(fn() => 'Hello')
     ]);
 
     $builder->then(new InvokableClass);
 
-    expect($builder->getOnThen())->toEqual([
+    expect($builder->getCallbacks()->onThen)->toEqual([
         new SerializableClosure(fn() => 'Hello'),
         new SerializableClosure(fn() => new InvokableClass)
     ]);
@@ -76,13 +76,13 @@ test('you can specify a closure to happen at the end of any haystack', function 
 
     $builder->finally(fn() => 'Hello');
 
-    expect($builder->getOnFinally())->toEqual([
+    expect($builder->getCallbacks()->onFinally)->toEqual([
         new SerializableClosure(fn() => 'Hello')
     ]);
 
     $builder->finally(new InvokableClass);
 
-    expect($builder->getOnFinally())->toEqual([
+    expect($builder->getCallbacks()->onFinally)->toEqual([
         new SerializableClosure(fn() => 'Hello'),
         new SerializableClosure(fn() => new InvokableClass),
     ]);
@@ -93,13 +93,13 @@ test('you can specify a closure to happen on an erroneous haystack', function ()
 
     $builder->catch(fn() => 'Hello');
 
-    expect($builder->getOnCatch())->toEqual([
+    expect($builder->getCallbacks()->onCatch)->toEqual([
         new SerializableClosure(fn() => 'Hello'),
     ]);
 
     $builder->catch(new InvokableClass);
 
-    expect($builder->getOnCatch())->toEqual([
+    expect($builder->getCallbacks()->onCatch)->toEqual([
         new SerializableClosure(fn() => 'Hello'),
         new SerializableClosure(fn() => new InvokableClass),
     ]);
@@ -110,13 +110,13 @@ test('you can specify a closure to happen on a paused haystack', function () {
 
     $builder->paused(fn() => 'Hello');
 
-    expect($builder->getOnPaused())->toEqual([
+    expect($builder->getCallbacks()->onPaused)->toEqual([
         new SerializableClosure(fn() => 'Hello'),
     ]);
 
     $builder->paused(new InvokableClass);
 
-    expect($builder->getOnPaused())->toEqual([
+    expect($builder->getCallbacks()->onPaused)->toEqual([
         new SerializableClosure(fn() => 'Hello'),
         new SerializableClosure(fn() => new InvokableClass),
     ]);

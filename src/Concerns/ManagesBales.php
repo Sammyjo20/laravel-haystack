@@ -10,6 +10,7 @@ use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 use Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException;
 use Laravel\SerializableClosure\SerializableClosure;
+use Sammyjo20\LaravelHaystack\Data\CallbackCollection;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Enums\FinishStatus;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
@@ -189,19 +190,19 @@ trait ManagesBales
 
         $this->update(['finished_at' => now()]);
 
-        $shouldQueryData = isset($this->on_then) || isset($this->on_catch) || isset($this->on_finally);
+        $callbacks = $this->getCallbacks();
 
-        $data = $shouldQueryData ? $this->conditionallyGetAllData() : null;
+        $data = $callbacks->isNotEmpty() ? $this->conditionallyGetAllData() : null;
 
         match ($status) {
-            FinishStatus::Success => $this->executeClosures($this->on_then, $data),
-            FinishStatus::Failure => $this->executeClosures($this->on_catch, $data),
+            FinishStatus::Success => $this->invokeCallbacks($callbacks->onThen, $data),
+            FinishStatus::Failure => $this->invokeCallbacks($callbacks->onCatch, $data),
             default => null,
         };
 
         // Always execute the finally closure.
 
-        $this->executeClosures($this->on_finally, $data);
+        $this->invokeCallbacks($callbacks->onFinally, $data);
 
         // Now finally delete itself.
 
@@ -278,21 +279,11 @@ trait ManagesBales
      * @return void
      * @throws PhpVersionNotSupportedException
      */
-    protected function executeClosures(?array $closures, ?Collection $data = null): void
+    protected function invokeCallbacks(?array $closures, ?Collection $data = null): void
     {
-        if (! isset($closures)) {
-            return;
-        }
-
-        dd($closures);
-
-        foreach ($closures as $closure) {
-            if (! $closure instanceof SerializableClosure) {
-                continue;
-            }
-
-            call_user_func($closure->getClosure(), $data);
-        }
+        collect($closures)->each(function (SerializableClosure $closure) use ($data) {
+            $closure($data);
+        });
     }
 
     /**
@@ -306,13 +297,15 @@ trait ManagesBales
     {
         $this->update(['resume_at' => $resumeAt]);
 
-        if (! isset($this->on_paused)) {
+        $callbacks = $this->getCallbacks();
+
+        if (empty($callbacks->onPaused)) {
             return;
         }
 
         $data = $this->conditionallyGetAllData();
 
-        $this->executeClosures($this->on_paused, $data);
+        $this->invokeCallbacks($callbacks->onPaused, $data);
     }
 
     /**
@@ -400,5 +393,15 @@ trait ManagesBales
     public function incrementBaleAttempts(StackableJob $job): void
     {
         HaystackBale::query()->whereKey($job->getHaystackBaleId())->increment('attempts');
+    }
+
+    /**
+     * Get the callbacks on the Haystack.
+     *
+     * @return CallbackCollection
+     */
+    public function getCallbacks(): CallbackCollection
+    {
+        return $this->callbacks ?? new CallbackCollection;
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 use Laravel\SerializableClosure\SerializableClosure;
+use Sammyjo20\LaravelHaystack\Data\CallbackCollection;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
@@ -117,6 +118,12 @@ test('a haystack job can have their own delay, queue and connection', function (
     expect($haystackBales[1]->on_connection)->toEqual('redis');
 });
 
+test('when a haystack does not have any callbacks the column is null', function () {
+    $haystack = Haystack::build()->create();
+
+    expect($haystack->callbacks)->toBeNull();
+});
+
 test('a haystack can have closures', function () {
     $closureA = fn () => 'A';
     $closureB = fn () => 'B';
@@ -132,10 +139,14 @@ test('a haystack can have closures', function () {
 
     $haystack->refresh();
 
-    expect($haystack->on_then)->toEqual([new SerializableClosure($closureA)]);
-    expect($haystack->on_catch)->toEqual([new SerializableClosure($closureB)]);
-    expect($haystack->on_finally)->toEqual([new SerializableClosure($closureC)]);
-    expect($haystack->on_paused)->toEqual([new SerializableClosure($closureC)]);
+    $callbacks = $haystack->callbacks;
+
+    expect($callbacks)->toBeInstanceOf(CallbackCollection::class);
+
+    expect($callbacks->onThen)->toEqual([new SerializableClosure($closureA)]);
+    expect($callbacks->onCatch)->toEqual([new SerializableClosure($closureB)]);
+    expect($callbacks->onFinally)->toEqual([new SerializableClosure($closureC)]);
+    expect($callbacks->onPaused)->toEqual([new SerializableClosure($closureC)]);
 });
 
 test('a haystack can be dispatched straight away', function () {
