@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sammyjo20\LaravelHaystack\Data;
 
 use Closure;
-use Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException;
 use Laravel\SerializableClosure\SerializableClosure;
 use Sammyjo20\LaravelHaystack\Helpers\ClosureHelper;
+use Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException;
 
 class MiddlewareCollection
 {
@@ -19,14 +21,15 @@ class MiddlewareCollection
     /**
      * Add the middleware to the collection
      *
-     * @param Closure|array|callable $value
+     * @param  Closure|array|callable  $value
      * @return $this
+     *
      * @throws PhpVersionNotSupportedException
      */
     public function add(Closure|array|callable $value): static
     {
         if (is_array($value)) {
-            $value = static fn() => $value;
+            $value = static fn () => $value;
         }
 
         $this->data[] = new SerializableClosure(ClosureHelper::fromCallable($value));

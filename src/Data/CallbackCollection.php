@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sammyjo20\LaravelHaystack\Data;
 
 use Closure;
@@ -39,8 +41,9 @@ class CallbackCollection
     /**
      * Add a "then" callback
      *
-     * @param Closure|callable $closure
+     * @param  Closure|callable  $closure
      * @return $this
+     *
      * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
      */
     public function addThen(Closure|callable $closure): static
@@ -51,8 +54,9 @@ class CallbackCollection
     /**
      * Add a "catch" callback
      *
-     * @param Closure|callable $closure
+     * @param  Closure|callable  $closure
      * @return $this
+     *
      * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
      */
     public function addCatch(Closure|callable $closure): static
@@ -63,8 +67,9 @@ class CallbackCollection
     /**
      * Add a "finally" callback
      *
-     * @param Closure|callable $closure
+     * @param  Closure|callable  $closure
      * @return $this
+     *
      * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
      */
     public function addFinally(Closure|callable $closure): static
@@ -75,8 +80,9 @@ class CallbackCollection
     /**
      * Add a "paused" callback
      *
-     * @param Closure|callable $closure
+     * @param  Closure|callable  $closure
      * @return $this
+     *
      * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
      */
     public function addPaused(Closure|callable $closure): static
@@ -87,9 +93,10 @@ class CallbackCollection
     /**
      * Add a callback to a given property
      *
-     * @param string $property
-     * @param Closure|callable $closure
+     * @param  string  $property
+     * @param  Closure|callable  $closure
      * @return $this
+     *
      * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
      */
     protected function addCallback(string $property, Closure|callable $closure): static

@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Sammyjo20\LaravelHaystack\Casts;
 
-use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use InvalidArgumentException;
-use Nette\Utils\Callback;
 use Sammyjo20\LaravelHaystack\Data\CallbackCollection;
+use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
 class CallbackCollectionCast implements CastsAttributes
 {
