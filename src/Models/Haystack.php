@@ -9,6 +9,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Prunable;
+use Sammyjo20\LaravelHaystack\Casts\SerializeClosures;
 use Sammyjo20\LaravelHaystack\Casts\Serialized;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
@@ -19,10 +20,10 @@ use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
 use Sammyjo20\LaravelHaystack\Database\Factories\HaystackFactory;
 
 /**
- * @property Closure $on_then
- * @property Closure $on_catch
- * @property Closure $on_finally
- * @property Closure $on_paused
+ * @property array<SerializableClosure> $on_then
+ * @property array<SerializableClosure> $on_catch
+ * @property array<SerializableClosure> $on_finally
+ * @property array<SerializableClosure> $on_paused
  * @property Closure $middleware
  * @property HaystackOptions $options
  */
@@ -41,10 +42,10 @@ class Haystack extends Model
      * @var array
      */
     protected $casts = [
-        'on_then' => SerializeClosure::class,
-        'on_catch' => SerializeClosure::class,
-        'on_finally' => SerializeClosure::class,
-        'on_paused' => SerializeClosure::class,
+        'on_then' => SerializeClosures::class,
+        'on_catch' => SerializeClosures::class,
+        'on_finally' => SerializeClosures::class,
+        'on_paused' => SerializeClosures::class,
         'middleware' => SerializeClosure::class,
         'started_at' => 'immutable_datetime',
         'resume_at' => 'immutable_datetime',

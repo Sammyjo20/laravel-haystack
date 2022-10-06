@@ -10,6 +10,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
+use Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException;
+use Laravel\SerializableClosure\SerializableClosure;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Data\PendingData;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
@@ -34,30 +36,30 @@ class HaystackBuilder
     /**
      * Closure to run when the Haystack is finished.
      *
-     * @var Closure|null
+     * @var array<SerializableClosure>
      */
-    protected ?Closure $onThen = null;
+    protected array $onThen = [];
 
     /**
      * Closure to run when the Haystack has failed.
      *
-     * @var Closure|null
+     * @var array<SerializableClosure>
      */
-    protected ?Closure $onCatch = null;
+    protected array $onCatch = [];
 
     /**
      * Closure to run when the Haystack has finished.
      *
-     * @var Closure|null
+     * @var array<SerializableClosure>
      */
-    protected ?Closure $onFinally = null;
+    protected array $onFinally = [];
 
     /**
      * Closure to run when the Haystack has been paused.
      *
-     * @var Closure|null
+     * @var array<SerializableClosure>
      */
-    protected ?Closure $onPaused = null;
+    protected array $onPaused = [];
 
     /**
      * The jobs to be added to the Haystack.
@@ -141,12 +143,13 @@ class HaystackBuilder
     /**
      * Provide a closure that will run when the haystack is complete.
      *
-     * @param  Closure|callable  $closure
+     * @param Closure|callable $closure
      * @return $this
+     * @throws PhpVersionNotSupportedException
      */
     public function then(Closure|callable $closure): static
     {
-        $this->onThen = ClosureHelper::fromCallable($closure);
+        $this->onThen[] = new SerializableClosure(ClosureHelper::fromCallable($closure));
 
         return $this;
     }
@@ -154,12 +157,13 @@ class HaystackBuilder
     /**
      * Provide a closure that will run when the haystack fails.
      *
-     * @param  Closure|callable  $closure
+     * @param Closure|callable $closure
      * @return $this
+     * @throws PhpVersionNotSupportedException
      */
     public function catch(Closure|callable $closure): static
     {
-        $this->onCatch = ClosureHelper::fromCallable($closure);
+        $this->onCatch[] = new SerializableClosure(ClosureHelper::fromCallable($closure));
 
         return $this;
     }
@@ -167,12 +171,13 @@ class HaystackBuilder
     /**
      * Provide a closure that will run when the haystack finishes.
      *
-     * @param  Closure|callable  $closure
+     * @param Closure|callable $closure
      * @return $this
+     * @throws PhpVersionNotSupportedException
      */
     public function finally(Closure|callable $closure): static
     {
-        $this->onFinally = ClosureHelper::fromCallable($closure);
+        $this->onFinally[] = new SerializableClosure(ClosureHelper::fromCallable($closure));
 
         return $this;
     }
@@ -180,12 +185,13 @@ class HaystackBuilder
     /**
      * Provide a closure that will run when the haystack is paused.
      *
-     * @param  Closure|callable  $closure
+     * @param Closure|callable $closure
      * @return $this
+     * @throws PhpVersionNotSupportedException
      */
     public function paused(Closure|callable $closure): static
     {
-        $this->onPaused = ClosureHelper::fromCallable($closure);
+        $this->onPaused[] = new SerializableClosure(ClosureHelper::fromCallable($closure));
 
         return $this;
     }
@@ -555,33 +561,43 @@ class HaystackBuilder
     }
 
     /**
-     * Get the closure for the "onThen".
+     * Get all the closures for the "onThen".
      *
-     * @return Closure|null
+     * @return array<SerializableClosure>
      */
-    public function getOnThen(): ?Closure
+    public function getOnThen(): array
     {
         return $this->onThen;
     }
 
     /**
-     * Get the closure for the "onCatch".
+     * Get all the closures for the "onCatch".
      *
-     * @return Closure|null
+     * @return array<SerializableClosure>
      */
-    public function getOnCatch(): ?Closure
+    public function getOnCatch(): array
     {
         return $this->onCatch;
     }
 
     /**
-     * Get the closure for the "onFinally".
+     * Get all the closures for the "onFinally".
      *
-     * @return Closure|null
+     * @return array<SerializableClosure>
      */
-    public function getOnFinally(): ?Closure
+    public function getOnFinally(): array
     {
         return $this->onFinally;
+    }
+
+    /**
+     * Get all the closures for the "onPaused".
+     *
+     * @return array<SerializableClosure>
+     */
+    public function getOnPaused(): array
+    {
+        return $this->onPaused;
     }
 
     /**

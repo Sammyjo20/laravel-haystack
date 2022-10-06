@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
+use Laravel\SerializableClosure\SerializableClosure;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
@@ -131,10 +132,10 @@ test('a haystack can have closures', function () {
 
     $haystack->refresh();
 
-    expect($haystack->on_then)->toEqual($closureA);
-    expect($haystack->on_catch)->toEqual($closureB);
-    expect($haystack->on_finally)->toEqual($closureC);
-    expect($haystack->on_paused)->toEqual($closureC);
+    expect($haystack->on_then)->toEqual([new SerializableClosure($closureA)]);
+    expect($haystack->on_catch)->toEqual([new SerializableClosure($closureB)]);
+    expect($haystack->on_finally)->toEqual([new SerializableClosure($closureC)]);
+    expect($haystack->on_paused)->toEqual([new SerializableClosure($closureC)]);
 });
 
 test('a haystack can be dispatched straight away', function () {

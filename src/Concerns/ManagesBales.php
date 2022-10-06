@@ -8,6 +8,8 @@ use Closure;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
+use Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException;
+use Laravel\SerializableClosure\SerializableClosure;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Enums\FinishStatus;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
@@ -86,9 +88,10 @@ trait ManagesBales
     /**
      * Dispatch the next job.
      *
-     * @param  StackableJob|null  $currentJob
-     * @param  int|CarbonInterface|null  $delayInSecondsOrCarbon
+     * @param StackableJob|null $currentJob
+     * @param int|CarbonInterface|null $delayInSecondsOrCarbon
      * @return void
+     * @throws PhpVersionNotSupportedException
      */
     public function dispatchNextJob(StackableJob $currentJob = null, int|CarbonInterface $delayInSecondsOrCarbon = null): void
     {
@@ -140,6 +143,7 @@ trait ManagesBales
      * Start the Haystack.
      *
      * @return void
+     * @throws PhpVersionNotSupportedException
      */
     public function start(): void
     {
@@ -152,6 +156,7 @@ trait ManagesBales
      * Restart the haystack
      *
      * @return void
+     * @throws PhpVersionNotSupportedException
      */
     public function restart(): void
     {
@@ -162,6 +167,7 @@ trait ManagesBales
      * Cancel the haystack.
      *
      * @return void
+     * @throws PhpVersionNotSupportedException
      */
     public function cancel(): void
     {
@@ -171,8 +177,9 @@ trait ManagesBales
     /**
      * Finish the Haystack.
      *
-     * @param  FinishStatus  $status
+     * @param FinishStatus $status
      * @return void
+     * @throws PhpVersionNotSupportedException
      */
     public function finish(FinishStatus $status = FinishStatus::Success): void
     {
@@ -187,14 +194,14 @@ trait ManagesBales
         $data = $shouldQueryData ? $this->conditionallyGetAllData() : null;
 
         match ($status) {
-            FinishStatus::Success => $this->executeClosure($this->on_then, $data),
-            FinishStatus::Failure => $this->executeClosure($this->on_catch, $data),
+            FinishStatus::Success => $this->executeClosures($this->on_then, $data),
+            FinishStatus::Failure => $this->executeClosures($this->on_catch, $data),
             default => null,
         };
 
         // Always execute the finally closure.
 
-        $this->executeClosure($this->on_finally, $data);
+        $this->executeClosures($this->on_finally, $data);
 
         // Now finally delete itself.
 
@@ -207,6 +214,7 @@ trait ManagesBales
      * Fail the Haystack.
      *
      * @return void
+     * @throws PhpVersionNotSupportedException
      */
     public function fail(): void
     {
@@ -263,24 +271,36 @@ trait ManagesBales
     }
 
     /**
-     * Execute the closure.
+     * Execute the closures.
      *
-     * @param  Closure|null  $closure
-     * @param  Collection|null  $data
+     * @param array<SerializableClosure> $closures
+     * @param Collection|null $data
      * @return void
+     * @throws PhpVersionNotSupportedException
      */
-    protected function executeClosure(?Closure $closure, ?Collection $data = null): void
+    protected function executeClosures(?array $closures, ?Collection $data = null): void
     {
-        if ($closure instanceof Closure) {
-            $closure($data);
+        if (! isset($closures)) {
+            return;
+        }
+
+        dd($closures);
+
+        foreach ($closures as $closure) {
+            if (! $closure instanceof SerializableClosure) {
+                continue;
+            }
+
+            call_user_func($closure->getClosure(), $data);
         }
     }
 
     /**
      * Pause the haystack.
      *
-     * @param  CarbonImmutable  $resumeAt
+     * @param CarbonImmutable $resumeAt
      * @return void
+     * @throws PhpVersionNotSupportedException
      */
     public function pause(CarbonImmutable $resumeAt): void
     {
@@ -292,7 +312,7 @@ trait ManagesBales
 
         $data = $this->conditionallyGetAllData();
 
-        $this->executeClosure($this->on_paused, $data);
+        $this->executeClosures($this->on_paused, $data);
     }
 
     /**
