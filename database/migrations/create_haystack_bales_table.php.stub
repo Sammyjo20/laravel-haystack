@@ -13,7 +13,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->foreignIdFor(Haystack::class)->constrained()->cascadeOnDelete();
-            $table->text('job');
+            $table->mediumText('job');
             $table->bigInteger('delay')->default(0);
             $table->string('on_queue')->nullable();
             $table->string('on_connection')->nullable();

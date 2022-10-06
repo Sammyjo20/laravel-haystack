@@ -23,6 +23,7 @@ use Sammyjo20\LaravelHaystack\Helpers\DataValidator;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 use Sammyjo20\LaravelHaystack\Exceptions\HaystackModelExists;
+use Sammyjo20\LaravelHaystack\Data\MiddlewareCollection;
 
 class HaystackBuilder
 {
@@ -36,13 +37,6 @@ class HaystackBuilder
     protected ?string $name = null;
 
     /**
-     * Callbacks that will be run at various events
-     *
-     * @var array<SerializableClosure>
-     */
-    protected CallbackCollection $callbacks;
-
-    /**
      * The jobs to be added to the Haystack.
      *
      * @var Collection
@@ -50,32 +44,39 @@ class HaystackBuilder
     protected Collection $jobs;
 
     /**
-     * Global delay in seconds.
+     * Global connection
+     *
+     * @var string|null
+     */
+    public ?string $globalConnection = null;
+
+    /**
+     * Global queue
+     *
+     * @var string|null
+     */
+    public ?string $globalQueue = null;
+
+    /**
+     * Global delay
      *
      * @var int
      */
-    protected int $globalDelayInSeconds = 0;
+    public int $globalDelayInSeconds = 0;
 
     /**
-     * Global queue.
+     * Callbacks that will be run at various events
      *
-     * @var string|null
+     * @var CallbackCollection
      */
-    protected ?string $globalQueue = null;
+    protected CallbackCollection $callbacks;
 
     /**
-     * Global connection.
+     * Middleware that will be applied to every job
      *
-     * @var string|null
+     * @var MiddlewareCollection
      */
-    protected ?string $globalConnection = null;
-
-    /**
-     * Global middleware.
-     *
-     * @var Closure|null
-     */
-    protected ?Closure $globalMiddleware = null;
+    protected MiddlewareCollection $middleware;
 
     /**
      * Other Haystack Options
@@ -107,12 +108,13 @@ class HaystackBuilder
         $this->initialData = new Collection;
         $this->callbacks = new CallbackCollection;
         $this->options = new HaystackOptions;
+        $this->middleware = new MiddlewareCollection;
     }
 
     /**
      * Specify a name for the haystack.
      *
-     * @param  string  $name
+     * @param string $name
      * @return $this
      */
     public function withName(string $name): static
@@ -181,10 +183,10 @@ class HaystackBuilder
     /**
      * Add a job to the haystack.
      *
-     * @param  StackableJob  $job
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
+     * @param StackableJob $job
+     * @param int $delayInSeconds
+     * @param string|null $queue
+     * @param string|null $connection
      * @return $this
      */
     public function addJob(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
@@ -199,7 +201,7 @@ class HaystackBuilder
     /**
      * Add a job when a condition is true.
      *
-     * @param  bool  $condition
+     * @param bool $condition
      * @param ...$arguments
      * @return $this
      */
@@ -211,7 +213,7 @@ class HaystackBuilder
     /**
      * Add a job when a condition is false.
      *
-     * @param  bool  $condition
+     * @param bool $condition
      * @param ...$arguments
      * @return $this
      */
@@ -223,10 +225,10 @@ class HaystackBuilder
     /**
      * Add multiple jobs to the haystack at a time.
      *
-     * @param  Collection|array  $jobs
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
+     * @param Collection|array $jobs
+     * @param int $delayInSeconds
+     * @param string|null $queue
+     * @param string|null $connection
      * @return $this
      */
     public function addJobs(Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
@@ -235,7 +237,7 @@ class HaystackBuilder
             $jobs = collect($jobs);
         }
 
-        $jobs = $jobs->filter(fn ($job) => $job instanceof StackableJob);
+        $jobs = $jobs->filter(fn($job) => $job instanceof StackableJob);
 
         foreach ($jobs as $job) {
             $this->addJob($job, $delayInSeconds, $queue, $connection);
@@ -247,7 +249,7 @@ class HaystackBuilder
     /**
      * Add jobs when a condition is true.
      *
-     * @param  bool  $condition
+     * @param bool $condition
      * @param ...$arguments
      * @return $this
      */
@@ -259,7 +261,7 @@ class HaystackBuilder
     /**
      * Add jobs when a condition is false.
      *
-     * @param  bool  $condition
+     * @param bool $condition
      * @param ...$arguments
      * @return $this
      */
@@ -273,10 +275,10 @@ class HaystackBuilder
      *
      * @alias addJob()
      *
-     * @param  StackableJob  $job
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
+     * @param StackableJob $job
+     * @param int $delayInSeconds
+     * @param string|null $queue
+     * @param string|null $connection
      * @return $this
      */
     public function addBale(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
@@ -289,10 +291,10 @@ class HaystackBuilder
      *
      * @alias addJobs()
      *
-     * @param  Collection|array  $jobs
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
+     * @param Collection|array $jobs
+     * @param int $delayInSeconds
+     * @param string|null $queue
+     * @param string|null $connection
      * @return $this
      */
     public function addBales(Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
@@ -303,7 +305,7 @@ class HaystackBuilder
     /**
      * Set a global delay on the jobs.
      *
-     * @param  int  $seconds
+     * @param int $seconds
      * @return $this
      */
     public function withDelay(int $seconds): static
@@ -316,7 +318,7 @@ class HaystackBuilder
     /**
      * Set a global queue for the jobs.
      *
-     * @param  string  $queue
+     * @param string $queue
      * @return $this
      */
     public function onQueue(string $queue): static
@@ -329,7 +331,7 @@ class HaystackBuilder
     /**
      * Set a global connection for the jobs.
      *
-     * @param  string  $connection
+     * @param string $connection
      * @return $this
      */
     public function onConnection(string $connection): static
@@ -340,18 +342,15 @@ class HaystackBuilder
     }
 
     /**
-     * Set a global middleware closure to run.
+     * Add some middleware to be merged in with every job
      *
-     * @param  Closure|callable|array  $value
+     * @param Closure|callable|array $value
      * @return $this
+     * @throws PhpVersionNotSupportedException
      */
-    public function withMiddleware(Closure|callable|array $value): static
+    public function addMiddleware(Closure|callable|array $value): static
     {
-        if (is_array($value)) {
-            $value = static fn () => $value;
-        }
-
-        $this->globalMiddleware = ClosureHelper::fromCallable($value);
+        $this->middleware->add($value);
 
         return $this;
     }
@@ -359,9 +358,9 @@ class HaystackBuilder
     /**
      * Provide data before the haystack is created.
      *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  string|null  $cast
+     * @param string $key
+     * @param mixed $value
+     * @param string|null $cast
      * @return $this
      */
     public function withData(string $key, mixed $value, string $cast = null): static
@@ -376,15 +375,15 @@ class HaystackBuilder
     /**
      * Store a model to be shared across all haystack jobs.
      *
-     * @param  Model  $model
-     * @param  string|null  $key
+     * @param Model $model
+     * @param string|null $key
      * @return $this
      *
      * @throws HaystackModelExists
      */
     public function withModel(Model $model, string $key = null): static
     {
-        $key = 'model:'.($key ?? $model::class);
+        $key = 'model:' . ($key ?? $model::class);
 
         if ($this->initialData->has($key)) {
             throw new HaystackModelExists($key);
@@ -402,7 +401,7 @@ class HaystackBuilder
      */
     public function create(): Haystack
     {
-        return DB::transaction(fn () => $this->createHaystack());
+        return DB::transaction(fn() => $this->createHaystack());
     }
 
     /**
@@ -422,7 +421,7 @@ class HaystackBuilder
     /**
      * Map the jobs to be ready for inserting.
      *
-     * @param  Haystack  $haystack
+     * @param Haystack $haystack
      * @return array
      */
     protected function prepareJobsForInsert(Haystack $haystack): array
@@ -456,7 +455,7 @@ class HaystackBuilder
     /**
      * Map the initial data to be ready for inserting.
      *
-     * @param  Haystack  $haystack
+     * @param Haystack $haystack
      * @return array
      */
     protected function prepareDataForInsert(Haystack $haystack): array
@@ -483,7 +482,7 @@ class HaystackBuilder
         $haystack = new Haystack;
         $haystack->name = $this->name;
         $haystack->callbacks = $this->callbacks->toSerializable();
-        $haystack->middleware = $this->globalMiddleware;
+        $haystack->middleware = $this->middleware->toSerializable();
         $haystack->options = $this->options;
 
         if ($this->beforeSave instanceof Closure) {
@@ -582,17 +581,17 @@ class HaystackBuilder
     /**
      * Get the closure for the global middleware.
      *
-     * @return Closure|null
+     * @return MiddlewareCollection
      */
-    public function getGlobalMiddleware(): ?Closure
+    public function getMiddleware(): MiddlewareCollection
     {
-        return $this->globalMiddleware;
+        return $this->middleware;
     }
 
     /**
      * Specify a closure to run before saving the Haystack
      *
-     * @param  Closure  $closure
+     * @param Closure $closure
      * @return $this
      */
     public function beforeSave(Closure $closure): static
@@ -605,8 +604,8 @@ class HaystackBuilder
     /**
      * Set an option on the Haystack Options.
      *
-     * @param  string  $option
-     * @param  mixed  $value
+     * @param string $option
+     * @param mixed $value
      * @return $this
      */
     public function setOption(string $option, mixed $value): static

@@ -9,10 +9,11 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Prunable;
+use Sammyjo20\LaravelHaystack\Casts\MiddlewareCollectionCast;
 use Sammyjo20\LaravelHaystack\Casts\SerializeClosures;
 use Sammyjo20\LaravelHaystack\Casts\Serialized;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Sammyjo20\LaravelHaystack\Casts\SerializedCallbacks;
+use Sammyjo20\LaravelHaystack\Casts\CallbackCollectionCast;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 use Sammyjo20\LaravelHaystack\Concerns\ManagesBales;
 use Sammyjo20\LaravelHaystack\Casts\SerializeClosure;
@@ -43,8 +44,8 @@ class Haystack extends Model
      * @var array
      */
     protected $casts = [
-        'callbacks' => SerializedCallbacks::class,
-        'middleware' => SerializeClosure::class,
+        'callbacks' => CallbackCollectionCast::class,
+        'middleware' => MiddlewareCollectionCast::class,
         'started_at' => 'immutable_datetime',
         'resume_at' => 'immutable_datetime',
         'finished_at' => 'immutable_datetime',

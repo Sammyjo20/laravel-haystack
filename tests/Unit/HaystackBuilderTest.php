@@ -125,17 +125,36 @@ test('you can specify a closure to happen on a paused haystack', function () {
 test('you can specify middleware as a closure, invokable class or an array', function () {
     $builder = new HaystackBuilder;
 
-    $builder->withMiddleware(fn() => [new Middleware()]);
+    $builder->addMiddleware(fn() => [new Middleware()]);
 
-    expect($builder->getGlobalMiddleware())->toEqual(fn() => [new Middleware()]);
+    expect($builder->getMiddleware()->data)->toEqual([
+        new SerializableClosure(fn() => [new Middleware()])
+    ]);
 
-    $builder->withMiddleware(new InvokableMiddleware);
+    $builder->addMiddleware(new InvokableMiddleware);
 
-    expect($builder->getGlobalMiddleware())->toEqual(fn() => new InvokableMiddleware);
+    expect($builder->getMiddleware()->data)->toEqual([
+        new SerializableClosure(fn() => [new Middleware()]),
+        new SerializableClosure(fn() => new InvokableMiddleware)
+    ]);
 
-    $builder->withMiddleware([new Middleware]);
+     $builder->addMiddleware([new Middleware]);
 
-    expect($builder->getGlobalMiddleware())->toEqual(fn() => [new Middleware()]);
+    expect($builder->getMiddleware()->data)->toEqual([
+        new SerializableClosure(fn() => [new Middleware()]),
+        new SerializableClosure(fn() => new InvokableMiddleware),
+        new SerializableClosure(fn() => [new Middleware()])
+    ]);
+
+    // Now we'll try to get all the middleware, it should give us a nice array of them all
+
+    $allMiddleware = $builder->getMiddleware()->toMiddlewareArray();
+
+    expect($allMiddleware)->toEqual([
+        new Middleware,
+        new Middleware,
+        new Middleware,
+    ]);
 });
 
 test('you can create a haystack from a builder', function () {

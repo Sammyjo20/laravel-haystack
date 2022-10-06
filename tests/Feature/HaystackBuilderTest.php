@@ -11,6 +11,7 @@ use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 use Sammyjo20\LaravelHaystack\Middleware\CheckAttempts;
 use Sammyjo20\LaravelHaystack\Middleware\CheckFinished;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableMiddleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Middleware\IncrementAttempts;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
@@ -71,7 +72,7 @@ test('a haystack can be created with middleware', function () {
     $haystack = Haystack::build()
         ->addJob(new NameJob('Sam'))
         ->addJob(new NameJob('Gareth'))
-        ->withMiddleware([
+        ->addMiddleware([
             new Middleware(),
         ])
         ->create();
@@ -92,6 +93,64 @@ test('a haystack can be created with middleware', function () {
 
     expect($samJob->middleware)->toEqual(array_merge($defaultMiddleware, [new Middleware]));
     expect($garethJob->middleware)->toEqual(array_merge($defaultMiddleware, [new Middleware]));
+});
+
+test('a haystack can be created with middleware multiple middleware', function () {
+    $haystack = Haystack::build()
+        ->addJob(new NameJob('Sam'))
+        ->addJob(new NameJob('Gareth'))
+        ->addMiddleware([
+            new Middleware(),
+        ])
+        ->addMiddleware(new InvokableMiddleware)
+        ->create();
+
+    $haystackBales = $haystack->bales()->get();
+
+    expect($haystackBales)->toHaveCount(2);
+
+    $samJob = $haystack->getNextJob()->job;
+
+    $haystack->getNextJob()->haystackRow->delete();
+
+    $garethJob = $haystack->getNextJob()->job;
+
+    // Check the middleware is applied to all jobs.
+
+    $defaultMiddleware = [new CheckFinished, new CheckAttempts, new IncrementAttempts];
+
+    // When invokable middleware is called it returns "Middleware"
+
+    expect($samJob->middleware)->toEqual(array_merge($defaultMiddleware, [new Middleware, new Middleware]));
+    expect($garethJob->middleware)->toEqual(array_merge($defaultMiddleware, [new Middleware, new Middleware]));
+});
+
+test('when no middleware is specified the middleware column is blank', function () {
+    $haystack = Haystack::build()
+        ->addJob(new NameJob('Sam'))
+        ->addJob(new NameJob('Gareth'))
+        ->create();
+
+    expect($haystack->middleware)->toBeNull();
+
+    $haystackBales = $haystack->bales()->get();
+
+    expect($haystackBales)->toHaveCount(2);
+
+    $samJob = $haystack->getNextJob()->job;
+
+    $haystack->getNextJob()->haystackRow->delete();
+
+    $garethJob = $haystack->getNextJob()->job;
+
+    // Check the middleware is applied to all jobs.
+
+    $defaultMiddleware = [new CheckFinished, new CheckAttempts, new IncrementAttempts];
+
+    // When invokable middleware is called it returns "Middleware"
+
+    expect($samJob->middleware)->toEqual($defaultMiddleware);
+    expect($garethJob->middleware)->toEqual($defaultMiddleware);
 });
 
 test('a haystack job can have their own delay, queue and connection', function () {

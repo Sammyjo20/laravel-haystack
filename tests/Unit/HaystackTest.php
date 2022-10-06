@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Sammyjo20\LaravelHaystack\Data\CallbackCollection;
+use Sammyjo20\LaravelHaystack\Data\MiddlewareCollection;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
@@ -53,17 +54,18 @@ test('a haystack can have many haystack bales', function () {
 });
 
 test('you can store a serialized closure on a haystack using the callbacks class', function () {
-    $middlewareClosure = fn () => [];
-
     $callbacks = new CallbackCollection;
     $callbacks->addThen(fn () => 'Then');
     $callbacks->addCatch(fn () => 'Catch');
     $callbacks->addFinally(fn () => 'Finally');
     $callbacks->addPaused(fn () => 'Paused');
 
+    $middleware = new MiddlewareCollection;
+    $middleware->add(fn () => []);
+
     $haystack = new Haystack;
     $haystack->callbacks = $callbacks;
-    $haystack->middleware = $middlewareClosure;
+    $haystack->middleware = $middleware;
     $haystack->options = new HaystackOptions;
     $haystack->save();
 
@@ -73,6 +75,7 @@ test('you can store a serialized closure on a haystack using the callbacks class
     $rawMiddleware = $haystack->getRawOriginal('middleware');
 
     $rawCallbacks = unserialize($rawCallbacks);
+    $rawMiddleware = unserialize($rawMiddleware);
 
     expect($rawCallbacks)->toBeInstanceOf(CallbackCollection::class);
 
@@ -80,19 +83,19 @@ test('you can store a serialized closure on a haystack using the callbacks class
     expect($rawCallbacks->onCatch)->toBeArray();
     expect($rawCallbacks->onFinally)->toBeArray();
     expect($rawCallbacks->onPaused)->toBeArray();
-    expect(unserialize($rawMiddleware))->toBeInstanceOf(SerializableClosure::class);
+    expect($rawMiddleware->data)->toBeArray();
 
     expect($rawCallbacks->onThen[0])->toBeInstanceOf(SerializableClosure::class);
     expect($rawCallbacks->onCatch[0])->toBeInstanceOf(SerializableClosure::class);
     expect($rawCallbacks->onFinally[0])->toBeInstanceOf(SerializableClosure::class);
     expect($rawCallbacks->onPaused[0])->toBeInstanceOf(SerializableClosure::class);
-    expect($haystack->middleware)->toBeInstanceOf(Closure::class);
+    expect($rawMiddleware->data[0])->toBeInstanceOf(SerializableClosure::class);
 
     expect(call_user_func($rawCallbacks->onThen[0]))->toEqual('Then');
     expect(call_user_func($rawCallbacks->onCatch[0]))->toEqual('Catch');
     expect(call_user_func($rawCallbacks->onFinally[0]))->toEqual('Finally');
     expect(call_user_func($rawCallbacks->onPaused[0]))->toEqual('Paused');
-    expect(call_user_func($haystack->middleware))->toEqual([]);
+    expect(call_user_func($rawMiddleware->data[0]))->toEqual([]);
 
     // Check that you can make them nullable too.
 
@@ -150,6 +153,15 @@ test('you must provide an invokable class if you do not provide a closure', func
 
     $haystack = new Haystack;
     $haystack->callbacks = 'myFunction';
+    $haystack->save();
+});
+
+test('it throws an exception if you provide other values other than middleware collection into middleware', function () {
+    $this->expectException(InvalidArgumentException::class);
+    $this->expectExceptionMessage('Value provided must be an instance of Sammyjo20\LaravelHaystack\Data\MiddlewareCollection.');
+
+    $haystack = new Haystack;
+    $haystack->middleware = 'howdy';
     $haystack->save();
 });
 
@@ -258,7 +270,7 @@ test('a haystack has a started at and finished at date', function () {
 
     $haystack = Haystack::build()
         ->addJob(new NameJob('Sam'))
-        ->withMiddleware([
+        ->addMiddleware([
             new TravelMiddleware,
         ])
         ->create();

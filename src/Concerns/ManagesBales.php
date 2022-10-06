@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException;
 use Laravel\SerializableClosure\SerializableClosure;
 use Sammyjo20\LaravelHaystack\Data\CallbackCollection;
+use Sammyjo20\LaravelHaystack\Data\MiddlewareCollection;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Enums\FinishStatus;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
@@ -62,12 +63,8 @@ trait ManagesBales
         // We'll now apply any global middleware if it was provided to us
         // while building the Haystack.
 
-        if (filled($this->middleware)) {
-            $middleware = call_user_func($this->middleware);
-
-            if (is_array($middleware)) {
-                $job->middleware = array_merge($job->middleware, $middleware);
-            }
+        if ($this->middleware instanceof MiddlewareCollection) {
+            $job->middleware = array_merge($job->middleware, $this->middleware->toMiddlewareArray());
         }
 
         // Apply default middleware. We'll need to make sure that
@@ -225,11 +222,11 @@ trait ManagesBales
     /**
      * Add new jobs to the haystack.
      *
-     * @param  StackableJob|Collection|array  $jobs
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
-     * @param  bool  $prepend
+     * @param StackableJob|Collection|array $jobs
+     * @param int $delayInSeconds
+     * @param string|null $queue
+     * @param string|null $connection
+     * @param bool $prepend
      * @return void
      */
     public function addJobs(StackableJob|Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null, bool $prepend = false): void
@@ -254,14 +251,14 @@ trait ManagesBales
     /**
      * Add pending jobs to the haystack.
      *
-     * @param  array  $pendingJobs
+     * @param array $pendingJobs
      * @return void
      */
     public function addPendingJobs(array $pendingJobs): void
     {
         $pendingJobRows = collect($pendingJobs)
-            ->filter(fn ($pendingJob) => $pendingJob instanceof PendingHaystackBale)
-            ->map(fn (PendingHaystackBale $pendingJob) => $pendingJob->toDatabaseRow($this))
+            ->filter(fn($pendingJob) => $pendingJob instanceof PendingHaystackBale)
+            ->map(fn(PendingHaystackBale $pendingJob) => $pendingJob->toDatabaseRow($this))
             ->all();
 
         if (empty($pendingJobRows)) {
@@ -311,9 +308,9 @@ trait ManagesBales
     /**
      * Store data on the Haystack.
      *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  string|null  $cast
+     * @param string $key
+     * @param mixed $value
+     * @param string|null $cast
      * @return ManagesBales|\Sammyjo20\LaravelHaystack\Models\Haystack
      */
     public function setData(string $key, mixed $value, string $cast = null): self
@@ -331,8 +328,8 @@ trait ManagesBales
     /**
      * Retrieve data by a key from the Haystack.
      *
-     * @param  string  $key
-     * @param  mixed|null  $default
+     * @param string $key
+     * @param mixed|null $default
      * @return mixed
      */
     public function getData(string $key, mixed $default = null): mixed
@@ -345,25 +342,25 @@ trait ManagesBales
     /**
      * Retrieve a shared model
      *
-     * @param  string  $key
-     * @param  mixed|null  $default
+     * @param string $key
+     * @param mixed|null $default
      * @return mixed
      */
     public function getModel(string $key, mixed $default = null): mixed
     {
-        return $this->getData('model:'.$key, $default);
+        return $this->getData('model:' . $key, $default);
     }
 
     /**
      * Retrieve all the data from the Haystack.
      *
-     * @param  bool  $includeModels
+     * @param bool $includeModels
      * @return Collection
      */
     public function allData(bool $includeModels = false): Collection
     {
         $data = $this->data()
-            ->when($includeModels === false, fn ($query) => $query->where('key', 'NOT LIKE', 'model:%'))
+            ->when($includeModels === false, fn($query) => $query->where('key', 'NOT LIKE', 'model:%'))
             ->orderBy('id')->get();
 
         return $data->mapWithKeys(function ($value, $key) {
@@ -387,7 +384,7 @@ trait ManagesBales
     /**
      * Increment the bale attempts.
      *
-     * @param  StackableJob  $job
+     * @param StackableJob $job
      * @return void
      */
     public function incrementBaleAttempts(StackableJob $job): void
