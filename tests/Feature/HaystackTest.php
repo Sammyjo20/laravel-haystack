@@ -3,10 +3,6 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Carbon;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\CounterMiddleware;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableCounterMiddleware;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableMiddleware;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
 use function Pest\Laravel\travel;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -22,11 +18,14 @@ use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ExceptionJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PauseNextJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NativeFailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\LongReleaseJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendMultipleJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ManuallyFailedJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PrependMultipleJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\CounterMiddleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AddNextOrderCheckCacheJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableCounterMiddleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingNextOrderCheckCacheJob;
 
 test('you can start a haystack', function () {

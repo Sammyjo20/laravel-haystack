@@ -11,7 +11,6 @@ use Laravel\SerializableClosure\SerializableClosure;
 use Sammyjo20\LaravelHaystack\Data\CallbackCollection;
 use Sammyjo20\LaravelHaystack\Middleware\CheckAttempts;
 use Sammyjo20\LaravelHaystack\Middleware\CheckFinished;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AddCountrySingerJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Middleware\IncrementAttempts;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
@@ -20,6 +19,7 @@ use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Models\CountrySinger;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CountrySingerJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AddCountrySingerJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableMiddleware;
 
 test('a haystack can be created with jobs', function () {
@@ -244,7 +244,7 @@ test('a haystack can have multiple closures for each method', function (string $
         new SerializableClosure($closureC),
     ]);
 })->with([
-    'then', 'catch', 'finally', 'paused'
+    'then', 'catch', 'finally', 'paused',
 ]);
 
 test('a haystack can be dispatched straight away', function () {
