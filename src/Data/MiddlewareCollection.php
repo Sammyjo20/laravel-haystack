@@ -51,6 +51,7 @@ class MiddlewareCollection
                 return is_array($result) ? $result : [$result];
             })
             ->flatten()
+            ->filter(fn ($value) => is_object($value))
             ->toArray();
     }
 

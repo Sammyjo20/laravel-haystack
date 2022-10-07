@@ -11,6 +11,7 @@ use Laravel\SerializableClosure\SerializableClosure;
 use Sammyjo20\LaravelHaystack\Data\CallbackCollection;
 use Sammyjo20\LaravelHaystack\Middleware\CheckAttempts;
 use Sammyjo20\LaravelHaystack\Middleware\CheckFinished;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AddCountrySingerJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 use Sammyjo20\LaravelHaystack\Middleware\IncrementAttempts;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
@@ -95,7 +96,7 @@ test('a haystack can be created with middleware', function () {
     expect($garethJob->middleware)->toEqual(array_merge($defaultMiddleware, [new Middleware]));
 });
 
-test('a haystack can be created with middleware multiple middleware', function () {
+test('a haystack can be created with multiple middleware', function () {
     $haystack = Haystack::build()
         ->addJob(new NameJob('Sam'))
         ->addJob(new NameJob('Gareth'))
@@ -207,6 +208,44 @@ test('a haystack can have closures', function () {
     expect($callbacks->onFinally)->toEqual([new SerializableClosure($closureC)]);
     expect($callbacks->onPaused)->toEqual([new SerializableClosure($closureC)]);
 });
+
+test('a haystack can have multiple closures for each method', function (string $method) {
+    $closureA = fn () => 'A';
+    $closureB = fn () => 'B';
+    $closureC = fn () => 'C';
+    $closureD = fn () => 'D';
+
+    $haystack = Haystack::build()
+        ->$method($closureA)
+        ->$method($closureB)
+        ->$method($closureC)
+        ->$method($closureD)
+        ->create();
+
+    $haystack->refresh();
+
+    $callbacks = $haystack->callbacks;
+
+    expect($callbacks)->toBeInstanceOf(CallbackCollection::class);
+
+    $callbackMethod = match ($method) {
+        'then' => 'onThen',
+        'catch' => 'onCatch',
+        'finally' => 'onFinally',
+        'paused' => 'onPaused',
+    };
+
+    expect($callbacks->$callbackMethod)->toBeArray();
+
+    expect($callbacks->$callbackMethod)->toEqual([
+        new SerializableClosure($closureA),
+        new SerializableClosure($closureB),
+        new SerializableClosure($closureC),
+        new SerializableClosure($closureC),
+    ]);
+})->with([
+    'then', 'catch', 'finally', 'paused'
+]);
 
 test('a haystack can be dispatched straight away', function () {
     Queue::fake();
@@ -374,6 +413,40 @@ test('you can provide a model with a custom key to be shared across the whole ha
         ->dispatch();
 
     expect(cache()->get('singer'))->toEqual('Kelsea Ballerini');
+});
+
+test('you can provide a model inside of a stackable job', function () {
+    dontDeleteHaystack();
+
+    $migration = include __DIR__.'/../Migrations/create_country_singers_table.php';
+    $migration->up();
+
+    CountrySinger::create(['name' => 'Kelsea Ballerini'])->fresh();
+
+    Haystack::build()
+        ->addJob(new AddCountrySingerJob('singer'))
+        ->addJob(new CountrySingerJob('singer'))
+        ->dispatch();
+
+    expect(cache()->get('singer'))->toEqual('Kelsea Ballerini');
+});
+
+test('it will throw an exception if you try to add the same model twice on the haystack', function () {
+    dontDeleteHaystack();
+
+    $migration = include __DIR__.'/../Migrations/create_country_singers_table.php';
+    $migration->up();
+
+    CountrySinger::create(['name' => 'Kelsea Ballerini'])->fresh();
+
+    $this->expectException(HaystackModelExists::class);
+    $this->expectExceptionMessage('Model with the key "singer" has already been defined on the Haystack. Use the second argument to define a custom key.');
+
+    Haystack::build()
+        ->addJob(new AddCountrySingerJob('singer'))
+        ->addJob(new AddCountrySingerJob('singer'))
+        ->addJob(new CountrySingerJob('singer'))
+        ->dispatch();
 });
 
 test('it will throw an exception if you try to define two models without specifying a key', function () {

@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->mediumText('callbacks')->nullable();
             $table->mediumText('middleware')->nullable();
-            $table->mediumText('options');
+            $table->text('options');
             $table->timestamps();
             $table->dateTime('started_at')->nullable();
             $table->dateTime('resume_at')->nullable();

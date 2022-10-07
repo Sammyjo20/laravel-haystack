@@ -7,9 +7,14 @@ namespace Sammyjo20\LaravelHaystack\Concerns;
 use Closure;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Sammyjo20\LaravelHaystack\Casts\SerializedModel;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
+use Sammyjo20\LaravelHaystack\Data\PendingData;
 use Sammyjo20\LaravelHaystack\Enums\FinishStatus;
+use Sammyjo20\LaravelHaystack\Exceptions\HaystackModelExists;
+use Sammyjo20\LaravelHaystack\Helpers\DataHelper;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Models\HaystackData;
 use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
@@ -86,8 +91,8 @@ trait ManagesBales
     /**
      * Dispatch the next job.
      *
-     * @param  StackableJob|null  $currentJob
-     * @param  int|CarbonInterface|null  $delayInSecondsOrCarbon
+     * @param StackableJob|null $currentJob
+     * @param int|CarbonInterface|null $delayInSecondsOrCarbon
      * @return void
      *
      * @throws PhpVersionNotSupportedException
@@ -179,7 +184,7 @@ trait ManagesBales
     /**
      * Finish the Haystack.
      *
-     * @param  FinishStatus  $status
+     * @param FinishStatus $status
      * @return void
      *
      * @throws PhpVersionNotSupportedException
@@ -228,11 +233,11 @@ trait ManagesBales
     /**
      * Add new jobs to the haystack.
      *
-     * @param  StackableJob|Collection|array  $jobs
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
-     * @param  bool  $prepend
+     * @param StackableJob|Collection|array $jobs
+     * @param int $delayInSeconds
+     * @param string|null $queue
+     * @param string|null $connection
+     * @param bool $prepend
      * @return void
      */
     public function addJobs(StackableJob|Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null, bool $prepend = false): void
@@ -257,14 +262,14 @@ trait ManagesBales
     /**
      * Add pending jobs to the haystack.
      *
-     * @param  array  $pendingJobs
+     * @param array $pendingJobs
      * @return void
      */
     public function addPendingJobs(array $pendingJobs): void
     {
         $pendingJobRows = collect($pendingJobs)
-            ->filter(fn ($pendingJob) => $pendingJob instanceof PendingHaystackBale)
-            ->map(fn (PendingHaystackBale $pendingJob) => $pendingJob->toDatabaseRow($this))
+            ->filter(fn($pendingJob) => $pendingJob instanceof PendingHaystackBale)
+            ->map(fn(PendingHaystackBale $pendingJob) => $pendingJob->toDatabaseRow($this))
             ->all();
 
         if (empty($pendingJobRows)) {
@@ -277,8 +282,8 @@ trait ManagesBales
     /**
      * Execute the closures.
      *
-     * @param  array<SerializableClosure>  $closures
-     * @param  Collection|null  $data
+     * @param array<SerializableClosure> $closures
+     * @param Collection|null $data
      * @return void
      *
      * @throws PhpVersionNotSupportedException
@@ -293,7 +298,7 @@ trait ManagesBales
     /**
      * Pause the haystack.
      *
-     * @param  CarbonImmutable  $resumeAt
+     * @param CarbonImmutable $resumeAt
      * @return void
      *
      * @throws PhpVersionNotSupportedException
@@ -316,9 +321,9 @@ trait ManagesBales
     /**
      * Store data on the Haystack.
      *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  string|null  $cast
+     * @param string $key
+     * @param mixed $value
+     * @param string|null $cast
      * @return ManagesBales|\Sammyjo20\LaravelHaystack\Models\Haystack
      */
     public function setData(string $key, mixed $value, string $cast = null): self
@@ -336,8 +341,8 @@ trait ManagesBales
     /**
      * Retrieve data by a key from the Haystack.
      *
-     * @param  string  $key
-     * @param  mixed|null  $default
+     * @param string $key
+     * @param mixed|null $default
      * @return mixed
      */
     public function getData(string $key, mixed $default = null): mixed
@@ -350,25 +355,44 @@ trait ManagesBales
     /**
      * Retrieve a shared model
      *
-     * @param  string  $key
-     * @param  mixed|null  $default
+     * @param string $key
+     * @param mixed|null $default
      * @return mixed
      */
     public function getModel(string $key, mixed $default = null): mixed
     {
-        return $this->getData('model:'.$key, $default);
+        return $this->getData('model:' . $key, $default);
+    }
+
+    /**
+     * Set a model on a Haystack
+     *
+     * @param Model $model
+     * @param string|null $key
+     * @return $this
+     * @throws HaystackModelExists
+     */
+    public function setModel(Model $model, string $key = null): static
+    {
+        $key = DataHelper::getModelKey($model, $key);
+
+        if ($this->data()->where('key', $key)->exists()) {
+            throw new HaystackModelExists($key);
+        }
+
+        return $this->setData($key, $model, SerializedModel::class);
     }
 
     /**
      * Retrieve all the data from the Haystack.
      *
-     * @param  bool  $includeModels
+     * @param bool $includeModels
      * @return Collection
      */
     public function allData(bool $includeModels = false): Collection
     {
         $data = $this->data()
-            ->when($includeModels === false, fn ($query) => $query->where('key', 'NOT LIKE', 'model:%'))
+            ->when($includeModels === false, fn($query) => $query->where('key', 'NOT LIKE', 'model:%'))
             ->orderBy('id')->get();
 
         return $data->mapWithKeys(function ($value, $key) {
@@ -392,7 +416,7 @@ trait ManagesBales
     /**
      * Increment the bale attempts.
      *
-     * @param  StackableJob  $job
+     * @param StackableJob $job
      * @return void
      */
     public function incrementBaleAttempts(StackableJob $job): void
