@@ -10,14 +10,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Prunable;
 use Sammyjo20\LaravelHaystack\Casts\Serialized;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Sammyjo20\LaravelHaystack\Data\CallbackCollection;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 use Sammyjo20\LaravelHaystack\Concerns\ManagesBales;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Sammyjo20\LaravelHaystack\Data\CallbackCollection;
 use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
+use Sammyjo20\LaravelHaystack\Data\MiddlewareCollection;
 use Sammyjo20\LaravelHaystack\Casts\CallbackCollectionCast;
 use Sammyjo20\LaravelHaystack\Casts\MiddlewareCollectionCast;
-use Sammyjo20\LaravelHaystack\Data\MiddlewareCollection;
 use Sammyjo20\LaravelHaystack\Database\Factories\HaystackFactory;
 
 /**
