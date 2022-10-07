@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-haystack` will be documented in this file.
 
+## Version v0.10.0 - 2022-10-07
+
+### What's Changed
+
+- Feature | Multiple Callbacks & Middleware by @Sammyjo20 in https://github.com/Sammyjo20/laravel-haystack/pull/48
+
+**Full Changelog**: https://github.com/Sammyjo20/laravel-haystack/compare/v0.9.0...v0.10.0
+
 ## Version v0.9.0 - 2022-10-04
 
 ### What's Changed
