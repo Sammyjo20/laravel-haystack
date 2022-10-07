@@ -8,17 +8,25 @@ use Closure;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Enums\FinishStatus;
+use Sammyjo20\LaravelHaystack\Helpers\DataHelper;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Models\HaystackData;
 use Sammyjo20\LaravelHaystack\Helpers\CarbonHelper;
+use Laravel\SerializableClosure\SerializableClosure;
+use Sammyjo20\LaravelHaystack\Casts\SerializedModel;
 use Sammyjo20\LaravelHaystack\Helpers\DataValidator;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
+use Sammyjo20\LaravelHaystack\Data\CallbackCollection;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 use Sammyjo20\LaravelHaystack\Middleware\CheckAttempts;
 use Sammyjo20\LaravelHaystack\Middleware\CheckFinished;
+use Sammyjo20\LaravelHaystack\Data\MiddlewareCollection;
 use Sammyjo20\LaravelHaystack\Middleware\IncrementAttempts;
+use Sammyjo20\LaravelHaystack\Exceptions\HaystackModelExists;
+use Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException;
 
 trait ManagesBales
 {
@@ -59,12 +67,8 @@ trait ManagesBales
         // We'll now apply any global middleware if it was provided to us
         // while building the Haystack.
 
-        if (filled($this->middleware)) {
-            $middleware = call_user_func($this->middleware);
-
-            if (is_array($middleware)) {
-                $job->middleware = array_merge($job->middleware, $middleware);
-            }
+        if ($this->middleware instanceof MiddlewareCollection) {
+            $job->middleware = array_merge($job->middleware, $this->middleware->toMiddlewareArray());
         }
 
         // Apply default middleware. We'll need to make sure that
@@ -89,6 +93,8 @@ trait ManagesBales
      * @param  StackableJob|null  $currentJob
      * @param  int|CarbonInterface|null  $delayInSecondsOrCarbon
      * @return void
+     *
+     * @throws PhpVersionNotSupportedException
      */
     public function dispatchNextJob(StackableJob $currentJob = null, int|CarbonInterface $delayInSecondsOrCarbon = null): void
     {
@@ -140,6 +146,8 @@ trait ManagesBales
      * Start the Haystack.
      *
      * @return void
+     *
+     * @throws PhpVersionNotSupportedException
      */
     public function start(): void
     {
@@ -152,6 +160,8 @@ trait ManagesBales
      * Restart the haystack
      *
      * @return void
+     *
+     * @throws PhpVersionNotSupportedException
      */
     public function restart(): void
     {
@@ -162,6 +172,8 @@ trait ManagesBales
      * Cancel the haystack.
      *
      * @return void
+     *
+     * @throws PhpVersionNotSupportedException
      */
     public function cancel(): void
     {
@@ -173,6 +185,8 @@ trait ManagesBales
      *
      * @param  FinishStatus  $status
      * @return void
+     *
+     * @throws PhpVersionNotSupportedException
      */
     public function finish(FinishStatus $status = FinishStatus::Success): void
     {
@@ -182,19 +196,19 @@ trait ManagesBales
 
         $this->update(['finished_at' => now()]);
 
-        $shouldQueryData = isset($this->on_then) || isset($this->on_catch) || isset($this->on_finally);
+        $callbacks = $this->getCallbacks();
 
-        $data = $shouldQueryData ? $this->conditionallyGetAllData() : null;
+        $data = $callbacks->isNotEmpty() ? $this->conditionallyGetAllData() : null;
 
         match ($status) {
-            FinishStatus::Success => $this->executeClosure($this->on_then, $data),
-            FinishStatus::Failure => $this->executeClosure($this->on_catch, $data),
+            FinishStatus::Success => $this->invokeCallbacks($callbacks->onThen, $data),
+            FinishStatus::Failure => $this->invokeCallbacks($callbacks->onCatch, $data),
             default => null,
         };
 
         // Always execute the finally closure.
 
-        $this->executeClosure($this->on_finally, $data);
+        $this->invokeCallbacks($callbacks->onFinally, $data);
 
         // Now finally delete itself.
 
@@ -207,6 +221,8 @@ trait ManagesBales
      * Fail the Haystack.
      *
      * @return void
+     *
+     * @throws PhpVersionNotSupportedException
      */
     public function fail(): void
     {
@@ -263,17 +279,19 @@ trait ManagesBales
     }
 
     /**
-     * Execute the closure.
+     * Execute the closures.
      *
-     * @param  Closure|null  $closure
+     * @param  array<SerializableClosure>  $closures
      * @param  Collection|null  $data
      * @return void
+     *
+     * @throws PhpVersionNotSupportedException
      */
-    protected function executeClosure(?Closure $closure, ?Collection $data = null): void
+    protected function invokeCallbacks(?array $closures, ?Collection $data = null): void
     {
-        if ($closure instanceof Closure) {
+        collect($closures)->each(function (SerializableClosure $closure) use ($data) {
             $closure($data);
-        }
+        });
     }
 
     /**
@@ -281,18 +299,22 @@ trait ManagesBales
      *
      * @param  CarbonImmutable  $resumeAt
      * @return void
+     *
+     * @throws PhpVersionNotSupportedException
      */
     public function pause(CarbonImmutable $resumeAt): void
     {
         $this->update(['resume_at' => $resumeAt]);
 
-        if (! isset($this->on_paused)) {
+        $callbacks = $this->getCallbacks();
+
+        if (empty($callbacks->onPaused)) {
             return;
         }
 
         $data = $this->conditionallyGetAllData();
 
-        $this->executeClosure($this->on_paused, $data);
+        $this->invokeCallbacks($callbacks->onPaused, $data);
     }
 
     /**
@@ -342,6 +364,26 @@ trait ManagesBales
     }
 
     /**
+     * Set a model on a Haystack
+     *
+     * @param  Model  $model
+     * @param  string|null  $key
+     * @return $this
+     *
+     * @throws HaystackModelExists
+     */
+    public function setModel(Model $model, string $key = null): static
+    {
+        $key = DataHelper::getModelKey($model, $key);
+
+        if ($this->data()->where('key', $key)->exists()) {
+            throw new HaystackModelExists($key);
+        }
+
+        return $this->setData($key, $model, SerializedModel::class);
+    }
+
+    /**
      * Retrieve all the data from the Haystack.
      *
      * @param  bool  $includeModels
@@ -380,5 +422,15 @@ trait ManagesBales
     public function incrementBaleAttempts(StackableJob $job): void
     {
         HaystackBale::query()->whereKey($job->getHaystackBaleId())->increment('attempts');
+    }
+
+    /**
+     * Get the callbacks on the Haystack.
+     *
+     * @return CallbackCollection
+     */
+    public function getCallbacks(): CallbackCollection
+    {
+        return $this->callbacks ?? new CallbackCollection;
     }
 }

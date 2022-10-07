@@ -18,11 +18,14 @@ use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ExceptionJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PauseNextJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NativeFailJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\LongReleaseJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendMultipleJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\ManuallyFailedJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\PrependMultipleJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\CounterMiddleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AddNextOrderCheckCacheJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableCounterMiddleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AppendingNextOrderCheckCacheJob;
 
 test('you can start a haystack', function () {
@@ -268,7 +271,10 @@ test('the closures can receive the data if the option is enabled', function () {
         ->addJob(new SetDataJob('friend', 'Steve'))
         ->addJob(new PauseNextJob('pause', true, 300))
         ->then(function ($data) {
-            cache()->set('then', $data);
+            cache()->set('thenOne', $data);
+        })
+        ->then(function ($data) {
+            cache()->set('thenTwo', $data);
         })
         ->finally(function ($data) {
             cache()->set('finally', $data);
@@ -287,9 +293,67 @@ test('the closures can receive the data if the option is enabled', function () {
         'friend' => 'Steve',
     ]);
 
-    expect(cache()->get('then'))->toEqual($data);
+    expect(cache()->get('thenOne'))->toEqual($data);
+    expect(cache()->get('thenTwo'))->toEqual($data);
     expect(cache()->get('finally'))->toEqual($data);
     expect(cache()->get('paused'))->toEqual($data);
+});
+
+test('the catch callback will recieve the data when a haystack fails', function () {
+    Haystack::build()
+        ->addJob(new SetDataJob('name', 'Sam'))
+        ->addJob(new SetDataJob('friend', 'Steve'))
+        ->addJob(new FailJob())
+        ->catch(function ($data) {
+            cache()->set('catchOne', $data);
+        })
+        ->catch(function ($data) {
+            cache()->set('catchTwo', $data);
+        })
+        ->dispatch();
+
+    $data = new Collection([
+        'name' => 'Sam',
+        'friend' => 'Steve',
+    ]);
+
+    expect(cache()->get('catchOne'))->toEqual($data);
+    expect(cache()->get('catchTwo'))->toEqual($data);
+});
+
+test('multiple closures can be executed for successful and paused haystacks', function () {
+    Haystack::build()
+        ->addJob(new CacheJob('name', 'Sam'))
+        ->addJob(new PauseNextJob('pause', true, 300))
+        ->then(fn () => cache()->increment('then'))
+        ->then(fn () => cache()->increment('then'))
+        ->then(fn () => cache()->increment('then'))
+        ->finally(fn () => cache()->increment('finally'))
+        ->finally(fn () => cache()->increment('finally'))
+        ->finally(fn () => cache()->increment('finally'))
+        ->paused(fn () => cache()->increment('paused'))
+        ->paused(fn () => cache()->increment('paused'))
+        ->paused(fn () => cache()->increment('paused'))
+        ->dispatch();
+
+    travel(6)->minutes();
+
+    $this->artisan('haystacks:resume');
+
+    expect(cache()->get('then'))->toEqual(3);
+    expect(cache()->get('finally'))->toEqual(3);
+    expect(cache()->get('paused'))->toEqual(3);
+});
+
+test('multiple closures can be executed for unsuccessful haystacks', function () {
+    Haystack::build()
+        ->addJob(new FailJob)
+        ->catch(fn () => cache()->increment('catch'))
+        ->catch(fn () => cache()->increment('catch'))
+        ->catch(fn () => cache()->increment('catch'))
+        ->dispatch();
+
+    expect(cache()->get('catch'))->toEqual(3);
 });
 
 test('the closures cannot receive the data if the option is disabled on a per builder instance', function () {
@@ -553,4 +617,35 @@ test('allow failures will not stop the job from processing if a job manually fai
     $bales = $haystack->bales()->get();
 
     expect($bales)->toHaveCount(0);
+});
+
+test('multiple middleware can be added in various ways and on every job', function () {
+    Haystack::build()
+        ->addJob(new NameJob('Sam'))
+        ->addJob(new NameJob('Gareth'))
+        ->addMiddleware([
+            new CounterMiddleware,
+            new CounterMiddleware,
+        ])
+        ->addMiddleware(new InvokableCounterMiddleware)
+        ->addMiddleware(fn () => [new CounterMiddleware, new CounterMiddleware])
+        ->addMiddleware(fn () => new CounterMiddleware)
+        ->dispatch();
+
+    // 6 middleware * 2 jobs = 12
+
+    expect(cache()->get('count'))->toEqual(12);
+});
+
+test('invalid jobs are ignored as middleware', function () {
+    Haystack::build()
+        ->addJob(new NameJob('Sam'))
+        ->addJob(new NameJob('Gareth'))
+        ->addMiddleware([new CounterMiddleware])
+        ->addMiddleware(['a', 'b', 'c'])
+        ->addMiddleware(fn () => 'yo')
+        ->addMiddleware(fn () => ['a', 'b'])
+        ->dispatch();
+
+    expect(cache()->get('count'))->toEqual(2);
 });

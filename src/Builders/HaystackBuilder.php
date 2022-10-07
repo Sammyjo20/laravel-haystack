@@ -12,13 +12,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Data\PendingData;
+use Sammyjo20\LaravelHaystack\Helpers\DataHelper;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 use Sammyjo20\LaravelHaystack\Casts\SerializedModel;
-use Sammyjo20\LaravelHaystack\Helpers\ClosureHelper;
 use Sammyjo20\LaravelHaystack\Helpers\DataValidator;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
+use Sammyjo20\LaravelHaystack\Data\CallbackCollection;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
+use Sammyjo20\LaravelHaystack\Data\MiddlewareCollection;
 use Sammyjo20\LaravelHaystack\Exceptions\HaystackModelExists;
+use Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException;
 
 class HaystackBuilder
 {
@@ -32,34 +35,6 @@ class HaystackBuilder
     protected ?string $name = null;
 
     /**
-     * Closure to run when the Haystack is finished.
-     *
-     * @var Closure|null
-     */
-    protected ?Closure $onThen = null;
-
-    /**
-     * Closure to run when the Haystack has failed.
-     *
-     * @var Closure|null
-     */
-    protected ?Closure $onCatch = null;
-
-    /**
-     * Closure to run when the Haystack has finished.
-     *
-     * @var Closure|null
-     */
-    protected ?Closure $onFinally = null;
-
-    /**
-     * Closure to run when the Haystack has been paused.
-     *
-     * @var Closure|null
-     */
-    protected ?Closure $onPaused = null;
-
-    /**
      * The jobs to be added to the Haystack.
      *
      * @var Collection
@@ -67,32 +42,39 @@ class HaystackBuilder
     protected Collection $jobs;
 
     /**
-     * Global delay in seconds.
+     * Global connection
+     *
+     * @var string|null
+     */
+    public ?string $globalConnection = null;
+
+    /**
+     * Global queue
+     *
+     * @var string|null
+     */
+    public ?string $globalQueue = null;
+
+    /**
+     * Global delay
      *
      * @var int
      */
-    protected int $globalDelayInSeconds = 0;
+    public int $globalDelayInSeconds = 0;
 
     /**
-     * Global queue.
+     * Callbacks that will be run at various events
      *
-     * @var string|null
+     * @var CallbackCollection
      */
-    protected ?string $globalQueue = null;
+    protected CallbackCollection $callbacks;
 
     /**
-     * Global connection.
+     * Middleware that will be applied to every job
      *
-     * @var string|null
+     * @var MiddlewareCollection
      */
-    protected ?string $globalConnection = null;
-
-    /**
-     * Global middleware.
-     *
-     * @var Closure|null
-     */
-    protected ?Closure $globalMiddleware = null;
+    protected MiddlewareCollection $middleware;
 
     /**
      * Other Haystack Options
@@ -122,7 +104,9 @@ class HaystackBuilder
     {
         $this->jobs = new Collection;
         $this->initialData = new Collection;
+        $this->callbacks = new CallbackCollection;
         $this->options = new HaystackOptions;
+        $this->middleware = new MiddlewareCollection;
     }
 
     /**
@@ -143,10 +127,12 @@ class HaystackBuilder
      *
      * @param  Closure|callable  $closure
      * @return $this
+     *
+     * @throws PhpVersionNotSupportedException
      */
     public function then(Closure|callable $closure): static
     {
-        $this->onThen = ClosureHelper::fromCallable($closure);
+        $this->callbacks->addThen($closure);
 
         return $this;
     }
@@ -156,10 +142,12 @@ class HaystackBuilder
      *
      * @param  Closure|callable  $closure
      * @return $this
+     *
+     * @throws PhpVersionNotSupportedException
      */
     public function catch(Closure|callable $closure): static
     {
-        $this->onCatch = ClosureHelper::fromCallable($closure);
+        $this->callbacks->addCatch($closure);
 
         return $this;
     }
@@ -169,10 +157,12 @@ class HaystackBuilder
      *
      * @param  Closure|callable  $closure
      * @return $this
+     *
+     * @throws PhpVersionNotSupportedException
      */
     public function finally(Closure|callable $closure): static
     {
-        $this->onFinally = ClosureHelper::fromCallable($closure);
+        $this->callbacks->addFinally($closure);
 
         return $this;
     }
@@ -182,10 +172,12 @@ class HaystackBuilder
      *
      * @param  Closure|callable  $closure
      * @return $this
+     *
+     * @throws PhpVersionNotSupportedException
      */
     public function paused(Closure|callable $closure): static
     {
-        $this->onPaused = ClosureHelper::fromCallable($closure);
+        $this->callbacks->addPaused($closure);
 
         return $this;
     }
@@ -352,18 +344,16 @@ class HaystackBuilder
     }
 
     /**
-     * Set a global middleware closure to run.
+     * Add some middleware to be merged in with every job
      *
      * @param  Closure|callable|array  $value
      * @return $this
+     *
+     * @throws PhpVersionNotSupportedException
      */
-    public function withMiddleware(Closure|callable|array $value): static
+    public function addMiddleware(Closure|callable|array $value): static
     {
-        if (is_array($value)) {
-            $value = static fn () => $value;
-        }
-
-        $this->globalMiddleware = ClosureHelper::fromCallable($value);
+        $this->middleware->add($value);
 
         return $this;
     }
@@ -396,7 +386,7 @@ class HaystackBuilder
      */
     public function withModel(Model $model, string $key = null): static
     {
-        $key = 'model:'.($key ?? $model::class);
+        $key = DataHelper::getModelKey($model, $key);
 
         if ($this->initialData->has($key)) {
             throw new HaystackModelExists($key);
@@ -494,11 +484,8 @@ class HaystackBuilder
     {
         $haystack = new Haystack;
         $haystack->name = $this->name;
-        $haystack->on_then = $this->onThen;
-        $haystack->on_catch = $this->onCatch;
-        $haystack->on_finally = $this->onFinally;
-        $haystack->on_paused = $this->onPaused;
-        $haystack->middleware = $this->globalMiddleware;
+        $haystack->callbacks = $this->callbacks->toSerializable();
+        $haystack->middleware = $this->middleware->toSerializable();
         $haystack->options = $this->options;
 
         if ($this->beforeSave instanceof Closure) {
@@ -555,33 +542,13 @@ class HaystackBuilder
     }
 
     /**
-     * Get the closure for the "onThen".
+     * Retrieve the callbacks
      *
-     * @return Closure|null
+     * @return CallbackCollection
      */
-    public function getOnThen(): ?Closure
+    public function getCallbacks(): CallbackCollection
     {
-        return $this->onThen;
-    }
-
-    /**
-     * Get the closure for the "onCatch".
-     *
-     * @return Closure|null
-     */
-    public function getOnCatch(): ?Closure
-    {
-        return $this->onCatch;
-    }
-
-    /**
-     * Get the closure for the "onFinally".
-     *
-     * @return Closure|null
-     */
-    public function getOnFinally(): ?Closure
-    {
-        return $this->onFinally;
+        return $this->callbacks;
     }
 
     /**
@@ -617,11 +584,11 @@ class HaystackBuilder
     /**
      * Get the closure for the global middleware.
      *
-     * @return Closure|null
+     * @return MiddlewareCollection
      */
-    public function getGlobalMiddleware(): ?Closure
+    public function getMiddleware(): MiddlewareCollection
     {
-        return $this->globalMiddleware;
+        return $this->middleware;
     }
 
     /**

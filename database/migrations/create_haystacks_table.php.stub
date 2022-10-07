@@ -10,17 +10,14 @@ return new class extends Migration
     {
         Schema::create('haystacks', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->string('name')->nullable();
-            $table->text('on_then')->nullable();
-            $table->text('on_catch')->nullable();
-            $table->text('on_finally')->nullable();
-            $table->text('on_paused')->nullable();
-            $table->text('middleware')->nullable();
+            $table->mediumText('callbacks')->nullable();
+            $table->mediumText('middleware')->nullable();
+            $table->text('options');
+            $table->timestamps();
             $table->dateTime('started_at')->nullable();
             $table->dateTime('resume_at')->nullable();
             $table->dateTime('finished_at')->nullable();
-            $table->text('options');
         });
     }
 

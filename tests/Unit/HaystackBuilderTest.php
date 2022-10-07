@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Sammyjo20\LaravelHaystack\Models\Haystack;
+use Laravel\SerializableClosure\SerializableClosure;
 use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
 use Sammyjo20\LaravelHaystack\Data\PendingHaystackBale;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
@@ -53,28 +54,38 @@ test('you can specify a global timeout, queue and connection on the builder for 
     expect($builder->getGlobalQueue())->toEqual('testing');
 });
 
-test('you can specify a closure or a callable to happen at the end of a successful haystack', function () {
+test('you can specify a closure or a callable to happen at the end of a successful haystack and it will chain functions', function () {
     $builder = new HaystackBuilder;
 
     $builder->then(fn () => 'Hello');
 
-    expect($builder->getOnThen())->toEqual(fn () => 'Hello');
+    expect($builder->getCallbacks()->onThen)->toEqual([
+        new SerializableClosure(fn () => 'Hello'),
+    ]);
 
     $builder->then(new InvokableClass);
 
-    expect($builder->getOnThen())->toEqual(fn () => new InvokableClass);
+    expect($builder->getCallbacks()->onThen)->toEqual([
+        new SerializableClosure(fn () => 'Hello'),
+        new SerializableClosure(fn () => new InvokableClass),
+    ]);
 });
 
-test('you can specify a closure to happen at the end any haystack', function () {
+test('you can specify a closure to happen at the end of any haystack', function () {
     $builder = new HaystackBuilder;
 
     $builder->finally(fn () => 'Hello');
 
-    expect($builder->getOnFinally())->toEqual(fn () => 'Hello');
+    expect($builder->getCallbacks()->onFinally)->toEqual([
+        new SerializableClosure(fn () => 'Hello'),
+    ]);
 
     $builder->finally(new InvokableClass);
 
-    expect($builder->getOnFinally())->toEqual(fn () => new InvokableClass);
+    expect($builder->getCallbacks()->onFinally)->toEqual([
+        new SerializableClosure(fn () => 'Hello'),
+        new SerializableClosure(fn () => new InvokableClass),
+    ]);
 });
 
 test('you can specify a closure to happen on an erroneous haystack', function () {
@@ -82,27 +93,68 @@ test('you can specify a closure to happen on an erroneous haystack', function ()
 
     $builder->catch(fn () => 'Hello');
 
-    expect($builder->getOnCatch())->toEqual(fn () => 'Hello');
+    expect($builder->getCallbacks()->onCatch)->toEqual([
+        new SerializableClosure(fn () => 'Hello'),
+    ]);
 
     $builder->catch(new InvokableClass);
 
-    expect($builder->getOnCatch())->toEqual(fn () => new InvokableClass);
+    expect($builder->getCallbacks()->onCatch)->toEqual([
+        new SerializableClosure(fn () => 'Hello'),
+        new SerializableClosure(fn () => new InvokableClass),
+    ]);
+});
+
+test('you can specify a closure to happen on a paused haystack', function () {
+    $builder = new HaystackBuilder;
+
+    $builder->paused(fn () => 'Hello');
+
+    expect($builder->getCallbacks()->onPaused)->toEqual([
+        new SerializableClosure(fn () => 'Hello'),
+    ]);
+
+    $builder->paused(new InvokableClass);
+
+    expect($builder->getCallbacks()->onPaused)->toEqual([
+        new SerializableClosure(fn () => 'Hello'),
+        new SerializableClosure(fn () => new InvokableClass),
+    ]);
 });
 
 test('you can specify middleware as a closure, invokable class or an array', function () {
     $builder = new HaystackBuilder;
 
-    $builder->withMiddleware(fn () => [new Middleware()]);
+    $builder->addMiddleware(fn () => [new Middleware()]);
 
-    expect($builder->getGlobalMiddleware())->toEqual(fn () => [new Middleware()]);
+    expect($builder->getMiddleware()->data)->toEqual([
+        new SerializableClosure(fn () => [new Middleware()]),
+    ]);
 
-    $builder->withMiddleware(new InvokableMiddleware);
+    $builder->addMiddleware(new InvokableMiddleware);
 
-    expect($builder->getGlobalMiddleware())->toEqual(fn () => new InvokableMiddleware);
+    expect($builder->getMiddleware()->data)->toEqual([
+        new SerializableClosure(fn () => [new Middleware()]),
+        new SerializableClosure(fn () => new InvokableMiddleware),
+    ]);
 
-    $builder->withMiddleware([new Middleware]);
+    $builder->addMiddleware([new Middleware]);
 
-    expect($builder->getGlobalMiddleware())->toEqual(fn () => [new Middleware()]);
+    expect($builder->getMiddleware()->data)->toEqual([
+        new SerializableClosure(fn () => [new Middleware()]),
+        new SerializableClosure(fn () => new InvokableMiddleware),
+        new SerializableClosure(fn () => [new Middleware()]),
+    ]);
+
+    // Now we'll try to get all the middleware, it should give us a nice array of them all
+
+    $allMiddleware = $builder->getMiddleware()->toMiddlewareArray();
+
+    expect($allMiddleware)->toEqual([
+        new Middleware,
+        new Middleware,
+        new Middleware,
+    ]);
 });
 
 test('you can create a haystack from a builder', function () {

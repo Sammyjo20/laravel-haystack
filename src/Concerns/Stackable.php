@@ -252,6 +252,22 @@ trait Stackable
     }
 
     /**
+     * Set a shared model
+     *
+     * @param  Model  $model
+     * @param  string  $key
+     * @return $this
+     *
+     * @throws \Sammyjo20\LaravelHaystack\Exceptions\HaystackModelExists
+     */
+    public function setHaystackModel(Model $model, string $key): static
+    {
+        $this->haystack->setModel($model, $key);
+
+        return $this;
+    }
+
+    /**
      * Get all data on the haystack.
      *
      * @return mixed

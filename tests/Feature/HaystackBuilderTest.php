@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
+use Laravel\SerializableClosure\SerializableClosure;
+use Sammyjo20\LaravelHaystack\Data\CallbackCollection;
 use Sammyjo20\LaravelHaystack\Middleware\CheckAttempts;
 use Sammyjo20\LaravelHaystack\Middleware\CheckFinished;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
@@ -17,6 +19,8 @@ use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\Middleware;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Models\CountrySinger;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CountrySingerJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\OrderCheckCacheJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AddCountrySingerJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Callables\InvokableMiddleware;
 
 test('a haystack can be created with jobs', function () {
     $haystack = Haystack::build()
@@ -69,7 +73,7 @@ test('a haystack can be created with middleware', function () {
     $haystack = Haystack::build()
         ->addJob(new NameJob('Sam'))
         ->addJob(new NameJob('Gareth'))
-        ->withMiddleware([
+        ->addMiddleware([
             new Middleware(),
         ])
         ->create();
@@ -90,6 +94,64 @@ test('a haystack can be created with middleware', function () {
 
     expect($samJob->middleware)->toEqual(array_merge($defaultMiddleware, [new Middleware]));
     expect($garethJob->middleware)->toEqual(array_merge($defaultMiddleware, [new Middleware]));
+});
+
+test('a haystack can be created with multiple middleware', function () {
+    $haystack = Haystack::build()
+        ->addJob(new NameJob('Sam'))
+        ->addJob(new NameJob('Gareth'))
+        ->addMiddleware([
+            new Middleware(),
+        ])
+        ->addMiddleware(new InvokableMiddleware)
+        ->create();
+
+    $haystackBales = $haystack->bales()->get();
+
+    expect($haystackBales)->toHaveCount(2);
+
+    $samJob = $haystack->getNextJob()->job;
+
+    $haystack->getNextJob()->haystackRow->delete();
+
+    $garethJob = $haystack->getNextJob()->job;
+
+    // Check the middleware is applied to all jobs.
+
+    $defaultMiddleware = [new CheckFinished, new CheckAttempts, new IncrementAttempts];
+
+    // When invokable middleware is called it returns "Middleware"
+
+    expect($samJob->middleware)->toEqual(array_merge($defaultMiddleware, [new Middleware, new Middleware]));
+    expect($garethJob->middleware)->toEqual(array_merge($defaultMiddleware, [new Middleware, new Middleware]));
+});
+
+test('when no middleware is specified the middleware column is blank', function () {
+    $haystack = Haystack::build()
+        ->addJob(new NameJob('Sam'))
+        ->addJob(new NameJob('Gareth'))
+        ->create();
+
+    expect($haystack->middleware)->toBeNull();
+
+    $haystackBales = $haystack->bales()->get();
+
+    expect($haystackBales)->toHaveCount(2);
+
+    $samJob = $haystack->getNextJob()->job;
+
+    $haystack->getNextJob()->haystackRow->delete();
+
+    $garethJob = $haystack->getNextJob()->job;
+
+    // Check the middleware is applied to all jobs.
+
+    $defaultMiddleware = [new CheckFinished, new CheckAttempts, new IncrementAttempts];
+
+    // When invokable middleware is called it returns "Middleware"
+
+    expect($samJob->middleware)->toEqual($defaultMiddleware);
+    expect($garethJob->middleware)->toEqual($defaultMiddleware);
 });
 
 test('a haystack job can have their own delay, queue and connection', function () {
@@ -116,6 +178,12 @@ test('a haystack job can have their own delay, queue and connection', function (
     expect($haystackBales[1]->on_connection)->toEqual('redis');
 });
 
+test('when a haystack does not have any callbacks the column is null', function () {
+    $haystack = Haystack::build()->create();
+
+    expect($haystack->callbacks)->toBeNull();
+});
+
 test('a haystack can have closures', function () {
     $closureA = fn () => 'A';
     $closureB = fn () => 'B';
@@ -131,11 +199,53 @@ test('a haystack can have closures', function () {
 
     $haystack->refresh();
 
-    expect($haystack->on_then)->toEqual($closureA);
-    expect($haystack->on_catch)->toEqual($closureB);
-    expect($haystack->on_finally)->toEqual($closureC);
-    expect($haystack->on_paused)->toEqual($closureC);
+    $callbacks = $haystack->callbacks;
+
+    expect($callbacks)->toBeInstanceOf(CallbackCollection::class);
+
+    expect($callbacks->onThen)->toEqual([new SerializableClosure($closureA)]);
+    expect($callbacks->onCatch)->toEqual([new SerializableClosure($closureB)]);
+    expect($callbacks->onFinally)->toEqual([new SerializableClosure($closureC)]);
+    expect($callbacks->onPaused)->toEqual([new SerializableClosure($closureC)]);
 });
+
+test('a haystack can have multiple closures for each method', function (string $method) {
+    $closureA = fn () => 'A';
+    $closureB = fn () => 'B';
+    $closureC = fn () => 'C';
+    $closureD = fn () => 'D';
+
+    $haystack = Haystack::build()
+        ->$method($closureA)
+        ->$method($closureB)
+        ->$method($closureC)
+        ->$method($closureD)
+        ->create();
+
+    $haystack->refresh();
+
+    $callbacks = $haystack->callbacks;
+
+    expect($callbacks)->toBeInstanceOf(CallbackCollection::class);
+
+    $callbackMethod = match ($method) {
+        'then' => 'onThen',
+        'catch' => 'onCatch',
+        'finally' => 'onFinally',
+        'paused' => 'onPaused',
+    };
+
+    expect($callbacks->$callbackMethod)->toBeArray();
+
+    expect($callbacks->$callbackMethod)->toEqual([
+        new SerializableClosure($closureA),
+        new SerializableClosure($closureB),
+        new SerializableClosure($closureC),
+        new SerializableClosure($closureC),
+    ]);
+})->with([
+    'then', 'catch', 'finally', 'paused',
+]);
 
 test('a haystack can be dispatched straight away', function () {
     Queue::fake();
@@ -303,6 +413,40 @@ test('you can provide a model with a custom key to be shared across the whole ha
         ->dispatch();
 
     expect(cache()->get('singer'))->toEqual('Kelsea Ballerini');
+});
+
+test('you can provide a model inside of a stackable job', function () {
+    dontDeleteHaystack();
+
+    $migration = include __DIR__.'/../Migrations/create_country_singers_table.php';
+    $migration->up();
+
+    CountrySinger::create(['name' => 'Kelsea Ballerini'])->fresh();
+
+    Haystack::build()
+        ->addJob(new AddCountrySingerJob('singer'))
+        ->addJob(new CountrySingerJob('singer'))
+        ->dispatch();
+
+    expect(cache()->get('singer'))->toEqual('Kelsea Ballerini');
+});
+
+test('it will throw an exception if you try to add the same model twice on the haystack', function () {
+    dontDeleteHaystack();
+
+    $migration = include __DIR__.'/../Migrations/create_country_singers_table.php';
+    $migration->up();
+
+    CountrySinger::create(['name' => 'Kelsea Ballerini'])->fresh();
+
+    $this->expectException(HaystackModelExists::class);
+    $this->expectExceptionMessage('Model with the key "singer" has already been defined on the Haystack. Use the second argument to define a custom key.');
+
+    Haystack::build()
+        ->addJob(new AddCountrySingerJob('singer'))
+        ->addJob(new AddCountrySingerJob('singer'))
+        ->addJob(new CountrySingerJob('singer'))
+        ->dispatch();
 });
 
 test('it will throw an exception if you try to define two models without specifying a key', function () {
