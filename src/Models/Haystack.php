@@ -4,28 +4,28 @@ declare(strict_types=1);
 
 namespace Sammyjo20\LaravelHaystack\Models;
 
-use Closure;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Prunable;
 use Sammyjo20\LaravelHaystack\Casts\Serialized;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Sammyjo20\LaravelHaystack\Data\CallbackCollection;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 use Sammyjo20\LaravelHaystack\Concerns\ManagesBales;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Sammyjo20\LaravelHaystack\Builders\HaystackBuilder;
 use Sammyjo20\LaravelHaystack\Casts\CallbackCollectionCast;
 use Sammyjo20\LaravelHaystack\Casts\MiddlewareCollectionCast;
+use Sammyjo20\LaravelHaystack\Data\MiddlewareCollection;
 use Sammyjo20\LaravelHaystack\Database\Factories\HaystackFactory;
 
 /**
- * @property array<SerializableClosure> $on_then
- * @property array<SerializableClosure> $on_catch
- * @property array<SerializableClosure> $on_finally
- * @property array<SerializableClosure> $on_paused
- * @property Closure $middleware
+ * @property CallbackCollection $callbacks
+ * @property MiddlewareCollection $middleware
  * @property HaystackOptions $options
+ * @property CarbonImmutable $started_at
+ * @property CarbonImmutable $finished_at
  */
 class Haystack extends Model
 {
@@ -44,10 +44,10 @@ class Haystack extends Model
     protected $casts = [
         'callbacks' => CallbackCollectionCast::class,
         'middleware' => MiddlewareCollectionCast::class,
+        'options' => Serialized::class,
         'started_at' => 'immutable_datetime',
         'resume_at' => 'immutable_datetime',
         'finished_at' => 'immutable_datetime',
-        'options' => Serialized::class,
     ];
 
     /**
