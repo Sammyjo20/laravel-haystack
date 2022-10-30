@@ -17,7 +17,7 @@ class HaystacksClear extends Command
     {
         $count = Haystack::query()->delete();
 
-        $this->info("Cleared $count haystacks'");
+        $this->info("Cleared $count haystacks");
 
         return self::SUCCESS;
     }
