@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-haystack` will be documented in this file.
 
+## Version v0.10.1 - 2022-10-30
+
+### What's Changed
+
+- Fix typo command output on clearing haystacks by @faisuc in https://github.com/Sammyjo20/laravel-haystack/pull/58
+
+**Full Changelog**: https://github.com/Sammyjo20/laravel-haystack/compare/v0.10.0...v0.10.1
+
 ## Version v0.10.0 - 2022-10-07
 
 ### What's Changed
