@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Sammyjo20\LaravelHaystack\Data\SerializedModel as SerializedModelData;
+use Sammyjo20\LaravelHaystack\Helpers\SerializationHelper;
 
 class SerializedModel implements CastsAttributes
 {
@@ -22,7 +23,7 @@ class SerializedModel implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes)
     {
-        return isset($value) ? unserialize($value, ['allowed_classes' => true])->model : null;
+        return isset($value) ? SerializationHelper::unserialize($value, ['allowed_classes' => true])->model : null;
     }
 
     /**
@@ -44,6 +45,6 @@ class SerializedModel implements CastsAttributes
             throw new InvalidArgumentException('The provided value must be a model.');
         }
 
-        return serialize(new SerializedModelData($value));
+        return SerializationHelper::serialize(new SerializedModelData($value));
     }
 }
