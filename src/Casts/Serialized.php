@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Sammyjo20\LaravelHaystack\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Database\PostgresConnection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class Serialized implements CastsAttributes
 {
@@ -19,7 +22,15 @@ class Serialized implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes)
     {
-        return isset($value) ? unserialize($value, ['allowed_classes' => true]) : null;
+        if (!isset($value)) {
+            return null;
+        }
+
+        if (DB::connection() instanceof PostgresConnection && ! Str::contains($value, [':', ';'])) {
+            $value = base64_decode($value);
+        }
+
+        return unserialize($value, ['allowed_classes' => true]);
     }
 
     /**
@@ -37,6 +48,10 @@ class Serialized implements CastsAttributes
             return null;
         }
 
-        return serialize($value);
+        $serialized = serialize($value);
+
+        return DB::connection() instanceof PostgresConnection
+            ? base64_encode($serialized)
+            : $serialized;
     }
 }
