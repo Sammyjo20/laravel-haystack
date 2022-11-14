@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Sammyjo20\LaravelHaystack\Casts;
 
-use Sammyjo20\LaravelHaystack\Helpers\SerializationHelper;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\PostgresConnection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Sammyjo20\LaravelHaystack\Helpers\SerializationHelper;
 
 class Serialized implements CastsAttributes
 {
