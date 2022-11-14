@@ -16,7 +16,7 @@ class SerializationHelper
      * @param  mixed  $value
      * @return string
      */
-    protected function serialize($value)
+    public static function serialize($value)
     {
         $serialized = serialize($value);
 
@@ -31,7 +31,7 @@ class SerializationHelper
      * @param  string  $serialized
      * @return mixed
      */
-    protected function unserialize($serialized)
+    public static function unserialize($serialized)
     {
         if ($this->connection instanceof PostgresConnection && ! Str::contains($serialized, [':', ';'])) {
             $serialized = base64_decode($serialized);
