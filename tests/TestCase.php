@@ -33,7 +33,7 @@ class TestCase extends Orchestra
 
     public function getEnvironmentSetUp($app)
     {
-        config()->set('database.default', 'testing');
+        config()->set('haystack.db_connection', 'testing');
         config()->set('database.connections.testing.foreign_key_constraints', true);
         config()->set('haystack.process_automatically', false);
 
