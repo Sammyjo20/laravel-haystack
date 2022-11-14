@@ -9,9 +9,6 @@ use InvalidArgumentException;
 use Laravel\SerializableClosure\SerializableClosure;
 use Sammyjo20\LaravelHaystack\Helpers\ClosureHelper;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
-use Illuminate\Database\PostgresConnection;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class SerializeClosure implements CastsAttributes
 {
@@ -26,15 +23,7 @@ class SerializeClosure implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes): ?Closure
     {
-        if (!isset($value)) {
-            return null;
-        }
-
-        if (DB::connection() instanceof PostgresConnection && ! Str::contains($value, [':', ';'])) {
-            $value = base64_decode($value);
-        }
-
-        return unserialize($value, ['allowed_classes' => true])->getClosure();
+        return isset($value) ? unserialize($value, ['allowed_classes' => true])->getClosure() : null;
     }
 
     /**
@@ -60,10 +49,6 @@ class SerializeClosure implements CastsAttributes
 
         $closure = ClosureHelper::fromCallable($value);
 
-        $serialized = serialize(new SerializableClosure($closure));
-
-        return DB::connection() instanceof PostgresConnection
-            ? base64_encode($serialized)
-            : $serialized;
+        return serialize(new SerializableClosure($closure));
     }
 }
