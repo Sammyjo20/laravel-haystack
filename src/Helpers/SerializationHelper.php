@@ -20,7 +20,7 @@ class SerializationHelper
     {
         $serialized = serialize($value);
 
-        return $this->connection instanceof PostgresConnection
+        return DB::connection() instanceof PostgresConnection
             ? base64_encode($serialized)
             : $serialized;
     }
@@ -33,7 +33,7 @@ class SerializationHelper
      */
     public static function unserialize($serialized)
     {
-        if ($this->connection instanceof PostgresConnection && ! Str::contains($serialized, [':', ';'])) {
+        if (DB::connection() instanceof PostgresConnection && ! Str::contains($serialized, [':', ';'])) {
             $serialized = base64_decode($serialized);
         }
 
