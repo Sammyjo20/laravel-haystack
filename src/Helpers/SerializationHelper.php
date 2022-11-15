@@ -31,12 +31,12 @@ class SerializationHelper
      * @param  string  $serialized
      * @return mixed
      */
-    public static function unserialize($serialized)
+    public static function unserialize($serialized, array $options = [])
     {
         if (DB::connection() instanceof PostgresConnection && ! Str::contains($serialized, [':', ';'])) {
             $serialized = base64_decode($serialized);
         }
 
-        return unserialize($serialized);
+        return unserialize($serialized, $options);
     }
 }
