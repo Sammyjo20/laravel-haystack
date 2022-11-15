@@ -38,6 +38,6 @@ class Serialized implements CastsAttributes
             return null;
         }
 
-        $serialized = SerializationHelper::serialize($value);
+        return SerializationHelper::serialize($value);
     }
 }
