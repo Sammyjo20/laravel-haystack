@@ -8,6 +8,7 @@ use Closure;
 use InvalidArgumentException;
 use Laravel\SerializableClosure\SerializableClosure;
 use Sammyjo20\LaravelHaystack\Helpers\ClosureHelper;
+use Sammyjo20\LaravelHaystack\Helpers\SerializationHelper;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
 class SerializeClosure implements CastsAttributes
@@ -23,7 +24,7 @@ class SerializeClosure implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes): ?Closure
     {
-        return isset($value) ? unserialize($value, ['allowed_classes' => true])->getClosure() : null;
+        return isset($value) ? SerializationHelper::unserialize($value, ['allowed_classes' => true])->getClosure() : null;
     }
 
     /**
@@ -49,6 +50,6 @@ class SerializeClosure implements CastsAttributes
 
         $closure = ClosureHelper::fromCallable($value);
 
-        return serialize(new SerializableClosure($closure));
+        return SerializationHelper::serialize(new SerializableClosure($closure));
     }
 }

@@ -6,6 +6,7 @@ namespace Sammyjo20\LaravelHaystack\Casts;
 
 use InvalidArgumentException;
 use Sammyjo20\LaravelHaystack\Data\CallbackCollection;
+use Sammyjo20\LaravelHaystack\Helpers\SerializationHelper;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
 class CallbackCollectionCast implements CastsAttributes
@@ -21,7 +22,7 @@ class CallbackCollectionCast implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes)
     {
-        return isset($value) ? unserialize($value, ['allowed_classes' => true]) : null;
+        return isset($value) ? SerializationHelper::unserialize($value, ['allowed_classes' => true]) : null;
     }
 
     /**
@@ -43,6 +44,6 @@ class CallbackCollectionCast implements CastsAttributes
             throw new InvalidArgumentException(sprintf('Value provided must be an instance of %s.', CallbackCollection::class));
         }
 
-        return serialize($value);
+        return SerializationHelper::serialize($value);
     }
 }
