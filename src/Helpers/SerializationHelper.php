@@ -16,7 +16,7 @@ class SerializationHelper
      * @param  mixed  $value
      * @return string
      */
-    public static function serialize($value)
+    public static function serialize(mixed $value)
     {
         $serialized = serialize($value);
 
@@ -29,9 +29,10 @@ class SerializationHelper
      * Unserialize the given value.
      *
      * @param  string  $serialized
+     * @param  array   $options
      * @return mixed
      */
-    public static function unserialize($serialized, array $options = [])
+    public static function unserialize(string $serialized, array $options = [])
     {
         if (DB::connection() instanceof PostgresConnection && ! Str::contains($serialized, [':', ';'])) {
             $serialized = base64_decode($serialized);
