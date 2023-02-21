@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Sammyjo20\LaravelHaystack\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Sammyjo20\LaravelHaystack\Helpers\SerializationHelper;
 
 class Serialized implements CastsAttributes
 {
@@ -19,7 +20,7 @@ class Serialized implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes)
     {
-        return isset($value) ? unserialize($value, ['allowed_classes' => true]) : null;
+        return isset($value) ? SerializationHelper::unserialize($value, ['allowed_classes' => true]) : null;
     }
 
     /**
@@ -37,6 +38,6 @@ class Serialized implements CastsAttributes
             return null;
         }
 
-        return serialize($value);
+        return SerializationHelper::serialize($value);
     }
 }
