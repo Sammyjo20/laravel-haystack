@@ -16,10 +16,6 @@ class SerializeClosure implements CastsAttributes
     /**
      * Unserialize a closure.
      *
-     * @param $model
-     * @param  string  $key
-     * @param $value
-     * @param  array  $attributes
      * @return mixed|null
      */
     public function get($model, string $key, $value, array $attributes): ?Closure
@@ -30,10 +26,6 @@ class SerializeClosure implements CastsAttributes
     /**
      * Serialize a closure.
      *
-     * @param $model
-     * @param  string  $key
-     * @param $value
-     * @param  array  $attributes
      * @return mixed|string|null
      *
      * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
