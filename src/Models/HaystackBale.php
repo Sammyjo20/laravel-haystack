@@ -71,4 +71,14 @@ class HaystackBale extends Model
 
         return $job;
     }
+
+    /**
+     * Get the current connection name for the model.
+     *
+     * @return string|null
+     */
+    public function getConnectionName()
+    {
+        return config('haystack.db_connection');
+    }
 }
