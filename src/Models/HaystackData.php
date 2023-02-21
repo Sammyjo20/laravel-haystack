@@ -30,8 +30,6 @@ class HaystackData extends Model
 
     /**
      * The Haystack this row belongs to.
-     *
-     * @return BelongsTo
      */
     public function haystack(): BelongsTo
     {
@@ -40,9 +38,6 @@ class HaystackData extends Model
 
     /**
      * Set the cast attribute and apply the casts.
-     *
-     * @param  string|null  $cast
-     * @return void
      */
     public function setCastAttribute(?string $cast): void
     {
@@ -56,9 +51,6 @@ class HaystackData extends Model
 
     /**
      * Get the cast value.
-     *
-     * @param $value
-     * @return mixed
      */
     public function getValueAttribute($value): mixed
     {

@@ -40,8 +40,6 @@ class HaystackBale extends Model
 
     /**
      * The Haystack this row belongs to.
-     *
-     * @return BelongsTo
      */
     public function haystack(): BelongsTo
     {
@@ -50,8 +48,6 @@ class HaystackBale extends Model
 
     /**
      * Get the job already configured.
-     *
-     * @return StackableJob
      */
     public function configuredJob(): StackableJob
     {

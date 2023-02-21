@@ -62,8 +62,6 @@ class Haystack extends Model
 
     /**
      * Get the prunable model query.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function prunable(): Builder
     {
@@ -81,8 +79,6 @@ class Haystack extends Model
 
     /**
      * The Haystack's bales.
-     *
-     * @return HasMany
      */
     public function bales(): HasMany
     {
@@ -91,8 +87,6 @@ class Haystack extends Model
 
     /**
      * The Haystack's data.
-     *
-     * @return HasMany
      */
     public function data(): HasMany
     {
@@ -101,8 +95,6 @@ class Haystack extends Model
 
     /**
      * Start building a Haystack.
-     *
-     * @return HaystackBuilder
      */
     public static function build(): HaystackBuilder
     {
@@ -111,8 +103,6 @@ class Haystack extends Model
 
     /**
      * Denotes if the haystack has started.
-     *
-     * @return bool
      */
     public function getStartedAttribute(): bool
     {
@@ -121,15 +111,13 @@ class Haystack extends Model
 
     /**
      * Denotes if the haystack has finished.
-     *
-     * @return bool
      */
     public function getFinishedAttribute(): bool
     {
         return $this->finished_at instanceof CarbonImmutable;
     }
 
-     /**
+    /**
      * Get the current connection name for the model.
      *
      * @return string|null
