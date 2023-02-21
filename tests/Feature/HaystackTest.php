@@ -531,7 +531,6 @@ test('allow failures will not stop the job from processing if a job fails', func
     withAutomaticProcessing();
 
     config()->set('queue.default', 'database');
-    config()->set('queue.failed.database', 'testing');
 
     $haystack = Haystack::build()
         ->addJob(new AutoCacheJob('name', 'Sam'))

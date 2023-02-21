@@ -70,10 +70,8 @@ class HaystackBale extends Model
 
     /**
      * Get the current connection name for the model.
-     *
-     * @return string|null
      */
-    public function getConnectionName()
+    public function getConnectionName(): string
     {
         return config('haystack.db_connection');
     }
