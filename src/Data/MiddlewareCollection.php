@@ -13,15 +13,12 @@ class MiddlewareCollection
 {
     /**
      * The Middleware
-     *
-     * @var array
      */
     public array $data = [];
 
     /**
      * Add the middleware to the collection
      *
-     * @param  Closure|array|callable  $value
      * @return $this
      *
      * @throws PhpVersionNotSupportedException
@@ -39,8 +36,6 @@ class MiddlewareCollection
 
     /**
      * Call the whole middleware stack and convert it into an array
-     *
-     * @return array
      */
     public function toMiddlewareArray(): array
     {
@@ -57,8 +52,6 @@ class MiddlewareCollection
 
     /**
      * Check if the middleware is empty
-     *
-     * @return bool
      */
     public function isEmpty(): bool
     {
@@ -67,8 +60,6 @@ class MiddlewareCollection
 
     /**
      * Check if the middleware is not empty
-     *
-     * @return bool
      */
     public function isNotEmpty(): bool
     {

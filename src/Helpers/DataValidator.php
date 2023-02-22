@@ -10,10 +10,6 @@ class DataValidator
 {
     /**
      * Throw an exception if the cast is invalid for the data type.
-     *
-     * @param  mixed  $value
-     * @param  string|null  $cast
-     * @return void
      */
     public static function validateCast(mixed $value, string $cast = null): void
     {

@@ -32,8 +32,6 @@ trait ManagesBales
 {
     /**
      * Get the next job row in the Haystack.
-     *
-     * @return HaystackBale|null
      */
     public function getNextJobRow(): ?HaystackBale
     {
@@ -42,8 +40,6 @@ trait ManagesBales
 
     /**
      * Get the next job from the Haystack.
-     *
-     * @return NextJob|null
      */
     public function getNextJob(): ?NextJob
     {
@@ -90,9 +86,6 @@ trait ManagesBales
     /**
      * Dispatch the next job.
      *
-     * @param  StackableJob|null  $currentJob
-     * @param  int|CarbonInterface|null  $delayInSecondsOrCarbon
-     * @return void
      *
      * @throws PhpVersionNotSupportedException
      */
@@ -145,7 +138,6 @@ trait ManagesBales
     /**
      * Start the Haystack.
      *
-     * @return void
      *
      * @throws PhpVersionNotSupportedException
      */
@@ -159,7 +151,6 @@ trait ManagesBales
     /**
      * Restart the haystack
      *
-     * @return void
      *
      * @throws PhpVersionNotSupportedException
      */
@@ -171,7 +162,6 @@ trait ManagesBales
     /**
      * Cancel the haystack.
      *
-     * @return void
      *
      * @throws PhpVersionNotSupportedException
      */
@@ -183,8 +173,6 @@ trait ManagesBales
     /**
      * Finish the Haystack.
      *
-     * @param  FinishStatus  $status
-     * @return void
      *
      * @throws PhpVersionNotSupportedException
      */
@@ -220,7 +208,6 @@ trait ManagesBales
     /**
      * Fail the Haystack.
      *
-     * @return void
      *
      * @throws PhpVersionNotSupportedException
      */
@@ -231,13 +218,6 @@ trait ManagesBales
 
     /**
      * Add new jobs to the haystack.
-     *
-     * @param  StackableJob|Collection|array  $jobs
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
-     * @param  bool  $prepend
-     * @return void
      */
     public function addJobs(StackableJob|Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null, bool $prepend = false): void
     {
@@ -260,9 +240,6 @@ trait ManagesBales
 
     /**
      * Add pending jobs to the haystack.
-     *
-     * @param  array  $pendingJobs
-     * @return void
      */
     public function addPendingJobs(array $pendingJobs): void
     {
@@ -282,8 +259,6 @@ trait ManagesBales
      * Execute the closures.
      *
      * @param  array<SerializableClosure>  $closures
-     * @param  Collection|null  $data
-     * @return void
      *
      * @throws PhpVersionNotSupportedException
      */
@@ -297,8 +272,6 @@ trait ManagesBales
     /**
      * Pause the haystack.
      *
-     * @param  CarbonImmutable  $resumeAt
-     * @return void
      *
      * @throws PhpVersionNotSupportedException
      */
@@ -320,9 +293,6 @@ trait ManagesBales
     /**
      * Store data on the Haystack.
      *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  string|null  $cast
      * @return ManagesBales|\Sammyjo20\LaravelHaystack\Models\Haystack
      */
     public function setData(string $key, mixed $value, string $cast = null): self
@@ -339,10 +309,6 @@ trait ManagesBales
 
     /**
      * Retrieve data by a key from the Haystack.
-     *
-     * @param  string  $key
-     * @param  mixed|null  $default
-     * @return mixed
      */
     public function getData(string $key, mixed $default = null): mixed
     {
@@ -353,10 +319,6 @@ trait ManagesBales
 
     /**
      * Retrieve a shared model
-     *
-     * @param  string  $key
-     * @param  mixed|null  $default
-     * @return mixed
      */
     public function getModel(string $key, mixed $default = null): mixed
     {
@@ -366,8 +328,6 @@ trait ManagesBales
     /**
      * Set a model on a Haystack
      *
-     * @param  Model  $model
-     * @param  string|null  $key
      * @return $this
      *
      * @throws HaystackModelExists
@@ -385,9 +345,6 @@ trait ManagesBales
 
     /**
      * Retrieve all the data from the Haystack.
-     *
-     * @param  bool  $includeModels
-     * @return Collection
      */
     public function allData(bool $includeModels = false): Collection
     {
@@ -403,8 +360,6 @@ trait ManagesBales
     /**
      * Conditionally retrieve all the data from the Haystack depending on
      * if we are able to return the data.
-     *
-     * @return Collection|null
      */
     protected function conditionallyGetAllData(): ?Collection
     {
@@ -415,9 +370,6 @@ trait ManagesBales
 
     /**
      * Increment the bale attempts.
-     *
-     * @param  StackableJob  $job
-     * @return void
      */
     public function incrementBaleAttempts(StackableJob $job): void
     {
@@ -426,8 +378,6 @@ trait ManagesBales
 
     /**
      * Get the callbacks on the Haystack.
-     *
-     * @return CallbackCollection
      */
     public function getCallbacks(): CallbackCollection
     {

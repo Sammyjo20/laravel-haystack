@@ -23,9 +23,6 @@ abstract class ChunkableHaystackJob extends ChunkableJob implements StackableJob
 
     /**
      * Dispatch the next chunk
-     *
-     * @param  object  $job
-     * @return void
      */
     protected function dispatchNextChunk(object $job): void
     {

@@ -23,7 +23,8 @@ class SerializationHelper
     /**
      * Unserialize the given value.
      */
-    public static function unserialize(string $serialized, array $options = []): mixed {
+    public static function unserialize(string $serialized, array $options = []): mixed
+    {
         if (self::isPgsql() && ! Str::contains($serialized, [':', ';'])) {
             $serialized = base64_decode($serialized);
         }

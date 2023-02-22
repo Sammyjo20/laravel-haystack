@@ -12,12 +12,6 @@ class PendingHaystackBale
 {
     /**
      * Constructor
-     *
-     * @param  StackableJob  $job
-     * @param  bool  $priority
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
      */
     public function __construct(
         public StackableJob $job,
@@ -45,9 +39,6 @@ class PendingHaystackBale
 
     /**
      * Convert to a haystack bale for casting.
-     *
-     * @param  Haystack  $haystack
-     * @return array
      */
     public function toDatabaseRow(Haystack $haystack): array
     {
