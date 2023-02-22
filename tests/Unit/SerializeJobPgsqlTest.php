@@ -7,12 +7,8 @@ use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 
-test('you can pass null to the serializes job cast', function () {
-    $bale = new HaystackBale;
-
-    $bale->job = null;
-
-    expect($bale->job)->toBeNull();
+beforeEach(function () {
+    $this->setupForPgSqlTest();
 });
 
 test('you can pass model and it will be serialized', function () {
@@ -29,8 +25,9 @@ test('you can pass model and it will be serialized', function () {
         ->first()
         ->job;
 
+    // For pgsql, the serialized string is additionally base64 encoded
     $this->assertEquals(
-        'O:53:"Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob":1:{s:4:"name";s:4:"name";}',
+        'Tzo1MzoiU2FtbXlqbzIwXExhcmF2ZWxIYXlzdGFja1xUZXN0c1xGaXh0dXJlc1xKb2JzXE5hbWVKb2IiOjE6e3M6NDoibmFtZSI7czo0OiJuYW1lIjt9',
         $serialized_string
     );
 });

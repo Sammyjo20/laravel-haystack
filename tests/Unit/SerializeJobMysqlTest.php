@@ -7,12 +7,8 @@ use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 
-test('you can pass null to the serializes job cast', function () {
-    $bale = new HaystackBale;
-
-    $bale->job = null;
-
-    expect($bale->job)->toBeNull();
+beforeEach(function () {
+    $this->setupForMySqlTest();
 });
 
 test('you can pass model and it will be serialized', function () {
@@ -29,6 +25,7 @@ test('you can pass model and it will be serialized', function () {
         ->first()
         ->job;
 
+    // For mysql, the serialized string is saved as-is
     $this->assertEquals(
         'O:53:"Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob":1:{s:4:"name";s:4:"name";}',
         $serialized_string

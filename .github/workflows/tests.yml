@@ -24,6 +24,36 @@ jobs:
           - laravel: 9.*
             testbench: 7.*
 
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB: testing
+          POSTGRES_USER: postgres
+          POSTGRES_PORT: 54321
+        ports:
+          - 54321:5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_USER: root
+          MYSQL_DATABASE: testing
+          MYSQL_PORT: 33066
+        ports:
+          - 33066:3306
+        # Set health checks to wait until mysql has started
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
     steps:
