@@ -63,8 +63,10 @@ class TestCase extends Orchestra
     {
         config()->set('haystack.db_connection', 'mysql');
         config()->set('database.default', 'mysql');
-        config()->set('database.connections.mysql.port', '33066');
+        config()->set('database.connections.mysql.port', env('MYSQL_PORT', '33066'));
         config()->set('database.connections.mysql.database', 'testing');
+        config()->set('database.connections.mysql.username', env('MYSQL_USER', 'root'));
+        config()->set('database.connections.mysql.password', env('MYSQL_PASSWORD', ''));
 
         Schema::dropAllTables();
 
@@ -86,10 +88,11 @@ class TestCase extends Orchestra
     {
         config()->set('haystack.db_connection', 'pgsql');
         config()->set('database.default', 'pgsql');
-        config()->set('database.connections.pgsql.port', '54321');
-        config()->set('database.connections.pgsql.username', 'postgres');
+        config()->set('database.connections.pgsql.port', env('POSTGRES_PORT', '54321'));
         config()->set('database.connections.pgsql.schema', 'public');
         config()->set('database.connections.pgsql.database', 'testing');
+        config()->set('database.connections.pgsql.username', env('POSTGRES_USER', 'postgres'));
+        config()->set('database.connections.pgsql.password', env('POSTGRES_PASSWORD', ''));
 
         Schema::setConnection(DB::connection('pgsql'));
         Schema::dropAllTables();

@@ -16,10 +16,10 @@ jobs:
         env:
           POSTGRES_DB: testing
           POSTGRES_USER: postgres
-          POSTGRES_PORT: 54321
-          ALLOW_EMPTY_PASSWORD: yes
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_PORT: 5432
         ports:
-          - 54321:5432
+          - 5432:5432
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -29,12 +29,12 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_USER: root
+          MYSQL_USER: test
+          MYSQL_PASSWORD: test
           MYSQL_DATABASE: testing
-          MYSQL_PORT: 33066
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_PORT: 3306
         ports:
-          - 33066:3306
+          - 3306:3306
         # Set health checks to wait until mysql has started
         options: >-
           --health-cmd="mysqladmin ping"
