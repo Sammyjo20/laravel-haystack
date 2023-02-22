@@ -10,20 +10,6 @@ on:
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: true
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-        php: [8.1]
-        laravel: [8.*, 9.*]
-        stability: [prefer-lowest, prefer-stable]
-        include:
-          - laravel: 8.*
-            testbench: ^6.24
-          - laravel: 9.*
-            testbench: 7.*
-
     services:
       postgres:
         image: postgres
@@ -31,6 +17,7 @@ jobs:
           POSTGRES_DB: testing
           POSTGRES_USER: postgres
           POSTGRES_PORT: 54321
+          ALLOW_EMPTY_PASSWORD: yes
         ports:
           - 54321:5432
         # Set health checks to wait until postgres has started
@@ -45,6 +32,7 @@ jobs:
           MYSQL_USER: root
           MYSQL_DATABASE: testing
           MYSQL_PORT: 33066
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
         ports:
           - 33066:3306
         # Set health checks to wait until mysql has started
@@ -53,6 +41,20 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest]
+        php: [8.1]
+        laravel: [8.*, 9.*]
+        stability: [prefer-lowest, prefer-stable]
+        include:
+          - laravel: 8.*
+            testbench: ^6.24
+          - laravel: 9.*
+            testbench: 7.*
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
