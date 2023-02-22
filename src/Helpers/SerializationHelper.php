@@ -17,22 +17,14 @@ class SerializationHelper
     {
         $serialized = serialize($value);
 
-        return self::isPgsql()
-            ? base64_encode($serialized)
-            : $serialized;
+        return self::isPgsql() ? base64_encode($serialized) : $serialized;
     }
 
     /**
      * Unserialize the given value.
      */
-    public static function unserialize(
-        string $serialized,
-        array $options = []
-    ): mixed {
-        if (
-            self::isPgsql()
-            && ! Str::contains($serialized, [':', ';'])
-        ) {
+    public static function unserialize(string $serialized, array $options = []): mixed {
+        if (self::isPgsql() && ! Str::contains($serialized, [':', ';'])) {
             $serialized = base64_decode($serialized);
         }
 
