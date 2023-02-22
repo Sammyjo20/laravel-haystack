@@ -30,7 +30,8 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_USER: test
-          MYSQL_PASSWORD: test
+          MYSQL_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: testing
           MYSQL_PORT: 3306
         ports:
