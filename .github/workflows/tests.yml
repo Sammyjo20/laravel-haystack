@@ -9,8 +9,12 @@ on:
       - '*'
 
 env:
-  MYSQL_PORT: 3306
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
   POSTGRES_PORT: 5432
+  MYSQL_USER: test
+  MYSQL_PASSWORD: password
+  MYSQL_PORT: 3306
 
 jobs:
   test:
