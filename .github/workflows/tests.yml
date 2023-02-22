@@ -8,6 +8,10 @@ on:
     branches:
       - '*'
 
+env:
+  MYSQL_PORT: 3306
+  POSTGRES_PORT: 5432
+
 jobs:
   test:
     services:

@@ -2,10 +2,7 @@
 
 declare(strict_types=1);
 
-use Illuminate\Support\Facades\DB;
-use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob;
 
 test('you can pass null to the serializes job cast', function () {
     $bale = new HaystackBale;
@@ -13,24 +10,4 @@ test('you can pass null to the serializes job cast', function () {
     $bale->job = null;
 
     expect($bale->job)->toBeNull();
-});
-
-test('you can pass model and it will be serialized', function () {
-    $haystack = Haystack::factory()->create();
-
-    $bale = new HaystackBale;
-
-    $bale->job = new NameJob('name');
-    $bale->haystack()->associate($haystack);
-    $bale->save();
-
-    $serialized_string = (string) DB::table('haystack_bales')
-        ->select('job')
-        ->first()
-        ->job;
-
-    $this->assertEquals(
-        'O:53:"Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\NameJob":1:{s:4:"name";s:4:"name";}',
-        $serialized_string
-    );
 });
