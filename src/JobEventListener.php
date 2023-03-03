@@ -9,6 +9,7 @@ use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
+use Sammyjo20\LaravelHaystack\Helpers\SerializationHelper;
 
 class JobEventListener
 {
@@ -147,7 +148,7 @@ class JobEventListener
             return null;
         }
 
-        return unserialize($payload['data']['command'], ['allowed_classes' => true]);
+        return SerializationHelper::unserialize($payload['data']['command'], ['allowed_classes' => true]);
     }
 
     /**

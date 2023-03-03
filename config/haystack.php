@@ -71,4 +71,18 @@ return [
 
     'keep_finished_haystacks_for_days' => 1,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Default Database Connection Name
+    |--------------------------------------------------------------------------
+    |
+    | Here you may specify which database connection you
+    | use to store haystack jobs.
+    |
+    */
+
+    'db_connection' => env(
+        'HAYSTACK_DB_CONNECTION',
+        env('DB_CONNECTION', 'mysql')
+    ),
 ];

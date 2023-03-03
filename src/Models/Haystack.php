@@ -116,4 +116,12 @@ class Haystack extends Model
     {
         return $this->finished_at instanceof CarbonImmutable;
     }
+
+    /**
+     * Get the current connection name for the model.
+     */
+    public function getConnectionName(): string
+    {
+        return config('haystack.db_connection');
+    }
 }

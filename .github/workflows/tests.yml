@@ -8,13 +8,54 @@ on:
     branches:
       - '*'
 
+env:
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_PORT: 5432
+  MYSQL_USER: test
+  MYSQL_PASSWORD: password
+  MYSQL_PORT: 3306
+
 jobs:
   test:
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB: testing
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_PORT: 5432
+        ports:
+          - 5432:5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_USER: test
+          MYSQL_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: testing
+          MYSQL_PORT: 3306
+        ports:
+          - 3306:3306
+        # Set health checks to wait until mysql has started
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
         php: [8.1, 8.2]
         laravel: [9.*, 10.*]
         stability: [prefer-lowest, prefer-stable]
