@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Sammyjo20\LaravelHaystack\Tests\Fixtures\DataObjects;
 
-use JessArcher\CastableDataTransferObject\CastableDataTransferObject;
-
-class Repository extends CastableDataTransferObject
+class Repository
 {
-    public readonly string $name;
-
-    public readonly string $stars;
-
-    public readonly string $isLaravel;
+    /**
+     * Constructor
+     */
+    public function __construct(
+        public readonly string $name,
+        public readonly int $stars,
+        public readonly bool $isLaravel,
+    ) {
+        //
+    }
 }

@@ -6,6 +6,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
+use Sammyjo20\LaravelHaystack\Casts\Serialized;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 use Illuminate\Support\Collection as BaseCollection;
@@ -375,7 +376,7 @@ test('you can get all the data on a haystack at once', function () {
     $haystack->setData('name', 'Sam');
     $haystack->setData('data', ['name' => 'Sam', 'work' => 'Plannr Technologies'], 'array');
     $haystack->setData('age', 21, 'integer');
-    $haystack->setData('repository', $repository, Repository::class);
+    $haystack->setData('repository', $repository, Serialized::class);
 
     expect($haystack->data()->count())->toEqual(4);
 
