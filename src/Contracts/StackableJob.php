@@ -13,15 +13,12 @@ interface StackableJob
 {
     /**
      * Get the job stack.
-     *
-     * @return Haystack
      */
     public function getHaystack(): Haystack;
 
     /**
      * Set the Haystack onto the job.
      *
-     * @param  Haystack  $haystack
      * @return $this
      */
     public function setHaystack(Haystack $haystack): static;
@@ -38,7 +35,6 @@ interface StackableJob
     /**
      * Dispatch the next bale in the haystack. Yee-haw!
      *
-     * @param  int|CarbonInterface|null  $delayInSecondsOrCarbon
      * @return $this
      */
     public function nextBale(int|CarbonInterface $delayInSecondsOrCarbon = null): static;
@@ -46,7 +42,6 @@ interface StackableJob
     /**
      * Release the job for haystack to process later.
      *
-     * @param  int|CarbonInterface  $delayInSecondsOrCarbon
      * @return $this
      */
     public function longRelease(int|CarbonInterface $delayInSecondsOrCarbon): static;
@@ -68,10 +63,6 @@ interface StackableJob
     /**
      * Append jobs to the haystack.
      *
-     * @param  StackableJob|Collection|array  $jobs
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
      * @return $this
      */
     public function appendToHaystack(StackableJob|Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static;
@@ -79,25 +70,18 @@ interface StackableJob
     /**
      * Prepend jobs to the haystack.
      *
-     * @param  StackableJob|Collection|array  $jobs
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
      * @return $this
      */
     public function prependToHaystack(StackableJob|Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static;
 
     /**
      * Get the haystack bale id
-     *
-     * @return int
      */
     public function getHaystackBaleId(): int;
 
     /**
      * Set the Haystack bale ID.
      *
-     * @param  int  $haystackBaleId
      * @return $this
      */
     public function setHaystackBaleId(int $haystackBaleId): static;
@@ -105,7 +89,6 @@ interface StackableJob
     /**
      * Pause the haystack.
      *
-     * @param  int|CarbonInterface  $delayInSecondsOrCarbon
      * @return $this
      */
     public function pauseHaystack(int|CarbonInterface $delayInSecondsOrCarbon): static;
@@ -113,19 +96,12 @@ interface StackableJob
     /**
      * Set data on the haystack.
      *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  string|null  $cast
      * @return $this
      */
     public function setHaystackData(string $key, mixed $value, string $cast = null): static;
 
     /**
      * Get data on the haystack.
-     *
-     * @param  string  $key
-     * @param  mixed|null  $default
-     * @return mixed
      */
     public function getHaystackData(string $key, mixed $default = null): mixed;
 
@@ -138,15 +114,12 @@ interface StackableJob
 
     /**
      * Get the haystack bale attempts.
-     *
-     * @return int
      */
     public function getHaystackBaleAttempts(): int;
 
     /**
      * Set the haystack bale attempts.
      *
-     * @param  int  $attempts
      * @return $this
      */
     public function setHaystackBaleAttempts(int $attempts): static;

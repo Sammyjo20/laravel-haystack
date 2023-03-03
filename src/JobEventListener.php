@@ -14,8 +14,6 @@ class JobEventListener
 {
     /**
      * Static make helper to create class.
-     *
-     * @return static
      */
     public static function make(): static
     {
@@ -24,11 +22,6 @@ class JobEventListener
 
     /**
      * Create the job payload.
-     *
-     * @param $connection
-     * @param $queue
-     * @param $payload
-     * @return array
      */
     public function createPayloadUsing($connection, $queue, $payload): array
     {
@@ -55,9 +48,6 @@ class JobEventListener
 
     /**
      * Handle the "JobProcessed" event.
-     *
-     * @param  JobProcessed  $event
-     * @return void
      */
     public function handleJobProcessed(JobProcessed $event): void
     {
@@ -109,9 +99,6 @@ class JobEventListener
 
     /**
      * Handle the "JobFailed" event.
-     *
-     * @param  JobFailed  $event
-     * @return void
      */
     public function handleFailedJob(JobFailed $event): void
     {
@@ -153,9 +140,6 @@ class JobEventListener
 
     /**
      * Unserialize the job from the job payload.
-     *
-     * @param  array  $payload
-     * @return object|null
      */
     private function unserializeJobFromPayload(array $payload): ?object
     {
@@ -168,9 +152,6 @@ class JobEventListener
 
     /**
      * Attempt to find the haystack model from the job payload.
-     *
-     * @param  array  $payload
-     * @return Haystack|null
      */
     private function getHaystackFromPayload(array $payload): ?Haystack
     {

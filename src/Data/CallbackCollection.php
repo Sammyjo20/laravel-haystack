@@ -12,36 +12,27 @@ class CallbackCollection
 {
     /**
      * Callbacks for the "then" event
-     *
-     * @var array
      */
     public array $onThen = [];
 
     /**
      * Callbacks for the "catch" event
-     *
-     * @var array
      */
     public array $onCatch = [];
 
     /**
      * Callbacks for the "finally" event
-     *
-     * @var array
      */
     public array $onFinally = [];
 
     /**
      * Callbacks for the "paused" event
-     *
-     * @var array
      */
     public array $onPaused = [];
 
     /**
      * Add a "then" callback
      *
-     * @param  Closure|callable  $closure
      * @return $this
      *
      * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
@@ -54,7 +45,6 @@ class CallbackCollection
     /**
      * Add a "catch" callback
      *
-     * @param  Closure|callable  $closure
      * @return $this
      *
      * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
@@ -67,7 +57,6 @@ class CallbackCollection
     /**
      * Add a "finally" callback
      *
-     * @param  Closure|callable  $closure
      * @return $this
      *
      * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
@@ -80,7 +69,6 @@ class CallbackCollection
     /**
      * Add a "paused" callback
      *
-     * @param  Closure|callable  $closure
      * @return $this
      *
      * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
@@ -93,8 +81,6 @@ class CallbackCollection
     /**
      * Add a callback to a given property
      *
-     * @param  string  $property
-     * @param  Closure|callable  $closure
      * @return $this
      *
      * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
@@ -108,8 +94,6 @@ class CallbackCollection
 
     /**
      * Check if the callbacks are empty.
-     *
-     * @return bool
      */
     public function isEmpty(): bool
     {
@@ -118,8 +102,6 @@ class CallbackCollection
 
     /**
      * Check if the callbacks are not empty
-     *
-     * @return bool
      */
     public function isNotEmpty(): bool
     {

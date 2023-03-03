@@ -47,7 +47,6 @@ class AlwaysLongReleaseJob implements ShouldQueue, StackableJob
     /**
      * Handle failed job
      *
-     * @param  Throwable  $exception
      * @return void
      */
     public function failed(Throwable $exception)

@@ -11,9 +11,6 @@ class ExceptionHelper
 {
     /**
      * Get the max attempts exceeded exception.
-     *
-     * @param $job
-     * @return Throwable
      */
     public static function maxAttemptsExceededException($job): Throwable
     {

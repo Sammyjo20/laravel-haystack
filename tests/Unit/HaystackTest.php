@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Sammyjo20\LaravelHaystack\Casts\Serialized;
 use Sammyjo20\LaravelHaystack\Data\NextJob;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
+use Sammyjo20\LaravelHaystack\Casts\Serialized;
 use Sammyjo20\LaravelHaystack\Models\HaystackBale;
 use Sammyjo20\LaravelHaystack\Data\HaystackOptions;
 use Illuminate\Support\Collection as BaseCollection;
