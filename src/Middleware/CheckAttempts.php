@@ -12,9 +12,6 @@ class CheckAttempts
     /**
      * Check if we have exceeded the attempts.
      *
-     * @param  StackableJob  $job
-     * @param $next
-     * @return void
      *
      * @throws \Throwable
      */

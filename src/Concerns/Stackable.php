@@ -19,29 +19,21 @@ trait Stackable
 {
     /**
      * The Haystack the job has.
-     *
-     * @var Haystack|null
      */
     protected ?Haystack $haystack = null;
 
     /**
      * The ID of the haystack "bale". Used for deleting.
-     *
-     * @var int
      */
     protected int $haystackBaleId;
 
     /**
      * The attempts on haystack "bale".
-     *
-     * @var int
      */
     protected int $haystackBaleAttempts;
 
     /**
      * Get the job stack.
-     *
-     * @return Haystack
      */
     public function getHaystack(): Haystack
     {
@@ -51,7 +43,6 @@ trait Stackable
     /**
      * Set the Haystack onto the job.
      *
-     * @param  Haystack  $haystack
      * @return $this
      */
     public function setHaystack(Haystack $haystack): static
@@ -82,7 +73,6 @@ trait Stackable
     /**
      * Dispatch the next bale in the haystack. Yee-haw!
      *
-     * @param  int|CarbonInterface|null  $delayInSecondsOrCarbon
      * @return $this
      *
      * @throws StackableException
@@ -95,7 +85,6 @@ trait Stackable
     /**
      * Release the job for haystack to process later.
      *
-     * @param  int|CarbonInterface  $delayInSecondsOrCarbon
      * @return $this
      */
     public function longRelease(int|CarbonInterface $delayInSecondsOrCarbon): static
@@ -134,10 +123,6 @@ trait Stackable
     /**
      * Append jobs to the haystack.
      *
-     * @param  StackableJob|Collection|array  $jobs
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
      * @return $this
      */
     public function appendToHaystack(StackableJob|Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
@@ -150,10 +135,6 @@ trait Stackable
     /**
      * Prepend jobs to the haystack.
      *
-     * @param  StackableJob|Collection|array  $jobs
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
      * @return $this
      */
     public function prependToHaystack(StackableJob|Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
@@ -165,8 +146,6 @@ trait Stackable
 
     /**
      * Get the haystack bale id
-     *
-     * @return int
      */
     public function getHaystackBaleId(): int
     {
@@ -176,7 +155,6 @@ trait Stackable
     /**
      * Set the Haystack bale ID.
      *
-     * @param  int  $haystackBaleId
      * @return $this
      */
     public function setHaystackBaleId(int $haystackBaleId): static
@@ -189,7 +167,6 @@ trait Stackable
     /**
      * Pause the haystack. We also need to delete the current row.
      *
-     * @param  int|CarbonInterface  $delayInSecondsOrCarbon
      * @return $this
      *
      * @throws StackableException
@@ -215,9 +192,6 @@ trait Stackable
     /**
      * Set data on the haystack.
      *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  string|null  $cast
      * @return $this
      */
     public function setHaystackData(string $key, mixed $value, string $cast = null): static
@@ -229,10 +203,6 @@ trait Stackable
 
     /**
      * Get data on the haystack.
-     *
-     * @param  string  $key
-     * @param  mixed|null  $default
-     * @return mixed
      */
     public function getHaystackData(string $key, mixed $default = null): mixed
     {
@@ -241,10 +211,6 @@ trait Stackable
 
     /**
      * Get a shared model
-     *
-     * @param  string  $model
-     * @param  mixed|null  $default
-     * @return Model|null
      */
     public function getHaystackModel(string $model, mixed $default = null): ?Model
     {
@@ -254,8 +220,6 @@ trait Stackable
     /**
      * Set a shared model
      *
-     * @param  Model  $model
-     * @param  string  $key
      * @return $this
      *
      * @throws \Sammyjo20\LaravelHaystack\Exceptions\HaystackModelExists
@@ -279,8 +243,6 @@ trait Stackable
 
     /**
      * Get the haystack bale attempts.
-     *
-     * @return int
      */
     public function getHaystackBaleAttempts(): int
     {
@@ -290,7 +252,6 @@ trait Stackable
     /**
      * Set the haystack bale attempts.
      *
-     * @param  int  $attempts
      * @return $this
      */
     public function setHaystackBaleAttempts(int $attempts): static
@@ -302,8 +263,6 @@ trait Stackable
 
     /**
      * Get the options on the Haystack
-     *
-     * @return HaystackOptions
      */
     public function getHaystackOptions(): HaystackOptions
     {
@@ -312,10 +271,6 @@ trait Stackable
 
     /**
      * Retrieve a haystack option
-     *
-     * @param  string  $option
-     * @param  mixed|null  $default
-     * @return mixed
      */
     public function getHaystackOption(string $option, mixed $default = null): mixed
     {

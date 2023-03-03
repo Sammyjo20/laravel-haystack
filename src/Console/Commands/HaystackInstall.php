@@ -20,8 +20,6 @@ class HaystackInstall extends Command
 
     /**
      * Install Haystack
-     *
-     * @return int
      */
     public function handle(): int
     {

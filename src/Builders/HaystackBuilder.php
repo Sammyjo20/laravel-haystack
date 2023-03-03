@@ -29,71 +29,51 @@ class HaystackBuilder
 
     /**
      * The name of the haystack.
-     *
-     * @var string|null
      */
     protected ?string $name = null;
 
     /**
      * The jobs to be added to the Haystack.
-     *
-     * @var Collection
      */
     protected Collection $jobs;
 
     /**
      * Global connection
-     *
-     * @var string|null
      */
     public ?string $globalConnection = null;
 
     /**
      * Global queue
-     *
-     * @var string|null
      */
     public ?string $globalQueue = null;
 
     /**
      * Global delay
-     *
-     * @var int
      */
     public int $globalDelayInSeconds = 0;
 
     /**
      * Callbacks that will be run at various events
-     *
-     * @var CallbackCollection
      */
     protected CallbackCollection $callbacks;
 
     /**
      * Middleware that will be applied to every job
-     *
-     * @var MiddlewareCollection
      */
     protected MiddlewareCollection $middleware;
 
     /**
      * Other Haystack Options
-     *
-     * @var HaystackOptions
      */
     protected HaystackOptions $options;
 
     /**
      * Array of pending data objects containing the initial data.
-     *
-     * @var Collection
      */
     protected Collection $initialData;
 
     /**
      * Closure to execute before saving
-     *
-     * @var Closure|null
      */
     protected ?Closure $beforeSave = null;
 
@@ -112,7 +92,6 @@ class HaystackBuilder
     /**
      * Specify a name for the haystack.
      *
-     * @param  string  $name
      * @return $this
      */
     public function withName(string $name): static
@@ -125,7 +104,6 @@ class HaystackBuilder
     /**
      * Provide a closure that will run when the haystack is complete.
      *
-     * @param  Closure|callable  $closure
      * @return $this
      *
      * @throws PhpVersionNotSupportedException
@@ -140,7 +118,6 @@ class HaystackBuilder
     /**
      * Provide a closure that will run when the haystack fails.
      *
-     * @param  Closure|callable  $closure
      * @return $this
      *
      * @throws PhpVersionNotSupportedException
@@ -155,7 +132,6 @@ class HaystackBuilder
     /**
      * Provide a closure that will run when the haystack finishes.
      *
-     * @param  Closure|callable  $closure
      * @return $this
      *
      * @throws PhpVersionNotSupportedException
@@ -170,7 +146,6 @@ class HaystackBuilder
     /**
      * Provide a closure that will run when the haystack is paused.
      *
-     * @param  Closure|callable  $closure
      * @return $this
      *
      * @throws PhpVersionNotSupportedException
@@ -185,10 +160,6 @@ class HaystackBuilder
     /**
      * Add a job to the haystack.
      *
-     * @param  StackableJob  $job
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
      * @return $this
      */
     public function addJob(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
@@ -203,8 +174,6 @@ class HaystackBuilder
     /**
      * Add a job when a condition is true.
      *
-     * @param  bool  $condition
-     * @param ...$arguments
      * @return $this
      */
     public function addJobWhen(bool $condition, ...$arguments): static
@@ -215,8 +184,6 @@ class HaystackBuilder
     /**
      * Add a job when a condition is false.
      *
-     * @param  bool  $condition
-     * @param ...$arguments
      * @return $this
      */
     public function addJobUnless(bool $condition, ...$arguments): static
@@ -227,10 +194,6 @@ class HaystackBuilder
     /**
      * Add multiple jobs to the haystack at a time.
      *
-     * @param  Collection|array  $jobs
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
      * @return $this
      */
     public function addJobs(Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
@@ -251,8 +214,6 @@ class HaystackBuilder
     /**
      * Add jobs when a condition is true.
      *
-     * @param  bool  $condition
-     * @param ...$arguments
      * @return $this
      */
     public function addJobsWhen(bool $condition, ...$arguments): static
@@ -263,8 +224,6 @@ class HaystackBuilder
     /**
      * Add jobs when a condition is false.
      *
-     * @param  bool  $condition
-     * @param ...$arguments
      * @return $this
      */
     public function addJobsUnless(bool $condition, ...$arguments): static
@@ -277,10 +236,6 @@ class HaystackBuilder
      *
      * @alias addJob()
      *
-     * @param  StackableJob  $job
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
      * @return $this
      */
     public function addBale(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
@@ -293,10 +248,6 @@ class HaystackBuilder
      *
      * @alias addJobs()
      *
-     * @param  Collection|array  $jobs
-     * @param  int  $delayInSeconds
-     * @param  string|null  $queue
-     * @param  string|null  $connection
      * @return $this
      */
     public function addBales(Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
@@ -307,7 +258,6 @@ class HaystackBuilder
     /**
      * Set a global delay on the jobs.
      *
-     * @param  int  $seconds
      * @return $this
      */
     public function withDelay(int $seconds): static
@@ -320,7 +270,6 @@ class HaystackBuilder
     /**
      * Set a global queue for the jobs.
      *
-     * @param  string  $queue
      * @return $this
      */
     public function onQueue(string $queue): static
@@ -333,7 +282,6 @@ class HaystackBuilder
     /**
      * Set a global connection for the jobs.
      *
-     * @param  string  $connection
      * @return $this
      */
     public function onConnection(string $connection): static
@@ -346,7 +294,6 @@ class HaystackBuilder
     /**
      * Add some middleware to be merged in with every job
      *
-     * @param  Closure|callable|array  $value
      * @return $this
      *
      * @throws PhpVersionNotSupportedException
@@ -361,9 +308,6 @@ class HaystackBuilder
     /**
      * Provide data before the haystack is created.
      *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  string|null  $cast
      * @return $this
      */
     public function withData(string $key, mixed $value, string $cast = null): static
@@ -378,8 +322,6 @@ class HaystackBuilder
     /**
      * Store a model to be shared across all haystack jobs.
      *
-     * @param  Model  $model
-     * @param  string|null  $key
      * @return $this
      *
      * @throws HaystackModelExists
@@ -399,8 +341,6 @@ class HaystackBuilder
 
     /**
      * Create the Haystack
-     *
-     * @return Haystack
      */
     public function create(): Haystack
     {
@@ -409,8 +349,6 @@ class HaystackBuilder
 
     /**
      * Dispatch the Haystack.
-     *
-     * @return Haystack
      */
     public function dispatch(): Haystack
     {
@@ -423,9 +361,6 @@ class HaystackBuilder
 
     /**
      * Map the jobs to be ready for inserting.
-     *
-     * @param  Haystack  $haystack
-     * @return array
      */
     protected function prepareJobsForInsert(Haystack $haystack): array
     {
@@ -457,9 +392,6 @@ class HaystackBuilder
 
     /**
      * Map the initial data to be ready for inserting.
-     *
-     * @param  Haystack  $haystack
-     * @return array
      */
     protected function prepareDataForInsert(Haystack $haystack): array
     {
@@ -477,8 +409,6 @@ class HaystackBuilder
 
     /**
      * Create the haystack.
-     *
-     * @return Haystack
      */
     protected function createHaystack(): Haystack
     {
@@ -533,8 +463,6 @@ class HaystackBuilder
 
     /**
      * Get all the jobs in the builder.
-     *
-     * @return Collection
      */
     public function getJobs(): Collection
     {
@@ -543,8 +471,6 @@ class HaystackBuilder
 
     /**
      * Retrieve the callbacks
-     *
-     * @return CallbackCollection
      */
     public function getCallbacks(): CallbackCollection
     {
@@ -553,8 +479,6 @@ class HaystackBuilder
 
     /**
      * Get the time for the "withDelay".
-     *
-     * @return int
      */
     public function getGlobalDelayInSeconds(): int
     {
@@ -563,8 +487,6 @@ class HaystackBuilder
 
     /**
      * Get the global queue
-     *
-     * @return string|null
      */
     public function getGlobalQueue(): ?string
     {
@@ -573,8 +495,6 @@ class HaystackBuilder
 
     /**
      * Get the global connection.
-     *
-     * @return string|null
      */
     public function getGlobalConnection(): ?string
     {
@@ -583,8 +503,6 @@ class HaystackBuilder
 
     /**
      * Get the closure for the global middleware.
-     *
-     * @return MiddlewareCollection
      */
     public function getMiddleware(): MiddlewareCollection
     {
@@ -594,7 +512,6 @@ class HaystackBuilder
     /**
      * Specify a closure to run before saving the Haystack
      *
-     * @param  Closure  $closure
      * @return $this
      */
     public function beforeSave(Closure $closure): static
@@ -607,8 +524,6 @@ class HaystackBuilder
     /**
      * Set an option on the Haystack Options.
      *
-     * @param  string  $option
-     * @param  mixed  $value
      * @return $this
      */
     public function setOption(string $option, mixed $value): static

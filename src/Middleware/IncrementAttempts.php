@@ -10,10 +10,6 @@ class IncrementAttempts
 {
     /**
      * Increment the processed attempts of a given job.
-     *
-     * @param  StackableJob  $job
-     * @param $next
-     * @return void
      */
     public function handle(StackableJob $job, $next): void
     {

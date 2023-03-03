@@ -30,8 +30,6 @@ class HaystackServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap any package services.
-     *
-     * @return void
      */
     public function boot(): void
     {

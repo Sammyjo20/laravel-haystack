@@ -11,8 +11,6 @@ class HaystackModelExists extends Exception
 {
     /**
      * Constructor
-     *
-     * @param  string  $key
      */
     public function __construct(string $key)
     {

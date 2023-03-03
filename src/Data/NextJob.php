@@ -11,9 +11,6 @@ class NextJob
 {
     /**
      * Constructor
-     *
-     * @param  StackableJob  $job
-     * @param  HaystackBale  $haystackRow
      */
     public function __construct(
         readonly public StackableJob $job,

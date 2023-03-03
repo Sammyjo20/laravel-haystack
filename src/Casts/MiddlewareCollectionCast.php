@@ -13,10 +13,6 @@ class MiddlewareCollectionCast implements CastsAttributes
     /**
      * Unserialize a job.
      *
-     * @param $model
-     * @param  string  $key
-     * @param $value
-     * @param  array  $attributes
      * @return mixed|null
      */
     public function get($model, string $key, $value, array $attributes)
@@ -27,10 +23,6 @@ class MiddlewareCollectionCast implements CastsAttributes
     /**
      * Serialize a job.
      *
-     * @param $model
-     * @param  string  $key
-     * @param $value
-     * @param  array  $attributes
      * @return mixed|string|null
      */
     public function set($model, string $key, $value, array $attributes)
