@@ -132,5 +132,5 @@ interface StackableJob
     /**
      * Set the haystack bale retry-until.
      */
-    public function setHaystackBaleRetryUntil(int $retryUntil): static;
+    public function setHaystackBaleRetryUntil(?int $retryUntil): static;
 }
