@@ -33,6 +33,11 @@ trait Stackable
     protected int $haystackBaleAttempts;
 
     /**
+     * The retry-until timestamp if provided.
+     */
+    protected ?int $haystackBaleRetryUntil = null;
+
+    /**
      * Get the job stack.
      */
     public function getHaystack(): Haystack
@@ -257,6 +262,26 @@ trait Stackable
     public function setHaystackBaleAttempts(int $attempts): static
     {
         $this->haystackBaleAttempts = $attempts;
+
+        return $this;
+    }
+
+    /**
+     * Get the haystack bale retry-until.
+     */
+    public function getHaystackBaleRetryUntil(): ?int
+    {
+        return $this->haystackBaleRetryUntil;
+    }
+
+    /**
+     * Set the haystack bale retry-until.
+     *
+     * @return $this
+     */
+    public function setHaystackBaleRetryUntil(?int $retryUntil): static
+    {
+        $this->haystackBaleRetryUntil = $retryUntil;
 
         return $this;
     }

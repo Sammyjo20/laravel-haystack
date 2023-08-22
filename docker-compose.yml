@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  haystack-mysql:
+    image: mysql:8.0.33
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ALLOW_EMPTY_PASSWORD: true
+    ports:
+      - 33066:3306
+  haystack-postgres:
+    image: postgres:15.4
+    restart: always
+    environment:
+      POSTGRES_USER:  postgres
+      POSTGRES_PASSWORD: ''
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - 54321:5432

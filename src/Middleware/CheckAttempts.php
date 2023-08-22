@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Sammyjo20\LaravelHaystack\Middleware;
 
+use Carbon\CarbonImmutable;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
 use Sammyjo20\LaravelHaystack\Helpers\ExceptionHelper;
 
@@ -17,9 +18,18 @@ class CheckAttempts
      */
     public function handle(StackableJob $job, $next): void
     {
-        $maxTries = $job->tries ?? 1;
+        $exceededRetryUntil = false;
+        $maxTries = null;
 
-        if ($job->getHaystackBaleAttempts() >= $maxTries) {
+        if (is_int($job->getHaystackBaleRetryUntil())) {
+            $exceededRetryUntil = now()->greaterThan(CarbonImmutable::parse($job->getHaystackBaleRetryUntil()));
+        } else {
+            $maxTries = $job->tries ?? 1;
+        }
+
+        $exceededLimit = (isset($maxTries) && $job->getHaystackBaleAttempts() >= $maxTries) || $exceededRetryUntil === true;
+
+        if ($exceededLimit === true) {
             $exception = ExceptionHelper::maxAttemptsExceededException($job);
 
             $job->fail($exception);
