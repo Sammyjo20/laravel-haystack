@@ -58,7 +58,8 @@ trait ManagesBales
 
         $job->setHaystack($this)
             ->setHaystackBaleId($jobRow->getKey())
-            ->setHaystackBaleAttempts($jobRow->attempts);
+            ->setHaystackBaleAttempts($jobRow->attempts)
+            ->setHaystackBaleRetryUntil($jobRow->retry_until);
 
         // We'll now apply any global middleware if it was provided to us
         // while building the Haystack.
@@ -262,7 +263,7 @@ trait ManagesBales
      *
      * @throws PhpVersionNotSupportedException
      */
-    protected function invokeCallbacks(?array $closures, ?Collection $data = null): void
+    protected function invokeCallbacks(?array $closures, Collection $data = null): void
     {
         collect($closures)->each(function (SerializableClosure $closure) use ($data) {
             $closure($data);
@@ -374,6 +375,14 @@ trait ManagesBales
     public function incrementBaleAttempts(StackableJob $job): void
     {
         HaystackBale::query()->whereKey($job->getHaystackBaleId())->increment('attempts');
+    }
+
+    /**
+     * Set the retry-until on the job.
+     */
+    public function setBaleRetryUntil(StackableJob $job, int $retryUntil): void
+    {
+        HaystackBale::query()->whereKey($job->getHaystackBaleId())->update(['retry_until' => $retryUntil]);
     }
 
     /**

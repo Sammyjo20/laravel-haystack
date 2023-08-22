@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Carbon;
+
 use function Pest\Laravel\travel;
+
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\CacheJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoCacheJob;

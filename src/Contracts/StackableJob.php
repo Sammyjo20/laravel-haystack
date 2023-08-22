@@ -123,4 +123,14 @@ interface StackableJob
      * @return $this
      */
     public function setHaystackBaleAttempts(int $attempts): static;
+
+    /**
+     * Get the haystack bale retry-until.
+     */
+    public function getHaystackBaleRetryUntil(): ?int;
+
+    /**
+     * Set the haystack bale retry-until.
+     */
+    public function setHaystackBaleRetryUntil(?int $retryUntil): static;
 }
