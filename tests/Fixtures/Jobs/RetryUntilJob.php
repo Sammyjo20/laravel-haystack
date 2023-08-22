@@ -21,8 +21,6 @@ class RetryUntilJob implements ShouldQueue, StackableJob
 
     /**
      * Max Exceptions
-     *
-     * @var int
      */
     public int $maxExceptions = 1;
 

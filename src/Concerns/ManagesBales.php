@@ -263,7 +263,7 @@ trait ManagesBales
      *
      * @throws PhpVersionNotSupportedException
      */
-    protected function invokeCallbacks(?array $closures, ?Collection $data = null): void
+    protected function invokeCallbacks(?array $closures, Collection $data = null): void
     {
         collect($closures)->each(function (SerializableClosure $closure) use ($data) {
             $closure($data);

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs;
 
-use Carbon\CarbonInterface;
 use DateTime;
+use Carbon\CarbonInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -20,8 +20,6 @@ class AutoRetryUntilJob implements ShouldQueue, StackableJob
 
     /**
      * Max Exceptions
-     *
-     * @var int
      */
     public int $maxExceptions = 1;
 

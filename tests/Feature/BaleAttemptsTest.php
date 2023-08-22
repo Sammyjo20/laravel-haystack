@@ -3,11 +3,13 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Carbon;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoRetryUntilJob;
-use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\RetryUntilJob;
+
 use function Pest\Laravel\travel;
+
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Contracts\StackableJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\RetryUntilJob;
+use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoRetryUntilJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AlwaysLongReleaseJob;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\AutoAlwaysLongReleaseJob;
 
