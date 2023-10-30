@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Sammyjo20\LaravelHaystack\Builders;
 
 use Closure;
+use Carbon\CarbonImmutable;
+use DateTimeInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -51,6 +53,11 @@ class HaystackBuilder
      * Global delay
      */
     public int $globalDelayInSeconds = 0;
+
+    /**
+     * Initial resumeAt time
+     */
+    public ?CarbonImmutable $resumeAt = null;
 
     /**
      * Callbacks that will be run at various events
@@ -267,6 +274,17 @@ class HaystackBuilder
         return $this;
     }
 
+    public function pausedUntil(DateTimeInterface $resumeAt): static
+    {
+        if (! $resumeAt instanceof CarbonImmutable) {
+            $resumeAt = Carbon::parse($resumeAt)->toImmutable();
+        }
+
+        $this->resumeAt = $resumeAt;
+
+        return $this;
+    }
+
     /**
      * Set a global queue for the jobs.
      *
@@ -417,6 +435,7 @@ class HaystackBuilder
         $haystack->callbacks = $this->callbacks->toSerializable();
         $haystack->middleware = $this->middleware->toSerializable();
         $haystack->options = $this->options;
+        $haystack->resume_at = $this->resumeAt;
 
         if ($this->beforeSave instanceof Closure) {
             $haystack = tap($haystack, $this->beforeSave);
