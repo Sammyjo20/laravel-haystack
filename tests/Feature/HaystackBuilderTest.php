@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 use Sammyjo20\LaravelHaystack\Models\Haystack;
@@ -67,6 +68,23 @@ test('a haystack can be created with default delay, queue and connection', funct
     expect($haystackBales[0]->delay)->toEqual(60);
     expect($haystackBales[0]->on_queue)->toEqual('testing');
     expect($haystackBales[0]->on_connection)->toEqual('database');
+});
+
+test('a haystack can be created with initial resume_at', function () {
+    $pauseUntil = now()->addMinutes(5)->toImmutable();
+
+    $haystack = Haystack::build()
+        ->addJob(new NameJob('Sam'))
+        ->pausedUntil($pauseUntil)
+        ->create();
+
+    expect($haystack)->toBeInstanceOf(Haystack::class);
+    expect($haystack->resume_at)->toBeInstanceOf(CarbonImmutable::class);
+    expect($haystack->resume_at->toIso8601String())->toEqual($pauseUntil->toIso8601String());
+
+    $haystackBales = $haystack->bales()->get();
+
+    expect($haystackBales)->toHaveCount(1);
 });
 
 test('a haystack can be created with middleware', function () {
