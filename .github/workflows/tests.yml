@@ -3,10 +3,10 @@ name: run-tests
 on:
   push:
     branches:
-      - 'main'
+      - main
   pull_request:
     branches:
-      - '*'
+      - *
 
 env:
   POSTGRES_USER: postgres
@@ -28,12 +28,7 @@ jobs:
           POSTGRES_PORT: 5432
         ports:
           - 5432:5432
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       mysql:
         image: mysql:8.0
         env:
@@ -44,26 +39,27 @@ jobs:
           MYSQL_PORT: 3306
         ports:
           - 3306:3306
-        # Set health checks to wait until mysql has started
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+        options: --health-cmd="mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 5
 
     runs-on: ${{ matrix.os }}
+
     strategy:
       fail-fast: true
       matrix:
         os: [ubuntu-latest]
         php: [8.1, 8.2]
-        laravel: [9.*, 10.*]
+        laravel: ['9.*', '10.*', '11.*']
         stability: [prefer-lowest, prefer-stable]
         include:
           - laravel: 9.*
             testbench: 7.*
           - laravel: 10.*
             testbench: 8.*
+          - laravel: 11.*
+            testbench: 9.*
+        exclude:
+          - laravel: 11.*
+            php: 8.1
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
