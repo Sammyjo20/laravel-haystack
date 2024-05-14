@@ -11,7 +11,7 @@ class DataHelper
     /**
      * Create the model key
      */
-    public static function getModelKey(Model $model, string $key = null): string
+    public static function getModelKey(Model $model, ?string $key = null): string
     {
         return 'model:'.($key ?? $model::class);
     }

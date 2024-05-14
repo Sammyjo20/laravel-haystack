@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Sammyjo20\LaravelHaystack\Builders;
 
 use Closure;
+use Carbon\CarbonImmutable;
+use DateTimeInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -51,6 +53,11 @@ class HaystackBuilder
      * Global delay
      */
     public int $globalDelayInSeconds = 0;
+
+    /**
+     * Initial resumeAt time
+     */
+    public ?CarbonImmutable $resumeAt = null;
 
     /**
      * Callbacks that will be run at various events
@@ -162,7 +169,7 @@ class HaystackBuilder
      *
      * @return $this
      */
-    public function addJob(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
+    public function addJob(StackableJob $job, int $delayInSeconds = 0, ?string $queue = null, ?string $connection = null): static
     {
         $pendingHaystackRow = new PendingHaystackBale($job, $delayInSeconds, $queue, $connection);
 
@@ -196,7 +203,7 @@ class HaystackBuilder
      *
      * @return $this
      */
-    public function addJobs(Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
+    public function addJobs(Collection|array $jobs, int $delayInSeconds = 0, ?string $queue = null, ?string $connection = null): static
     {
         if (is_array($jobs)) {
             $jobs = collect($jobs);
@@ -238,7 +245,7 @@ class HaystackBuilder
      *
      * @return $this
      */
-    public function addBale(StackableJob $job, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
+    public function addBale(StackableJob $job, int $delayInSeconds = 0, ?string $queue = null, ?string $connection = null): static
     {
         return $this->addJob($job, $delayInSeconds, $queue, $connection);
     }
@@ -250,7 +257,7 @@ class HaystackBuilder
      *
      * @return $this
      */
-    public function addBales(Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
+    public function addBales(Collection|array $jobs, int $delayInSeconds = 0, ?string $queue = null, ?string $connection = null): static
     {
         return $this->addJobs($jobs, $delayInSeconds, $queue, $connection);
     }
@@ -263,6 +270,17 @@ class HaystackBuilder
     public function withDelay(int $seconds): static
     {
         $this->globalDelayInSeconds = $seconds;
+
+        return $this;
+    }
+
+    public function pausedUntil(DateTimeInterface $resumeAt): static
+    {
+        if (! $resumeAt instanceof CarbonImmutable) {
+            $resumeAt = Carbon::parse($resumeAt)->toImmutable();
+        }
+
+        $this->resumeAt = $resumeAt;
 
         return $this;
     }
@@ -310,7 +328,7 @@ class HaystackBuilder
      *
      * @return $this
      */
-    public function withData(string $key, mixed $value, string $cast = null): static
+    public function withData(string $key, mixed $value, ?string $cast = null): static
     {
         DataValidator::validateCast($value, $cast);
 
@@ -326,7 +344,7 @@ class HaystackBuilder
      *
      * @throws HaystackModelExists
      */
-    public function withModel(Model $model, string $key = null): static
+    public function withModel(Model $model, ?string $key = null): static
     {
         $key = DataHelper::getModelKey($model, $key);
 
@@ -417,6 +435,7 @@ class HaystackBuilder
         $haystack->callbacks = $this->callbacks->toSerializable();
         $haystack->middleware = $this->middleware->toSerializable();
         $haystack->options = $this->options;
+        $haystack->resume_at = $this->resumeAt;
 
         if ($this->beforeSave instanceof Closure) {
             $haystack = tap($haystack, $this->beforeSave);

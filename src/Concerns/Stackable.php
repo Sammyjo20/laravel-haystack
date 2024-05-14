@@ -64,7 +64,7 @@ trait Stackable
      *
      * @throws StackableException
      */
-    public function nextJob(int|CarbonInterface $delayInSecondsOrCarbon = null): static
+    public function nextJob(int|CarbonInterface|null $delayInSecondsOrCarbon = null): static
     {
         if (config('haystack.process_automatically', false) === true) {
             throw new StackableException('The "nextJob" method is unavailable when "haystack.process_automatically" is enabled.');
@@ -82,7 +82,7 @@ trait Stackable
      *
      * @throws StackableException
      */
-    public function nextBale(int|CarbonInterface $delayInSecondsOrCarbon = null): static
+    public function nextBale(int|CarbonInterface|null $delayInSecondsOrCarbon = null): static
     {
         return $this->nextJob($delayInSecondsOrCarbon);
     }
@@ -130,7 +130,7 @@ trait Stackable
      *
      * @return $this
      */
-    public function appendToHaystack(StackableJob|Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
+    public function appendToHaystack(StackableJob|Collection|array $jobs, int $delayInSeconds = 0, ?string $queue = null, ?string $connection = null): static
     {
         $this->haystack->addJobs($jobs, $delayInSeconds, $queue, $connection, false);
 
@@ -142,7 +142,7 @@ trait Stackable
      *
      * @return $this
      */
-    public function prependToHaystack(StackableJob|Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null): static
+    public function prependToHaystack(StackableJob|Collection|array $jobs, int $delayInSeconds = 0, ?string $queue = null, ?string $connection = null): static
     {
         $this->haystack->addJobs($jobs, $delayInSeconds, $queue, $connection, true);
 
@@ -199,7 +199,7 @@ trait Stackable
      *
      * @return $this
      */
-    public function setHaystackData(string $key, mixed $value, string $cast = null): static
+    public function setHaystackData(string $key, mixed $value, ?string $cast = null): static
     {
         $this->haystack->setData($key, $value, $cast);
 
