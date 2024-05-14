@@ -11,7 +11,7 @@ class DataValidator
     /**
      * Throw an exception if the cast is invalid for the data type.
      */
-    public static function validateCast(mixed $value, string $cast = null): void
+    public static function validateCast(mixed $value, ?string $cast = null): void
     {
         if (is_null($cast) && is_string($value) === false && is_int($value) === false) {
             throw new InvalidArgumentException('You must specify a cast if the value is not a string or integer.');

@@ -4,7 +4,6 @@
     "license": "MIT",
     "keywords": [
         "Sammyjo20",
-        "laravel",
         "laravel-haystack"
     ],
     "authors": [
@@ -17,19 +16,19 @@
     "homepage": "https://github.com/sammyjo20/laravel-haystack",
     "require": {
         "php": "^8.1",
-        "illuminate/console": "^9.33 || ^10.0",
-        "illuminate/contracts": "^9.33 || ^10.0",
-        "illuminate/database": "^9.33 || ^10.0",
-        "illuminate/queue": "^9.33 || ^10.0",
-        "illuminate/support": "^9.33 || ^10.0",
+        "illuminate/console": "^10.0 || ^11.7",
+        "illuminate/contracts": "^10.0 || ^11.7",
+        "illuminate/database": "^10.0 || ^v11.7",
+        "illuminate/queue": "^10.0 || ^11.7",
+        "illuminate/support": "^10.0 || ^11.7",
         "laravel/serializable-closure": "^1.2"
     },
     "require-dev": {
-        "laravel/pint": "^1.0",
-        "orchestra/testbench": "^7.8 || ^8.0",
-        "pestphp/pest": "^1.21",
-        "pestphp/pest-plugin-laravel": "^1.2",
-        "sammyjo20/laravel-chunkable-jobs": "^1.0",
+        "friendsofphp/php-cs-fixer": "^3.5",
+        "orchestra/testbench": "^8.0 || ^9.0",
+        "pestphp/pest": "^v2.34",
+        "pestphp/pest-plugin-laravel": "^1.2 || ^2.0",
+        "sammyjo20/laravel-chunkable-jobs": "^1.1",
         "spatie/laravel-ray": "^1.26"
     },
     "suggest": {
@@ -61,12 +60,15 @@
         }
     },
     "scripts": {
-        "format": "vendor/bin/pint",
-        "scripts": {
-            "post-autoload-dump": [
-                "@php ./vendor/bin/testbench package:discover --ansi"
-            ]
-        },
+        "post-autoload-dump": [
+            "@php ./vendor/bin/testbench package:discover --ansi"
+        ],
+        "fix-code": [
+            "./vendor/bin/php-cs-fixer fix --allow-risky=yes"
+        ],
+        "pstan": [
+            "./vendor/bin/phpstan analyse"
+        ],
         "test": [
             "./vendor/bin/pest"
         ]
