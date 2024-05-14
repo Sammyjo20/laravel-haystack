@@ -201,7 +201,7 @@ trait ManagesBales
 
         // Now finally delete itself.
 
-        if ($status == FinishStatus::Success && config('haystack.delete_finished_haystacks') === true) {
+        if ($status === FinishStatus::Success && config('haystack.delete_finished_haystacks') === true) {
             $this->delete();
         }
     }
