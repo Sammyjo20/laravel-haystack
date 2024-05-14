@@ -6,3 +6,4 @@ coverage
 docs
 vendor
 node_modules
+.phpunit.cache
