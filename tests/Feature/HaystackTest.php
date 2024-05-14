@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 use Illuminate\Support\Carbon;
 
-use function Pest\Laravel\assertModelExists;
 use function Pest\Laravel\travel;
-
 use Illuminate\Support\Collection;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
+use function Pest\Laravel\assertModelExists;
 
-use function Pest\Laravel\assertModelMissing;
 
 use Sammyjo20\LaravelHaystack\Models\Haystack;
 use Sammyjo20\LaravelHaystack\Tests\Fixtures\Jobs\FailJob;

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Sammyjo20\LaravelHaystack\Builders;
 
 use Closure;
-use Carbon\CarbonImmutable;
 use DateTimeInterface;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
