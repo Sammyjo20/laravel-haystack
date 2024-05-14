@@ -1,3 +1,9 @@
+> ### Notice 14/05/2024
+> 
+> I am no longer going to be accepting new features for Laravel Haystack. I intend to still ensure security fixes 
+> are made, but I feel that the project is now complete. Additionally, I feel that Laravel's job batches and
+> chains in Laravel 10+ are a lot more powerful and you may not need Laravel Haystack in 2024.
+
 <div align="center">
     
 <img src="https://user-images.githubusercontent.com/29132017/181642184-e95e6214-2ff0-4a32-985e-938432b7b3f5.jpeg" width="250">
