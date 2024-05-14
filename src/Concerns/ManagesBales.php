@@ -90,7 +90,7 @@ trait ManagesBales
      *
      * @throws PhpVersionNotSupportedException
      */
-    public function dispatchNextJob(StackableJob $currentJob = null, int|CarbonInterface $delayInSecondsOrCarbon = null): void
+    public function dispatchNextJob(?StackableJob $currentJob = null, int|CarbonInterface|null $delayInSecondsOrCarbon = null): void
     {
         // If the resume_at has been set, and the date is in the future, we're not allowed to process
         // the next job, so we stop.
@@ -220,7 +220,7 @@ trait ManagesBales
     /**
      * Add new jobs to the haystack.
      */
-    public function addJobs(StackableJob|Collection|array $jobs, int $delayInSeconds = 0, string $queue = null, string $connection = null, bool $prepend = false): void
+    public function addJobs(StackableJob|Collection|array $jobs, int $delayInSeconds = 0, ?string $queue = null, ?string $connection = null, bool $prepend = false): void
     {
         if ($jobs instanceof StackableJob) {
             $jobs = [$jobs];
@@ -263,7 +263,7 @@ trait ManagesBales
      *
      * @throws PhpVersionNotSupportedException
      */
-    protected function invokeCallbacks(?array $closures, Collection $data = null): void
+    protected function invokeCallbacks(?array $closures, ?Collection $data = null): void
     {
         collect($closures)->each(function (SerializableClosure $closure) use ($data) {
             $closure($data);
@@ -296,7 +296,7 @@ trait ManagesBales
      *
      * @return ManagesBales|\Sammyjo20\LaravelHaystack\Models\Haystack
      */
-    public function setData(string $key, mixed $value, string $cast = null): self
+    public function setData(string $key, mixed $value, ?string $cast = null): self
     {
         DataValidator::validateCast($value, $cast);
 
@@ -333,7 +333,7 @@ trait ManagesBales
      *
      * @throws HaystackModelExists
      */
-    public function setModel(Model $model, string $key = null): static
+    public function setModel(Model $model, ?string $key = null): static
     {
         $key = DataHelper::getModelKey($model, $key);
 
