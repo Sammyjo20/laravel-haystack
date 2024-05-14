@@ -19,7 +19,7 @@
         "php": "^8.1",
         "illuminate/console": "^10.0 || ^11.0",
         "illuminate/contracts": "^10.0 || ^11.0",
-        "illuminate/database": "^10.0 || ^v11.1",
+        "illuminate/database": "^10.0 || ^v11.7",
         "illuminate/queue": "^10.0 || ^11.0",
         "illuminate/support": "^10.0 || ^11.0",
         "laravel/serializable-closure": "^1.2"
