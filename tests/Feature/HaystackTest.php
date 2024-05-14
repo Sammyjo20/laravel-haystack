@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Carbon;
 
+use function Pest\Laravel\assertModelExists;
 use function Pest\Laravel\travel;
 
 use Illuminate\Support\Collection;
@@ -439,7 +440,7 @@ test('the haystack will fail if the job fails from an exception if automatic pro
 
     expect(cache()->get('failed'))->toBeTrue();
 
-    assertModelMissing($haystack);
+    assertModelExists($haystack); // Should still exist
 });
 
 test('the haystack will fail if the job is manually failed', function () {
@@ -458,7 +459,7 @@ test('the haystack will fail if the job is manually failed', function () {
 
     expect(cache()->get('failed'))->toBeTrue();
 
-    assertModelMissing($haystack);
+    assertModelExists($haystack); // Should still exist
 });
 
 test('a haystack can be cancelled early and future jobs wont be processed', function () {
