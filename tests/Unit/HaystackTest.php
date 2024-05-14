@@ -176,7 +176,7 @@ test('when a haystack has no jobs left and nextJob is called it is finished and 
     expect(Haystack::all())->toHaveCount(0);
 });
 
-test('when a haystack fails it will delete itself and all bales', function () {
+test('when a haystack fails it will remain with the final bales', function () {
     $haystack = Haystack::factory()
         ->has(HaystackBale::factory()->state(['job' => new NameJob('Sam')]), 'bales')
         ->create();
@@ -186,8 +186,8 @@ test('when a haystack fails it will delete itself and all bales', function () {
 
     $haystack->fail();
 
-    expect(Haystack::all())->toHaveCount(0);
-    expect(HaystackBale::all())->toHaveCount(0);
+    expect(Haystack::all())->toHaveCount(1);
+    expect(HaystackBale::all())->toHaveCount(1);
 });
 
 test('you can instantiate a haystack builder from the model', function () {
